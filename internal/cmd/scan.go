@@ -41,7 +41,7 @@ func init() {
 
 	scanCmd.Flags().StringVarP(&outputFile, "output", "o", "", "Output file path (default: stdout)")
 	scanCmd.Flags().StringVar(&excludeDirs, "exclude-dir", "", "Comma-separated directories to exclude")
-	scanCmd.Flags().StringVar(&aggregate, "aggregate", "", "Aggregate fields: tech,techs,languages,licenses")
+	scanCmd.Flags().StringVar(&aggregate, "aggregate", "", "Aggregate fields: tech,techs,languages,licenses,dependencies")
 	scanCmd.Flags().BoolVar(&prettyPrint, "pretty", true, "Pretty print JSON output")
 }
 
@@ -129,10 +129,10 @@ func generateOutput(payload interface{}, aggregateFields string, prettyPrint boo
 		}
 
 		// Validate fields
-		validFields := map[string]bool{"tech": true, "techs": true, "languages": true, "licenses": true}
+		validFields := map[string]bool{"tech": true, "techs": true, "languages": true, "licenses": true, "dependencies": true}
 		for _, field := range fields {
 			if !validFields[field] {
-				return nil, fmt.Errorf("invalid aggregate field: %s. Valid fields: tech, techs, languages, licenses", field)
+				return nil, fmt.Errorf("invalid aggregate field: %s. Valid fields: tech, techs, languages, licenses, dependencies", field)
 			}
 		}
 

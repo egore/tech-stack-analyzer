@@ -68,10 +68,10 @@ The analyzer uses a command-based interface powered by [Cobra](https://github.co
 ./bin/stack-analyzer scan /path/to/package.json
 ./bin/stack-analyzer scan /path/to/pyproject.toml
 
-# Aggregate output (rollup technologies, languages, licenses)
-./bin/stack-analyzer scan --aggregate tech,techs,languages,licenses /path/to/project
+# Aggregate output (rollup technologies, languages, licenses, dependencies)
+./bin/stack-analyzer scan --aggregate tech,techs,languages,licenses,dependencies /path/to/project
 ./bin/stack-analyzer scan --aggregate techs /path/to/project
-./bin/stack-analyzer scan --aggregate tech,languages /path/to/project
+./bin/stack-analyzer scan --aggregate dependencies /path/to/project
 
 # List all available technologies (744 total)
 ./bin/stack-analyzer info techs
@@ -97,7 +97,7 @@ stack-analyzer scan [path] [flags]
 
 **Flags:**
 - `--output, -o` - Output file path (default: stdout)
-- `--aggregate` - Aggregate fields: `tech,techs,languages,licenses`
+- `--aggregate` - Aggregate fields: `tech,techs,languages,licenses,dependencies`
 - `--exclude-dir` - Comma-separated directories to exclude
 - `--pretty` - Pretty print JSON output (default: true)
 
@@ -105,7 +105,7 @@ stack-analyzer scan [path] [flags]
 ```bash
 stack-analyzer scan .
 stack-analyzer scan /path/to/project --output results.json
-stack-analyzer scan --aggregate techs,languages /path
+stack-analyzer scan --aggregate techs,languages,dependencies /path
 ```
 
 #### `info` - Display information about rules and types
@@ -223,7 +223,7 @@ The scanner outputs a hierarchical JSON structure representing the detected tech
 Use the `--aggregate` flag to get a simplified, rolled-up view of your entire codebase:
 
 ```bash
-./bin/stack-analyzer --aggregate tech,techs,languages,licenses /path/to/project
+./bin/stack-analyzer scan --aggregate tech,techs,languages,licenses,dependencies /path/to/project
 ```
 
 **Output:**
@@ -237,7 +237,13 @@ Use the `--aggregate` flag to get a simplified, rolled-up view of your entire co
     "JavaScript": 45,
     "Go": 12
   },
-  "licenses": ["MIT", "Apache-2.0"]
+  "licenses": ["MIT", "Apache-2.0"],
+  "dependencies": [
+    ["npm", "react", "^18.2.0"],
+    ["npm", "express", "^4.18.0"],
+    ["python", "fastapi", "0.118.2"],
+    ["python", "pydantic", "latest"]
+  ]
 }
 ```
 
@@ -246,12 +252,14 @@ Use the `--aggregate` flag to get a simplified, rolled-up view of your entire co
 - `techs` - All detected technologies (includes frameworks, tools, libraries)
 - `languages` - Programming languages with file counts
 - `licenses` - Detected licenses from LICENSE files and package manifests
+- `dependencies` - All dependencies as `[type, name, version]` arrays
 
 This is useful for:
 - Quick technology stack overview
 - Generating technology badges
-- Dependency auditing
+- Dependency auditing and security scanning
 - License compliance checking
+- Counting dependencies: `jq '.dependencies | length'`
 
 ### Example Full Output
 

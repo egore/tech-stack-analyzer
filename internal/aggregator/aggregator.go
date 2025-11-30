@@ -8,10 +8,11 @@ import (
 
 // AggregateOutput represents aggregated/rolled-up data from the scan
 type AggregateOutput struct {
-	Tech      []string       `json:"tech,omitempty"`  // Primary/main technologies
-	Techs     []string       `json:"techs,omitempty"` // All detected technologies
-	Languages map[string]int `json:"languages,omitempty"`
-	Licenses  []string       `json:"licenses,omitempty"`
+	Tech         []string       `json:"tech,omitempty"`         // Primary/main technologies
+	Techs        []string       `json:"techs,omitempty"`        // All detected technologies
+	Languages    map[string]int `json:"languages,omitempty"`    // Language file counts
+	Licenses     []string       `json:"licenses,omitempty"`     // Detected licenses
+	Dependencies [][]string     `json:"dependencies,omitempty"` // All dependencies [type, name, version]
 }
 
 // Aggregator handles aggregation of scan results
@@ -48,6 +49,10 @@ func (a *Aggregator) Aggregate(payload *types.Payload) *AggregateOutput {
 
 	if a.fields["licenses"] {
 		output.Licenses = a.collectLicenses(payload)
+	}
+
+	if a.fields["dependencies"] {
+		output.Dependencies = a.collectDependencies(payload)
 	}
 
 	return output
@@ -152,6 +157,48 @@ func (a *Aggregator) collectLicensesRecursive(payload *types.Payload, licenseSet
 	// Recursively process children
 	for _, child := range payload.Childs {
 		a.collectLicensesRecursive(child, licenseSet)
+	}
+}
+
+// collectDependencies recursively collects all unique dependencies
+func (a *Aggregator) collectDependencies(payload *types.Payload) [][]string {
+	// Use a map with string key to track unique dependencies
+	// Key format: "type|name|version"
+	depMap := make(map[string]types.Dependency)
+	a.collectDependenciesRecursive(payload, depMap)
+
+	// Convert to array format for JSON output
+	dependencies := make([][]string, 0, len(depMap))
+	for _, dep := range depMap {
+		dependencies = append(dependencies, []string{dep.Type, dep.Name, dep.Example})
+	}
+
+	// Sort by type, then name, then version
+	sort.Slice(dependencies, func(i, j int) bool {
+		if dependencies[i][0] != dependencies[j][0] {
+			return dependencies[i][0] < dependencies[j][0]
+		}
+		if dependencies[i][1] != dependencies[j][1] {
+			return dependencies[i][1] < dependencies[j][1]
+		}
+		return dependencies[i][2] < dependencies[j][2]
+	})
+
+	return dependencies
+}
+
+// collectDependenciesRecursive helper function
+func (a *Aggregator) collectDependenciesRecursive(payload *types.Payload, depMap map[string]types.Dependency) {
+	// Add dependencies from current payload
+	for _, dep := range payload.Dependencies {
+		// Create unique key from type|name|version
+		key := dep.Type + "|" + dep.Name + "|" + dep.Example
+		depMap[key] = dep
+	}
+
+	// Recursively process children
+	for _, child := range payload.Childs {
+		a.collectDependenciesRecursive(child, depMap)
 	}
 }
 
