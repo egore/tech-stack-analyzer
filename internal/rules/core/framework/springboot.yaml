@@ -1,0 +1,10 @@
+tech: springboot
+name: Spring Boot
+type: framework
+dependencies:
+  - type: maven
+    name: /^org\.springframework\.boot:.*/
+    example: org.springframework.boot:spring-boot-starter
+  - type: docker
+    name: springboot
+    example: springboot
