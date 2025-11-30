@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/petrarca/tech-stack-analyzer/internal/scanner"
+	"github.com/petrarca/tech-stack-analyzer/internal/types"
 )
 
 func main() {
@@ -57,10 +58,12 @@ func main() {
 		log.Fatalf("Invalid path: %v", err)
 	}
 
-	// Check if path exists
-	if _, err := os.Stat(absPath); os.IsNotExist(err) {
+	// Check if path exists and determine if it's a file or directory
+	fileInfo, err := os.Stat(absPath)
+	if os.IsNotExist(err) {
 		log.Fatalf("Path does not exist: %s", absPath)
 	}
+	isFile := !fileInfo.IsDir()
 
 	// Parse exclude dirs
 	var excludeList []string
@@ -73,14 +76,27 @@ func main() {
 	}
 
 	// Initialize scanner with exclude directories
-	s, err := scanner.NewScannerWithExcludes(absPath, excludeList)
+	// For single file scanning, use the parent directory as the base
+	scannerPath := absPath
+	if isFile {
+		scannerPath = filepath.Dir(absPath)
+	}
+
+	s, err := scanner.NewScannerWithExcludes(scannerPath, excludeList)
 	if err != nil {
 		log.Fatalf("Failed to create scanner: %v", err)
 	}
 
-	// Scan project
-	log.Printf("Scanning %s...", absPath)
-	payload, err := s.Scan()
+	// Scan project or file
+	var payload *types.Payload
+	if isFile {
+		log.Printf("Scanning file %s...", absPath)
+		payload, err = s.ScanFile(filepath.Base(absPath))
+	} else {
+		log.Printf("Scanning %s...", absPath)
+		payload, err = s.Scan()
+	}
+
 	if err != nil {
 		log.Fatalf("Failed to scan: %v", err)
 	}

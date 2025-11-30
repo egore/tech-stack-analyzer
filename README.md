@@ -61,18 +61,25 @@ go install github.com/petrarca/tech-stack-analyzer/cmd/scanner@latest
 
 # Exclude specific directories
 ./bin/stack-analyzer /path/to/project --exclude-dir "vendor,node_modules,bin"
+
+# Scan a single file (useful for quick testing)
+./bin/stack-analyzer /path/to/pom.xml
+./bin/stack-analyzer /path/to/package.json
+./bin/stack-analyzer /path/to/pyproject.toml
 ```
 
 ### Command Line Options
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| `path` | Project path to analyze (positional argument) | `.` |
+| `path` | Project path or single file to analyze (positional argument) | `.` |
 | `--output` | Output file path | stdout |
 | `--pretty` | Pretty print JSON output | `true` |
 | `--exclude-dir` | Comma-separated directories to exclude | none |
 | `--validate` | Validate rules and exit | `false` |
 | `--version` | Show version information | `false` |
+
+**Note:** The scanner automatically detects whether the path is a directory or a single file. When scanning a single file (e.g., `pom.xml`, `package.json`, `pyproject.toml`), it treats the file as if it's in a directory containing only that file. This is particularly useful for quick testing of configuration files.
 
 ### Detection Approach
 

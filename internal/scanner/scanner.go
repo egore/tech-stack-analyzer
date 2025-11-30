@@ -127,6 +127,36 @@ func (s *Scanner) Scan() (*types.Payload, error) {
 	return payload, nil
 }
 
+// ScanFile performs analysis on a single file, treating it as a directory with just that file
+func (s *Scanner) ScanFile(fileName string) (*types.Payload, error) {
+	// Create main payload
+	payload := types.NewPayloadWithPath("main", "/")
+
+	// The provider's base path is already set to the directory containing the file
+	// We just need to pass the file name
+	basePath := s.provider.GetBasePath()
+
+	// Create a virtual file list with just the single file
+	files := []types.File{
+		{
+			Name:     fileName,
+			Path:     fileName,
+			Type:     "file",
+			Size:     0, // Size not needed for detection
+			Modified: 0, // Modified time not needed for detection
+		},
+	}
+
+	// Apply rules to detect technologies on the single file
+	// Pass the base path (directory) as the current path for component detection
+	ctx := s.applyRules(payload, files, basePath)
+
+	// Detect language from the file name
+	ctx.DetectLanguage(fileName)
+
+	return payload, nil
+}
+
 // recurse follows the exact TypeScript implementation pattern
 func (s *Scanner) recurse(payload *types.Payload, filePath string) error {
 	// Get files in current directory (like TypeScript's provider.listDir)
