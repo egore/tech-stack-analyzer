@@ -386,8 +386,8 @@ func (s *Scanner) findImplicitComponent(payload *types.Payload, rule types.Rule,
 	}
 }
 
-// shouldIgnoreDirectory mirrors TypeScript's IGNORED_DIVE_PATHS exactly
-// plus user-specified exclude directories
+// shouldIgnoreDirectory checks if a directory should be ignored during scanning
+// Uses modular ignore patterns defined in ignore_patterns.go
 func (s *Scanner) shouldIgnoreDirectory(name string) bool {
 	// Check user-specified exclude directories first
 	if s.excludeDirs != nil {
@@ -398,28 +398,11 @@ func (s *Scanner) shouldIgnoreDirectory(name string) bool {
 			if lowerName == strings.ToLower(excludeDir) {
 				return true
 			}
-			// Also check if the directory path contains the exclude pattern
-			if strings.Contains(lowerName, strings.ToLower(excludeDir)) {
-				return true
-			}
 		}
 	}
 
-	// Exact same ignore list as TypeScript implementation
-	ignored := []string{
-		"node_modules", "dist", "build", "bin", "static", "public", "vendor",
-		"terraform.tfstate.d", "migrations", "tests", "e2e", "__fixtures__",
-		"__snapshots__", "tmp",
-		// -- Dot folder
-		".artifacts", ".assets", ".azure", ".azure-pipelines", ".bundle",
-		".cache", ".changelog", ".devcontainer", ".docker", ".dynamodb",
-		".fusebox", ".git", // needed to detect github actions - '.github' is NOT ignored
-		".gitlab", ".gradle", ".log", ".metadata", ".npm", ".nuxt",
-		".react-email", ".release", ".semgrep", ".serverless", ".svn",
-		".terraform", ".vercel", ".venv", ".vscode", ".vuepress",
-		// Python virtual environments
-		"venv", "__pycache__",
-	}
+	// Get all ignore patterns from modular system
+	ignored := GetFlatIgnoreList()
 
 	lowerName := strings.ToLower(name)
 	for _, pattern := range ignored {
