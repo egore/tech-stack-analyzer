@@ -28,13 +28,14 @@ import (
 
 // Scanner handles the scanning logic (like TypeScript's Payload.recurse)
 type Scanner struct {
-	provider       types.Provider
-	rules          []types.Rule
-	depDetector    *DependencyDetector
-	compDetector   *ComponentDetector
-	jsonDetector   *JSONSchemaDetector
-	dotenvDetector *parsers.DotenvDetector
-	excludeDirs    []string
+	provider        types.Provider
+	rules           []types.Rule
+	depDetector     *DependencyDetector
+	compDetector    *ComponentDetector
+	jsonDetector    *JSONSchemaDetector
+	dotenvDetector  *parsers.DotenvDetector
+	licenseDetector *LicenseDetector
+	excludeDirs     []string
 }
 
 // NewScanner creates a new scanner (mirroring TypeScript's analyser function)
@@ -60,18 +61,22 @@ func NewScanner(path string) (*Scanner, error) {
 	// Initialize dotenv detector
 	dotenvDetector := parsers.NewDotenvDetector(provider, rules)
 
+	// Initialize license detector
+	licenseDetector := NewLicenseDetector()
+
 	// Build matchers from rules (like TypeScript's loadAllRules)
 	matchers.BuildFileMatchersFromRules(rules)
 	matchers.BuildExtensionMatchersFromRules(rules)
 
 	return &Scanner{
-		provider:       provider,
-		rules:          rules,
-		depDetector:    depDetector,
-		compDetector:   compDetector,
-		jsonDetector:   jsonDetector,
-		dotenvDetector: dotenvDetector,
-		excludeDirs:    nil,
+		provider:        provider,
+		rules:           rules,
+		depDetector:     depDetector,
+		compDetector:    compDetector,
+		jsonDetector:    jsonDetector,
+		dotenvDetector:  dotenvDetector,
+		licenseDetector: licenseDetector,
+		excludeDirs:     nil,
 	}, nil
 }
 
@@ -98,18 +103,22 @@ func NewScannerWithExcludes(path string, excludeDirs []string) (*Scanner, error)
 	// Initialize dotenv detector
 	dotenvDetector := parsers.NewDotenvDetector(provider, rules)
 
+	// Initialize license detector
+	licenseDetector := NewLicenseDetector()
+
 	// Build matchers from rules (like TypeScript's loadAllRules)
 	matchers.BuildFileMatchersFromRules(rules)
 	matchers.BuildExtensionMatchersFromRules(rules)
 
 	return &Scanner{
-		provider:       provider,
-		rules:          rules,
-		depDetector:    depDetector,
-		compDetector:   compDetector,
-		jsonDetector:   jsonDetector,
-		dotenvDetector: dotenvDetector,
-		excludeDirs:    excludeDirs,
+		provider:        provider,
+		rules:           rules,
+		depDetector:     depDetector,
+		compDetector:    compDetector,
+		jsonDetector:    jsonDetector,
+		dotenvDetector:  dotenvDetector,
+		licenseDetector: licenseDetector,
+		excludeDirs:     excludeDirs,
 	}, nil
 }
 
@@ -168,6 +177,10 @@ func (s *Scanner) recurse(payload *types.Payload, filePath string) error {
 	// Apply rules to detect technologies (like TypeScript's ruleComponents loop)
 	// This might return a different context if a component was detected
 	ctx := s.applyRules(payload, files, filePath)
+
+	// Detect licenses from LICENSE files in this directory
+	// This adds file-based license detection (MIT, Apache-2.0, etc.) from LICENSE files
+	s.licenseDetector.AddLicensesToPayload(ctx, filePath)
 
 	// Process each file/directory (exactly like TypeScript's loop)
 	for _, file := range files {
