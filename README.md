@@ -43,51 +43,102 @@ go install github.com/petrarca/tech-stack-analyzer/cmd/scanner@latest
 
 ### Basic Usage
 
+The analyzer uses a command-based interface powered by [Cobra](https://github.com/spf13/cobra):
+
 ```bash
+# Get help
+./bin/stack-analyzer --help
+./bin/stack-analyzer scan --help
+./bin/stack-analyzer info --help
+
 # Scan current directory
-./bin/stack-analyzer
+./bin/stack-analyzer scan
 
 # Scan specific directory
-./bin/stack-analyzer /path/to/project
+./bin/stack-analyzer scan /path/to/project
 
 # Save results to file
-./bin/stack-analyzer /path/to/project --output results.json
-
-# Pretty print JSON output (enabled by default)
-./bin/stack-analyzer /path/to/project --pretty
-
-# Compact JSON output
-./bin/stack-analyzer /path/to/project --pretty=false
+./bin/stack-analyzer scan /path/to/project --output results.json
 
 # Exclude specific directories
-./bin/stack-analyzer /path/to/project --exclude-dir "vendor,node_modules,bin"
+./bin/stack-analyzer scan /path/to/project --exclude-dir "vendor,node_modules,bin"
 
 # Scan a single file (useful for quick testing)
-./bin/stack-analyzer /path/to/pom.xml
-./bin/stack-analyzer /path/to/package.json
-./bin/stack-analyzer /path/to/pyproject.toml
+./bin/stack-analyzer scan /path/to/pom.xml
+./bin/stack-analyzer scan /path/to/package.json
+./bin/stack-analyzer scan /path/to/pyproject.toml
 
 # Aggregate output (rollup technologies, languages, licenses)
-./bin/stack-analyzer --aggregate tech,techs,languages,licenses /path/to/project
-./bin/stack-analyzer --aggregate techs /path/to/project
-./bin/stack-analyzer --aggregate tech,languages /path/to/project
+./bin/stack-analyzer scan --aggregate tech,techs,languages,licenses /path/to/project
+./bin/stack-analyzer scan --aggregate techs /path/to/project
+./bin/stack-analyzer scan --aggregate tech,languages /path/to/project
+
+# List all available technologies (744 total)
+./bin/stack-analyzer info techs
+
+# Show rule details for a specific technology
+./bin/stack-analyzer info rule postgresql
+./bin/stack-analyzer info rule postgresql --format json
+
+# List component types
+./bin/stack-analyzer info component-types
 ```
 
-### Command Line Options
+### Commands
 
-| Option | Description | Default |
-|--------|-------------|---------|
-| `path` | Project path or single file to analyze (positional argument) | `.` |
-| `--output` | Output file path | stdout |
-| `--aggregate` | Aggregate and rollup fields (comma-separated): `tech,techs,languages,licenses` | none |
-| `--pretty` | Pretty print JSON output | `true` |
-| `--exclude-dir` | Comma-separated directories to exclude | none |
-| `--validate` | Validate rules and exit | `false` |
-| `--version` | Show version information | `false` |
+#### `scan` - Analyze a project or file
 
-**Note:** The scanner automatically detects whether the path is a directory or a single file. When scanning a single file (e.g., `pom.xml`, `package.json`, `pyproject.toml`), it treats the file as if it's in a directory containing only that file. This is particularly useful for quick testing of configuration files.
+Scans a project directory or single file to detect technologies, frameworks, databases, and services.
 
-**Important:** Flags must be specified BEFORE the path argument. For example: `./bin/stack-analyzer --aggregate techs /path/to/project`
+**Usage:**
+```bash
+stack-analyzer scan [path] [flags]
+```
+
+**Flags:**
+- `--output, -o` - Output file path (default: stdout)
+- `--aggregate` - Aggregate fields: `tech,techs,languages,licenses`
+- `--exclude-dir` - Comma-separated directories to exclude
+- `--pretty` - Pretty print JSON output (default: true)
+
+**Examples:**
+```bash
+stack-analyzer scan .
+stack-analyzer scan /path/to/project --output results.json
+stack-analyzer scan --aggregate techs,languages /path
+```
+
+#### `info` - Display information about rules and types
+
+**Subcommands:**
+
+**`info component-types`** - List all component types
+```bash
+stack-analyzer info component-types
+```
+Shows which technology types create components (appear in `tech` field) vs those that don't (only in `techs` array).
+
+**`info techs`** - List all available technologies
+```bash
+stack-analyzer info techs
+stack-analyzer info techs | grep postgres
+```
+Lists all 744 technology names from the embedded rules.
+
+**`info rule [tech-name]`** - Show rule details
+```bash
+stack-analyzer info rule postgresql
+stack-analyzer info rule postgresql --format json
+```
+Displays the complete rule definition for a given technology.
+
+**Flags:**
+- `--format, -f` - Output format: `yaml` or `json` (default: yaml)
+
+### Global Flags
+
+- `--help, -h` - Help for any command
+- `--version, -v` - Show version information
 
 ### Detection Approach
 
