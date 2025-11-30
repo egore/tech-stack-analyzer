@@ -23,8 +23,8 @@ dependencies:
     name: oracledb
     example: oracledb
   - type: python
-    name: sqlalchemy
-    example: sqlalchemy+oracle
+    name: python-oracledb
+    example: python-oracledb
   - type: python
     name: django-oracle
     example: django-oracle

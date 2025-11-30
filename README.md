@@ -66,6 +66,11 @@ go install github.com/petrarca/tech-stack-analyzer/cmd/scanner@latest
 ./bin/stack-analyzer /path/to/pom.xml
 ./bin/stack-analyzer /path/to/package.json
 ./bin/stack-analyzer /path/to/pyproject.toml
+
+# Aggregate output (rollup technologies, languages, licenses)
+./bin/stack-analyzer --aggregate tech,techs,languages,licenses /path/to/project
+./bin/stack-analyzer --aggregate techs /path/to/project
+./bin/stack-analyzer --aggregate tech,languages /path/to/project
 ```
 
 ### Command Line Options
@@ -74,12 +79,15 @@ go install github.com/petrarca/tech-stack-analyzer/cmd/scanner@latest
 |--------|-------------|---------|
 | `path` | Project path or single file to analyze (positional argument) | `.` |
 | `--output` | Output file path | stdout |
+| `--aggregate` | Aggregate and rollup fields (comma-separated): `tech,techs,languages,licenses` | none |
 | `--pretty` | Pretty print JSON output | `true` |
 | `--exclude-dir` | Comma-separated directories to exclude | none |
 | `--validate` | Validate rules and exit | `false` |
 | `--version` | Show version information | `false` |
 
 **Note:** The scanner automatically detects whether the path is a directory or a single file. When scanning a single file (e.g., `pom.xml`, `package.json`, `pyproject.toml`), it treats the file as if it's in a directory containing only that file. This is particularly useful for quick testing of configuration files.
+
+**Important:** Flags must be specified BEFORE the path argument. For example: `./bin/stack-analyzer --aggregate techs /path/to/project`
 
 ### Detection Approach
 
@@ -123,6 +131,25 @@ For major technology stacks, the scanner provides **deep analysis** through dedi
 
 This hybrid approach ensures **broad coverage** (detects almost any technology) while providing **deep insights** for the most common technology stacks.
 
+### Component Classification
+
+The scanner distinguishes between **architectural components** and **tools/libraries**:
+
+**Technologies that CREATE components** (appear in `tech` field):
+- Infrastructure: `db`, `hosting`, `cloud`, `storage`, `queue`
+- Services: `ai`, `auth`, `payment`, `notification`, `monitoring`, `analytics`
+- Applications: `app`, `cms`, `saas`, `communication`, `collaboration`
+- Others: `etl`, `automation`, `security`, `maps`, `crm`, `network`, `ssg`
+
+**Technologies that DON'T create components** (only in `techs` array):
+- Development: `ci`, `builder`, `linter`, `test`, `validation`, `tool`
+- Code organization: `framework`, `orm`, `package_manager`
+- Languages: `language`, `runtime`
+- UI utilities: `ui`, `ui_framework`, `iconset`
+- Infrastructure as Code: `iac`
+
+This classification is defined in `internal/scanner/component_types.go` and determines whether a detected technology represents an architectural decision (component) or an implementation detail (tool/library).
+
 ### Output Structure
 
 The scanner outputs a hierarchical JSON structure representing the detected technologies:
@@ -130,8 +157,8 @@ The scanner outputs a hierarchical JSON structure representing the detected tech
 - **id**: Unique identifier for each component
 - **name**: Component name (e.g., "main", "frontend", "backend")
 - **path**: File system path relative to the project root
-- **tech**: Primary technology detected for this component
-- **techs**: Array of all technologies detected in this component
+- **tech**: Primary technology detected for this component (architectural components only)
+- **techs**: Array of all technologies detected in this component (components + tools/libraries)
 - **languages**: Object mapping programming languages to file counts
 - **dependencies**: Array of detected dependencies with format `[type, name, version]`
 - **childs**: Array of nested components (sub-projects, services, etc.)
@@ -140,7 +167,42 @@ The scanner outputs a hierarchical JSON structure representing the detected tech
 - **licenses**: Array of detected licenses in this component
 - **reason**: Array explaining why technologies were detected
 
-### Example Output
+### Aggregated Output
+
+Use the `--aggregate` flag to get a simplified, rolled-up view of your entire codebase:
+
+```bash
+./bin/stack-analyzer --aggregate tech,techs,languages,licenses /path/to/project
+```
+
+**Output:**
+```json
+{
+  "tech": ["nodejs", "python", "postgresql", "redis"],
+  "techs": ["nodejs", "python", "postgresql", "redis", "react", "typescript", "docker", "eslint", "prettier"],
+  "languages": {
+    "Python": 130,
+    "TypeScript": 89,
+    "JavaScript": 45,
+    "Go": 12
+  },
+  "licenses": ["MIT", "Apache-2.0"]
+}
+```
+
+**Available fields:**
+- `tech` - Primary/architectural technologies (databases, services, infrastructure)
+- `techs` - All detected technologies (includes frameworks, tools, libraries)
+- `languages` - Programming languages with file counts
+- `licenses` - Detected licenses from LICENSE files and package manifests
+
+This is useful for:
+- Quick technology stack overview
+- Generating technology badges
+- Dependency auditing
+- License compliance checking
+
+### Example Full Output
 
 ```json
 {

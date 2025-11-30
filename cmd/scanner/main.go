@@ -9,15 +9,50 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/petrarca/tech-stack-analyzer/internal/aggregator"
 	"github.com/petrarca/tech-stack-analyzer/internal/scanner"
 	"github.com/petrarca/tech-stack-analyzer/internal/types"
 )
+
+// generateOutput creates JSON output, either aggregated or full payload
+func generateOutput(payload *types.Payload, aggregateFields string, prettyPrint bool) ([]byte, error) {
+	var result interface{}
+
+	if aggregateFields != "" {
+		// Parse aggregate fields
+		fields := strings.Split(aggregateFields, ",")
+		for i, field := range fields {
+			fields[i] = strings.TrimSpace(field)
+		}
+
+		// Validate fields
+		validFields := map[string]bool{"tech": true, "techs": true, "languages": true, "licenses": true}
+		for _, field := range fields {
+			if !validFields[field] {
+				return nil, fmt.Errorf("invalid aggregate field: %s. Valid fields: tech, techs, languages, licenses", field)
+			}
+		}
+
+		// Create aggregator and aggregate
+		agg := aggregator.NewAggregator(fields)
+		result = agg.Aggregate(payload)
+	} else {
+		result = payload
+	}
+
+	// Marshal to JSON
+	if prettyPrint {
+		return json.MarshalIndent(result, "", "  ")
+	}
+	return json.Marshal(result)
+}
 
 func main() {
 	var (
 		outputFile    = flag.String("output", "", "Output file (default: stdout)")
 		externalRules = flag.String("rules", "", "External rules directory (not implemented)")
 		excludeDirs   = flag.String("exclude-dir", "", "Comma-separated directories to exclude")
+		aggregate     = flag.String("aggregate", "", "Aggregate and rollup fields (comma-separated): tech,techs,languages,licenses")
 		prettyPrint   = flag.Bool("pretty", true, "Pretty print JSON output")
 		validateRules = flag.Bool("validate", false, "Validate rules and exit")
 		version       = flag.Bool("version", false, "Show version information")
@@ -101,13 +136,8 @@ func main() {
 		log.Fatalf("Failed to scan: %v", err)
 	}
 
-	// Convert to JSON
-	var jsonData []byte
-	if *prettyPrint {
-		jsonData, err = json.MarshalIndent(payload, "", "  ")
-	} else {
-		jsonData, err = json.Marshal(payload)
-	}
+	// Generate output (aggregated or full payload)
+	jsonData, err := generateOutput(payload, *aggregate, *prettyPrint)
 
 	if err != nil {
 		log.Fatalf("Failed to marshal JSON: %v", err)

@@ -365,26 +365,9 @@ func (s *Scanner) findImplicitComponentByTech(payload *types.Payload, tech strin
 // findImplicitComponent creates a child component for technologies that are not in the notAComponent set
 // This replicates the TypeScript findImplicitComponent logic
 func (s *Scanner) findImplicitComponent(payload *types.Payload, rule types.Rule, currentPath string, addEdges bool) {
-	// notAComponent set from TypeScript (lines 6-22 in helpers.ts)
-	notAComponent := map[string]bool{
-		"ci":              true,
-		"language":        true,
-		"runtime":         true,
-		"tool":            true,
-		"framework":       true,
-		"validation":      true,
-		"builder":         true,
-		"linter":          true,
-		"test":            true,
-		"orm":             true,
-		"package_manager": true,
-		"ui":              true,
-		"ui_framework":    true,
-		"iac":             true,
-	}
-
-	// If this tech type is in the notAComponent set, don't create a component
-	if notAComponent[rule.Type] {
+	// Check if this tech type should create a component
+	// See component_types.go for the classification logic
+	if IsNotAComponent(rule.Type) {
 		return
 	}
 
