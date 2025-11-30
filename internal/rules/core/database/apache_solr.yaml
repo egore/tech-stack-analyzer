@@ -1,0 +1,10 @@
+tech: apache_solr
+name: Apache Solr
+type: db
+dependencies:
+  - type: docker
+    name: solr
+    example: solr
+  - type: docker
+    name: bitnami/solr
+    example: bitnami/solr

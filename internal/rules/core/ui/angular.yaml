@@ -1,0 +1,9 @@
+tech: angular
+name: Angular
+type: ui_framework
+dependencies:
+  - type: npm
+    name: angular
+    example: angular
+files:
+  - angular.json

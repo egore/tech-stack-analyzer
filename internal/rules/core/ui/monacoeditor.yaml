@@ -1,0 +1,13 @@
+tech: monacoeditor
+name: Monaco Editor
+type: ui
+dependencies:
+  - type: npm
+    name: monaco-editor
+    example: monaco-editor
+  - type: npm
+    name: "@monaco-editor/loader"
+    example: "@monaco-editor/loader"
+  - type: npm
+    name: "@monaco-editor/react"
+    example: "@monaco-editor/react"

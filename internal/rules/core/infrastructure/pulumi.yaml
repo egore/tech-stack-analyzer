@@ -1,0 +1,15 @@
+tech: pulumi
+name: Pulumi
+type: iac
+dependencies:
+  - type: npm
+    name: "@pulumi/pulumi"
+    example: "@pulumi/pulumi"
+  - type: python
+    name: pulumi
+    example: pulumi
+  - type: golang
+    name: github.com/pulumi/pulumi/sdk/v3
+    example: github.com/pulumi/pulumi/sdk/v3
+files:
+  - Pulumi.yaml

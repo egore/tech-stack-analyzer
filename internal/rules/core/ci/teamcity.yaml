@@ -1,0 +1,5 @@
+tech: teamcity
+name: TeamCity
+type: ci
+files:
+  - .teamcity

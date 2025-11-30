@@ -1,0 +1,13 @@
+tech: mongodbatlas
+name: MongoDB Atlas
+type: hosting
+dependencies:
+  - type: terraform
+    name: registry.terraform.io/mongodb/mongodbatlas
+    example: registry.terraform.io/mongodb/mongodbatlas
+  - type: npm
+    name: "@pulumi/mongodbatlas"
+    example: "@pulumi/mongodbatlas"
+detect:
+  type: terraform
+  file: "*.tf"

@@ -1,0 +1,18 @@
+tech: emberjs
+name: Ember
+type: ui_framework
+dependencies:
+  - type: npm
+    name: ember-cli
+    example: ember-cli
+  - type: npm
+    name: ember
+    example: ember
+  - type: npm
+    name: ember-data
+    example: ember-data
+  - type: npm
+    name: ember-source
+    example: ember-source
+files:
+  - ember-cli-build.js

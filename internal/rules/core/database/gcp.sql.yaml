@@ -1,0 +1,13 @@
+tech: gcp.sql
+name: Cloud SQL
+type: db
+dependencies:
+  - type: npm
+    name: "@google-cloud/cloud-sql-connector"
+    example: "@google-cloud/cloud-sql-connector"
+  - type: php
+    name: google/cloud-sql-admin
+    example: google/cloud-sql-admin
+detect:
+  type: terraform
+  file: "*.tf"

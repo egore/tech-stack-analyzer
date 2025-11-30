@@ -1,0 +1,6 @@
+tech: azure.aks
+name: Azure Kubernetes
+type: hosting
+detect:
+  type: terraform
+  file: "*.tf"

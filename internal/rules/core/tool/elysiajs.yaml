@@ -1,0 +1,7 @@
+tech: elysiajs
+name: ElysiaJS
+type: tool
+dependencies:
+  - type: npm
+    name: elysia
+    example: elysia

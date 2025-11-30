@@ -1,0 +1,9 @@
+tech: oxlint
+name: OxLint
+type: linter
+dependencies:
+  - type: npm
+    name: oxlint
+    example: oxlint
+files:
+  - .oxlintrc.json

@@ -1,0 +1,7 @@
+tech: joijs
+name: Joi
+type: validation
+dependencies:
+  - type: npm
+    name: joi
+    example: joi

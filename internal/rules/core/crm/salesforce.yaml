@@ -1,0 +1,15 @@
+tech: salesforce
+name: Salesforce
+type: crm
+dotenv:
+  - SALESFORCE_
+dependencies:
+  - type: terraform
+    name: registry.terraform.io/hashicorp/salesforce
+    example: registry.terraform.io/hashicorp/salesforce
+  - type: npm
+    name: jsforce
+    example: jsforce
+detect:
+  type: terraform
+  file: "*.tf"

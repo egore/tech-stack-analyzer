@@ -1,0 +1,7 @@
+tech: django
+name: Django
+type: framework
+dependencies:
+  - type: python
+    name: django
+    example: django

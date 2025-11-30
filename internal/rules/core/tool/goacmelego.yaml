@@ -1,0 +1,12 @@
+tech: goacmelego
+name: Lego
+type: tool
+dependencies:
+  - type: docker
+    name: goacme/lego
+    example: goacme/lego
+  - type: golang
+    name: github.com/go-acme/lego/v4/cmd/lego
+    example: github.com/go-acme/lego/v4/cmd/lego
+files:
+  - .lego

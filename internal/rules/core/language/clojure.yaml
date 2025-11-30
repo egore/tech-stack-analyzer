@@ -1,0 +1,5 @@
+tech: clojure
+name: Clojure
+type: language
+extensions:
+  - .clj

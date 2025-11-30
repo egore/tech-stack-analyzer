@@ -1,0 +1,10 @@
+tech: airbyte
+name: Airbyte
+type: etl
+dependencies:
+  - type: terraform
+    name: registry.terraform.io/airbytehq/airbyte
+    example: registry.terraform.io/airbytehq/airbyte
+detect:
+  type: terraform
+  file: "*.tf"

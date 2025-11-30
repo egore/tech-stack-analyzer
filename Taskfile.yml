@@ -1,0 +1,88 @@
+version: '3'
+
+tasks:
+  build:
+    desc: Compile the stack-analyzer binary
+    cmds:
+      - go build -o bin/stack-analyzer ./cmd/scanner
+    sources:
+      - '**/*.go'
+      - go.mod
+      - go.sum
+    generates:
+      - bin/stack-analyzer
+
+  format:
+    desc: Format Go code using gofmt
+    cmds:
+      - gofmt -w -s .
+
+  check:
+    desc: Run go vet and golangci-lint
+    cmds:
+      - go vet ./...
+      - golangci-lint run
+
+  test:
+    desc: Run tests
+    cmds:
+      - go test -v ./...
+
+  fct:
+    desc: Run format, check, and test in sequence
+    cmds:
+      - task: format
+      - task: check
+      - task: test
+
+  clean:
+    desc: Clean up build artifacts and caches
+    cmds:
+      - rm -rf bin/
+      - go clean -cache -testcache -modcache
+
+  run:
+    desc: Run stack-analyzer on a directory
+    cmds:
+      - ./bin/stack-analyzer {{.CLI_ARGS}}
+    deps:
+      - build
+
+  run:help:
+    desc: Show stack-analyzer help message
+    cmds:
+      - ./bin/stack-analyzer --help
+    deps:
+      - build
+
+  pre-commit:setup:
+    desc: Install pre-commit tool
+    cmds:
+      - uv tool install pre-commit
+
+  pre-commit:install:
+    desc: Install pre-commit git hooks
+    cmds:
+      - pre-commit install --install-hooks
+      - pre-commit install --hook-type pre-push
+
+  pre-commit:uninstall:
+    desc: Uninstall pre-commit hooks
+    cmds:
+      - pre-commit uninstall
+      - pre-commit uninstall --hook-type pre-push
+
+  pre-commit:update:
+    desc: Update pre-commit hooks
+    cmds:
+      - pre-commit autoupdate
+
+  pre-commit:run:
+    desc: Run pre-commit hooks on all files
+    cmds:
+      - pre-commit run --all-files
+
+  pre-commit:validate:
+    desc: Validate pre-commit configuration
+    cmds:
+      - pre-commit validate-config

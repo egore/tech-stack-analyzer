@@ -1,0 +1,7 @@
+tech: sveltekit
+name: SvelteKit
+type: framework
+dependencies:
+  - type: npm
+    name: "@sveltejs/kit"
+    example: "@sveltejs/kit"

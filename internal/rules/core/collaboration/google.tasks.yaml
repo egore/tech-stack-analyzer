@@ -1,0 +1,10 @@
+tech: google.tasks
+name: Google Tasks
+type: collaboration
+dependencies:
+  - type: npm
+    name: "@googleapis/tasks"
+    example: "@googleapis/tasks"
+  - type: ruby
+    name: google-apis-tasks_v1
+    example: google-apis-tasks_v1

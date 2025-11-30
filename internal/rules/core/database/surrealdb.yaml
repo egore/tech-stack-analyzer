@@ -1,0 +1,10 @@
+tech: surrealdb
+name: SurrealDB
+type: db
+dependencies:
+  - type: docker
+    name: surrealdb/surrealdb
+    example: surrealdb/surrealdb
+  - type: npm
+    name: surrealdb.js
+    example: surrealdb.js

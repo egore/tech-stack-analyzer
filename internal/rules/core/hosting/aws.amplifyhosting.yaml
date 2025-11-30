@@ -1,0 +1,10 @@
+tech: aws.amplifyhosting
+name: AWS Amplify Hosting
+type: hosting
+dependencies:
+  - type: npm
+    name: aws-amplify
+    example: aws-amplify
+detect:
+  type: terraform
+  file: "*.tf"

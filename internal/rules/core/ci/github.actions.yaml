@@ -1,0 +1,9 @@
+tech: github.actions
+name: Github Actions
+type: ci
+files:
+  - .github/workflows
+detect:
+  type: github-actions
+  file: .github/workflows
+  pattern: \.github\/workflows\/.+\.y(a)?ml$

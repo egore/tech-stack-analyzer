@@ -1,0 +1,14 @@
+tech: circleci
+name: CircleCI
+type: ci
+dependencies:
+  - type: ruby
+    name: circleci
+    example: circleci
+  - type: githubAction
+    name: CircleCI-Public/trigger-circleci-pipeline-action
+    example: CircleCI-Public/trigger-circleci-pipeline-action
+files:
+  - .circleci
+  - circle.yml
+  - circle.yaml

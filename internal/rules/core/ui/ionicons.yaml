@@ -1,0 +1,7 @@
+tech: ionicons
+name: Ionicons
+type: iconset
+dependencies:
+  - type: npm
+    name: ionicosn
+    example: ionicosn

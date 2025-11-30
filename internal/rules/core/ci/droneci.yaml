@@ -1,0 +1,9 @@
+tech: droneci
+name: DroneCI
+type: ci
+dependencies:
+  - type: docker
+    name: drone/drone
+    example: drone/drone
+files:
+  - .drone.yml

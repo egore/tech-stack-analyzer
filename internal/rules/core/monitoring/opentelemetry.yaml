@@ -1,0 +1,54 @@
+tech: opentelemetry
+name: OpenTelemetry
+type: monitoring
+dotenv:
+  - OTEL_
+dependencies:
+  - type: npm
+    name: "@opentelemetry/core"
+    example: "@opentelemetry/core"
+  - type: npm
+    name: "@opentelemetry/api"
+    example: "@opentelemetry/api"
+  - type: npm
+    name: "@opentelemetry/sdk-node"
+    example: "@opentelemetry/sdk-node"
+  - type: npm
+    name: "@opentelemetry/semantic-conventions"
+    example: "@opentelemetry/semantic-conventions"
+  - type: npm
+    name: "@sentry/opentelemetry-node"
+    example: "@sentry/opentelemetry-node"
+  - type: docker
+    name: otel/opentelemetry-collector-contrib
+    example: otel/opentelemetry-collector-contrib
+  - type: docker
+    name: otel/opentelemetry-collector
+    example: otel/opentelemetry-collector
+  - type: docker
+    name: otel/opentelemetry-operator
+    example: otel/opentelemetry-operator
+  - type: golang
+    name: go.opentelemetry.io/otel
+    example: go.opentelemetry.io/otel
+  - type: php
+    name: open-telemetry/sdk
+    example: open-telemetry/sdk
+  - type: python
+    name: opentelemetry-distro
+    example: opentelemetry-distro
+  - type: ruby
+    name: opentelemetry-sdk
+    example: opentelemetry-sdk
+  - type: ruby
+    name: sentry-opentelemetry
+    example: sentry-opentelemetry
+  - type: rust
+    name: opentelemetry
+    example: opentelemetry
+  - type: githubAction
+    name: plengauer/Thoth
+    example: plengauer/Thoth
+  - type: golang
+    name: github.com/getsentry/sentry-go/otel
+    example: github.com/getsentry/sentry-go/otel

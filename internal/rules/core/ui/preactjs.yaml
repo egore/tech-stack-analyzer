@@ -1,0 +1,7 @@
+tech: preactjs
+name: Preact
+type: ui_framework
+dependencies:
+  - type: npm
+    name: preact
+    example: preact

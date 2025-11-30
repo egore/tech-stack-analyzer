@@ -1,0 +1,7 @@
+tech: oceanbase
+name: Oceanbase
+type: db
+dependencies:
+  - type: docker
+    name: oceanbase/oceanbase-ce
+    example: oceanbase/oceanbase-ce

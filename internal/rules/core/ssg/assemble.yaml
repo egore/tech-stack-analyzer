@@ -1,0 +1,7 @@
+tech: assemble
+name: Assemble
+type: ssg
+dependencies:
+  - type: npm
+    name: assemble
+    example: assemble

@@ -1,0 +1,7 @@
+tech: superstruct
+name: Superstruct
+type: validation
+dependencies:
+  - type: npm
+    name: superstruct
+    example: superstruct

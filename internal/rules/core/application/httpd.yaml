@@ -1,0 +1,5 @@
+tech: httpd
+name: HTTPD
+type: app
+files:
+  - httpd.conf

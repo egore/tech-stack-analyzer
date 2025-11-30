@@ -1,0 +1,10 @@
+tech: ibmcloud
+name: IBM Cloud
+type: cloud
+dependencies:
+  - type: terraform
+    name: registry.terraform.io/IBM-Cloud/ibm
+    example: registry.terraform.io/IBM-Cloud/ibm
+detect:
+  type: terraform
+  file: "*.tf"

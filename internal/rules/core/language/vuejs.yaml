@@ -1,0 +1,5 @@
+tech: vuejs
+name: Vue
+type: language
+extensions:
+  - .vue

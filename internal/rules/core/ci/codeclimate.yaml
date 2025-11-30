@@ -1,0 +1,12 @@
+tech: codeclimate
+name: Code Climate
+type: ci
+dependencies:
+  - type: githubAction
+    name: paambaati/codeclimate-action
+    example: paambaati/codeclimate-action
+  - type: githubAction
+    name: remarkablemark/setup-codeclimate
+    example: remarkablemark/setup-codeclimate
+files:
+  - .codeclimate.yml

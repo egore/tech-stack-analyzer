@@ -1,0 +1,7 @@
+tech: hanko
+name: Hanko
+type: auth
+dependencies:
+  - type: npm
+    name: "@nuxtjs/hanko"
+    example: "@nuxtjs/hanko"

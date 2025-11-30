@@ -1,0 +1,10 @@
+tech: fastify
+name: Fastify
+type: tool
+dependencies:
+  - type: npm
+    name: fastify
+    example: fastify
+  - type: npm
+    name: "@opentelemetry/instrumentation-fastify"
+    example: "@opentelemetry/instrumentation-fastify"

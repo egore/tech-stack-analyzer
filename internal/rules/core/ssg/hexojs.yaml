@@ -1,0 +1,7 @@
+tech: hexojs
+name: HexoJS
+type: ssg
+dependencies:
+  - type: npm
+    name: hexo
+    example: hexo

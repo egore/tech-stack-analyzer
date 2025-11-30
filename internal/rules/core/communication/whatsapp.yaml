@@ -1,0 +1,15 @@
+tech: whatsapp
+name: WhatsApp
+type: communication
+dotenv:
+  - WHATSAPP_
+dependencies:
+  - type: npm
+    name: whatsapp-web.js
+    example: whatsapp-web.js
+  - type: npm
+    name: "@neoxr/wb"
+    example: "@neoxr/wb"
+  - type: npm
+    name: whatsapp-business
+    example: whatsapp-business

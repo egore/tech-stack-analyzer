@@ -1,0 +1,6 @@
+tech: visualbasicnet
+name: Visual Basic .NET
+type: language
+extensions:
+  - .vb
+  - .vbhtml

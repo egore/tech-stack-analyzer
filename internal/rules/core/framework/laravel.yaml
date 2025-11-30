@@ -1,0 +1,9 @@
+tech: laravel
+name: Laravel
+type: framework
+dependencies:
+  - type: php
+    name: laravel/framework
+    example: laravel/framework
+files:
+  - artisan

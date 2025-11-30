@@ -1,0 +1,13 @@
+tech: cockroachdb
+name: CockroachDB
+type: db
+dependencies:
+  - type: terraform
+    name: registry.terraform.io/cockroachdb/cockroach
+    example: registry.terraform.io/cockroachdb/cockroach
+  - type: php
+    name: nbj/cockroachdb-laravel
+    example: nbj/cockroachdb-laravel
+detect:
+  type: terraform
+  file: "*.tf"

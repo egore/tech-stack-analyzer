@@ -1,0 +1,5 @@
+tech: bunsh
+name: Bun
+type: runtime
+files:
+  - bun.lock

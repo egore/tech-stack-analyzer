@@ -1,0 +1,7 @@
+tech: sqlalchemy
+name: SQLAlchemy
+type: orm
+dependencies:
+  - type: python
+    name: SQLAlchemy
+    example: SQLAlchemy

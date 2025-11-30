@@ -1,0 +1,5 @@
+tech: dynatrace
+name: Dynatrace
+type: monitoring
+dotenv:
+  - DYNATRACE_

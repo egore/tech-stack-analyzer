@@ -1,0 +1,9 @@
+tech: heremaps
+name: HERE Maps
+type: maps
+dotenv:
+  - HERE_MAPS_
+dependencies:
+  - type: npm
+    name: "@types/heremaps"
+    example: "@types/heremaps"

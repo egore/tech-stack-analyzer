@@ -1,0 +1,16 @@
+tech: scoutapm
+name: Scout APM
+type: monitoring
+dependencies:
+  - type: ruby
+    name: scout_apm
+    example: scout_apm
+  - type: php
+    name: scoutapp/scout-apm-php
+    example: scoutapp/scout-apm-php
+  - type: php
+    name: scoutapp/scout-apm-laravel
+    example: scoutapp/scout-apm-laravel
+  - type: npm
+    name: scoutapp/scout-apm-laravel
+    example: scoutapp/scout-apm-laravel

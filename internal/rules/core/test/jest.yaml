@@ -1,0 +1,13 @@
+tech: jest
+name: Jest
+type: test
+dependencies:
+  - type: npm
+    name: jest
+    example: jest
+  - type: npm
+    name: babel-jest
+    example: babel-jest
+  - type: npm
+    name: jest-cli
+    example: jest-cli

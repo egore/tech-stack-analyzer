@@ -1,0 +1,7 @@
+tech: chef
+name: Chef
+type: iac
+dependencies:
+  - type: docker
+    name: chef/chef
+    example: chef/chef

@@ -1,0 +1,7 @@
+tech: muiicons
+name: MUI Icons
+type: iconset
+dependencies:
+  - type: npm
+    name: "@mui/icons-material"
+    example: "@mui/icons-material"

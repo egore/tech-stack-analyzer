@@ -1,0 +1,5 @@
+tech: lua
+name: Lua
+type: language
+extensions:
+  - .lua

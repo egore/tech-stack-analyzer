@@ -1,0 +1,7 @@
+tech: yii2
+name: Yii2
+type: framework
+dependencies:
+  - type: php
+    name: yiisoft/yii2
+    example: yiisoft/yii2

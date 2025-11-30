@@ -1,0 +1,7 @@
+tech: sonarcloud
+name: SonarCloud
+type: ci
+dependencies:
+  - type: githubAction
+    name: SonarSource/sonarcloud-github-action
+    example: SonarSource/sonarcloud-github-action

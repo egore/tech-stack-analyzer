@@ -1,0 +1,10 @@
+tech: materialui
+name: Material UI
+type: ui
+dependencies:
+  - type: npm
+    name: "@mui/material"
+    example: "@mui/material"
+  - type: npm
+    name: "@mui/types"
+    example: "@mui/types"

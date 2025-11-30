@@ -1,0 +1,7 @@
+tech: reactemail
+name: React Email
+type: tool
+dependencies:
+  - type: npm
+    name: react-email
+    example: react-email

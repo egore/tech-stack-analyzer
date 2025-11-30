@@ -1,0 +1,10 @@
+tech: aspnet
+name: ASP.NET
+type: language
+extensions:
+  - .asax
+  - .ascx
+  - .ashx
+  - .asmx
+  - .aspx
+  - .axd

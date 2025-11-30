@@ -1,0 +1,12 @@
+tech: mkdocs
+name: MkDocs
+type: ssg
+dependencies:
+  - type: python
+    name: mkdocs
+    example: mkdocs
+  - type: docker
+    name: squidfunk/mkdocs-material
+    example: squidfunk/mkdocs-material
+files:
+  - mkdocs.yml

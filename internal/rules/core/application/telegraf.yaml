@@ -1,0 +1,7 @@
+tech: telegraf
+name: Telegraf
+type: app
+dependencies:
+  - type: docker
+    name: telegraf
+    example: telegraf

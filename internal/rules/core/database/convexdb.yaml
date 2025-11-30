@@ -1,0 +1,24 @@
+tech: convexdb
+name: Convex
+type: db
+dotenv:
+  - CONVEX_
+dependencies:
+  - type: npm
+    name: convex
+    example: convex
+  - type: python
+    name: convex
+    example: convex
+  - type: rust
+    name: convex
+    example: convex
+  - type: terraform.resource
+    name: airbyte_destination_convex
+    example: airbyte_destination_convex
+  - type: terraform.resource
+    name: airbyte_source_convex
+    example: airbyte_source_convex
+detect:
+  type: terraform
+  file: "*.tf"

@@ -1,0 +1,5 @@
+tech: tinybird
+name: Tinybird
+type: analytics
+dotenv:
+  - TINYBIRD

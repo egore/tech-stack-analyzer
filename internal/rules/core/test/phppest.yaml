@@ -1,0 +1,7 @@
+tech: phppest
+name: PHP Pest
+type: test
+dependencies:
+  - type: php
+    name: pestphp/pest
+    example: pestphp/pest

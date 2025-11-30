@@ -1,0 +1,7 @@
+tech: docsify
+name: Docsify
+type: ssg
+dependencies:
+  - type: npm
+    name: docsify-cli
+    example: docsify-cli

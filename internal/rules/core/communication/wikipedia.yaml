@@ -1,0 +1,12 @@
+tech: wikipedia
+name: Wikipedia
+type: communication
+dotenv:
+  - WIKIPEDIA_
+dependencies:
+  - type: python
+    name: wikipedia
+    example: wikipedia
+  - type: npm
+    name: wikipedia
+    example: wikipedia

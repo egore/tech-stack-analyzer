@@ -1,0 +1,15 @@
+tech: supabase
+name: Supabase
+type: cloud
+dotenv:
+  - SUPABASE_
+dependencies:
+  - type: githubAction
+    name: supabase/setup-cli
+    example: supabase/setup-cli
+  - type: docker
+    name: supabase/studio
+    example: supabase/studio
+  - type: python
+    name: supabase
+    example: supabase

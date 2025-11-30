@@ -1,0 +1,7 @@
+tech: rails
+name: Rails
+type: framework
+dependencies:
+  - type: npm
+    name: rails
+    example: rails

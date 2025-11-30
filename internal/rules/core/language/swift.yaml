@@ -1,0 +1,5 @@
+tech: swift
+name: Swift
+type: language
+extensions:
+  - .swift

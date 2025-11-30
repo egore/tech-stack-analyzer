@@ -1,0 +1,5 @@
+tech: render
+name: Render
+type: hosting
+files:
+  - render.yaml

@@ -1,0 +1,10 @@
+tech: scaleway.redis
+name: Scaleway Redis
+type: db
+dependencies:
+  - type: terraform.resource
+    name: scaleway_redis_cluster
+    example: scaleway_redis_cluster
+detect:
+  type: terraform
+  file: "*.tf"

@@ -1,0 +1,10 @@
+tech: bytebase
+name: Bytebase
+type: tool
+dependencies:
+  - type: docker
+    name: bytebase/bytebase
+    example: bytebase/bytebase
+  - type: githubAction
+    name: bytebase/sql-review-action
+    example: bytebase/sql-review-action

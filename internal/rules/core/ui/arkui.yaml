@@ -1,0 +1,16 @@
+tech: arkui
+name: Ark UI
+type: ui
+dependencies:
+  - type: npm
+    name: "@ark-ui/react"
+    example: "@ark-ui/react"
+  - type: npm
+    name: "@ark-ui/svelte"
+    example: "@ark-ui/svelte"
+  - type: npm
+    name: "@ark-ui/solid"
+    example: "@ark-ui/solid"
+  - type: npm
+    name: "@ark-ui/vue"
+    example: "@ark-ui/vue"

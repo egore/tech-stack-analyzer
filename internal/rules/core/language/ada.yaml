@@ -1,0 +1,7 @@
+tech: ada
+name: Ada
+type: language
+extensions:
+  - .ada
+  - .adb
+  - .ads

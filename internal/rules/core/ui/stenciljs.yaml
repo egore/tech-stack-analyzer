@@ -1,0 +1,7 @@
+tech: stenciljs
+name: Stencil
+type: ui_framework
+dependencies:
+  - type: npm
+    name: "@stencil/core"
+    example: "@stencil/core"

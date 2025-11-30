@@ -1,0 +1,16 @@
+tech: vercel.edge
+name: Vercel Edge
+type: hosting
+dependencies:
+  - type: npm
+    name: "@vercel/edge"
+    example: "@vercel/edge"
+  - type: npm
+    name: "@vercel/edge-config"
+    example: "@vercel/edge-config"
+  - type: npm
+    name: "@vercel/edge-functions-ui"
+    example: "@vercel/edge-functions-ui"
+  - type: npm
+    name: "@edge-runtime/primitives"
+    example: "@edge-runtime/primitives"

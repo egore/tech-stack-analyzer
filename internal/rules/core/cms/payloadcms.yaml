@@ -1,0 +1,10 @@
+tech: payloadcms
+name: Payload
+type: cms
+dependencies:
+  - type: npm
+    name: payload
+    example: payload
+  - type: npm
+    name: "@payload/plugin-seo"
+    example: "@payload/plugin-seo"

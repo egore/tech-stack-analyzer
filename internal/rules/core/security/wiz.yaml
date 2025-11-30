@@ -1,0 +1,12 @@
+tech: wiz
+name: Wiz
+type: security
+dotenv:
+  - WIZ_
+dependencies:
+  - type: terraform
+    name: registry.terraform.io/AxtonGrams/wiz
+    example: registry.terraform.io/AxtonGrams/wiz
+detect:
+  type: terraform
+  file: "*.tf"

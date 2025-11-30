@@ -1,0 +1,10 @@
+tech: prismacloud
+name: Prisma Cloud
+type: saas
+dependencies:
+  - type: terraform
+    name: registry.terraform.io/PaloAltoNetworks/prismacloud
+    example: registry.terraform.io/PaloAltoNetworks/prismacloud
+detect:
+  type: terraform
+  file: "*.tf"

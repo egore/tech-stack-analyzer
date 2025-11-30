@@ -1,0 +1,7 @@
+tech: kotlin
+name: Kotlin
+type: language
+extensions:
+  - .kt
+  - .ktm
+  - .kts

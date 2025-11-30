@@ -1,0 +1,7 @@
+tech: vercel.analytics
+name: Vercel Analytics
+type: analytics
+dependencies:
+  - type: npm
+    name: "@vercel/analytics"
+    example: "@vercel/analytics"

@@ -1,0 +1,9 @@
+tech: sveltejs
+name: Svelte
+type: ui_framework
+dependencies:
+  - type: npm
+    name: svelte
+    example: svelte
+files:
+  - svelte.config.js

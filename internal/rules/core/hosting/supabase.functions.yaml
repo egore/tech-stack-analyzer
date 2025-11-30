@@ -1,0 +1,10 @@
+tech: supabase.functions
+name: Supabase Functions
+type: hosting
+dependencies:
+  - type: npm
+    name: "@supabase/functions-js"
+    example: "@supabase/functions-js"
+  - type: npm
+    name: supabase/functions-php
+    example: supabase/functions-php

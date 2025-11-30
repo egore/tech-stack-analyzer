@@ -1,0 +1,11 @@
+tech: deno
+name: Deno
+type: runtime
+dependencies:
+  - type: githubAction
+    name: denoland/setup-deno
+    example: denoland/setup-deno
+files:
+  - deno.jsonc
+  - deno.json
+  - deno.lock

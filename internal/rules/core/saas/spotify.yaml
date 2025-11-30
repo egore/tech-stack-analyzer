@@ -1,0 +1,9 @@
+tech: spotify
+name: Spotify
+type: saas
+dotenv:
+  - SPOTIFY_
+dependencies:
+  - type: npm
+    name: spotify-web-api-node
+    example: spotify-web-api-node

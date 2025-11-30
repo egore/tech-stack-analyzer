@@ -1,0 +1,6 @@
+tech: appveyor
+name: AppVeyor
+type: ci
+files:
+  - .appveyor.yml
+  - .appveyor.yaml

@@ -1,0 +1,16 @@
+tech: pirschanalytics
+name: Pirsch Analytics
+type: analytics
+dependencies:
+  - type: npm
+    name: pirsch-sdk
+    example: pirsch-sdk
+  - type: ruby
+    name: pirsch_api
+    example: pirsch_api
+  - type: php
+    name: pirsch-analytics/sdk
+    example: pirsch-analytics/sdk
+  - type: golang
+    name: github.com/pirsch-analytics/pirsch-go-sdk/v2
+    example: github.com/pirsch-analytics/pirsch-go-sdk/v2

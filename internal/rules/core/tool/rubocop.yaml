@@ -1,0 +1,5 @@
+tech: rubocop
+name: Rubocop
+type: linter
+files:
+  - .rubocop.yml

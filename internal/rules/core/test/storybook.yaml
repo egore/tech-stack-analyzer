@@ -1,0 +1,9 @@
+tech: storybook
+name: Storybook
+type: test
+dependencies:
+  - type: npm
+    name: storybook
+    example: storybook
+files:
+  - .storybook

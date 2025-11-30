@@ -1,0 +1,7 @@
+tech: gorm
+name: GORM
+type: orm
+dependencies:
+  - type: golang
+    name: gorm.io/gorm
+    example: gorm.io/gorm

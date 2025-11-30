@@ -1,0 +1,9 @@
+tech: adobe.analytics
+name: Adobe Analytics
+type: analytics
+dotenv:
+  - ADOBE_ANALYTICS_
+dependencies:
+  - type: npm
+    name: "@adobe/aio-lib-analytics"
+    example: "@adobe/aio-lib-analytics"

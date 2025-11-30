@@ -1,0 +1,13 @@
+tech: mssql
+name: MS SQL
+type: db
+dependencies:
+  - type: ruby
+    name: jdbc-mssql
+    example: jdbc-mssql
+  - type: npm
+    name: mssql
+    example: mssql
+  - type: npm
+    name: "@opentelemetry/instrumentation-tedious"
+    example: "@opentelemetry/instrumentation-tedious"

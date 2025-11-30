@@ -1,0 +1,7 @@
+tech: daisyui
+name: daisyUI
+type: ui
+dependencies:
+  - type: npm
+    name: daisyui
+    example: daisyui

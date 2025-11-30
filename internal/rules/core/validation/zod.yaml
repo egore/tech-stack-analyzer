@@ -1,0 +1,7 @@
+tech: zod
+name: Zod
+type: validation
+dependencies:
+  - type: npm
+    name: zod
+    example: zod

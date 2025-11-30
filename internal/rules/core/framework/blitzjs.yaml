@@ -1,0 +1,7 @@
+tech: blitzjs
+name: Blitzjs
+type: framework
+dependencies:
+  - type: npm
+    name: blitz
+    example: blitz

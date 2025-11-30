@@ -1,0 +1,9 @@
+tech: sonarqube
+name: SonarQube
+type: ci
+dependencies:
+  - type: docker
+    name: sonarqube
+    example: sonarqube
+files:
+  - .sonar-project.properties

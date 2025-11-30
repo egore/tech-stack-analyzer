@@ -1,0 +1,9 @@
+tech: readthedocs
+name: Read The Docs
+type: ssg
+dependencies:
+  - type: docker
+    name: readthedocs/build
+    example: readthedocs/build
+files:
+  - .readthedocs.yml

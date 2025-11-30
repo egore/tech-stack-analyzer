@@ -1,0 +1,9 @@
+tech: databuddy
+name: Databuddy
+type: analytics
+dotenv:
+  - DATABUDDY_
+dependencies:
+  - type: npm
+    name: "@databuddy/sdk"
+    example: "@databuddy/sdk"

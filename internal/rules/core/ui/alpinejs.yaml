@@ -1,0 +1,7 @@
+tech: alpinejs
+name: Alpine.js
+type: ui_framework
+dependencies:
+  - type: npm
+    name: alpinejs
+    example: alpinejs

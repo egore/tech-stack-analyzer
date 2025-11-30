@@ -1,0 +1,10 @@
+tech: codecov
+name: Codecov
+type: ci
+dependencies:
+  - type: githubAction
+    name: codecov/codecov-action
+    example: codecov/codecov-action
+files:
+  - .codecov.yml
+  - codecov.yml

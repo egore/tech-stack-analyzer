@@ -1,0 +1,5 @@
+tech: pipenv
+name: pipenv
+type: package_manager
+files:
+  - Pipfile.lock

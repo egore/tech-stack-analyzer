@@ -1,0 +1,12 @@
+tech: strapi
+name: Strapi
+type: cms
+dotenv:
+  - STRAPI_
+dependencies:
+  - type: npm
+    name: strapi
+    example: strapi
+  - type: npm
+    name: "@strapi/strapi"
+    example: "@strapi/strapi"

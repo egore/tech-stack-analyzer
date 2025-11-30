@@ -1,0 +1,12 @@
+tech: vale
+name: Vale
+type: linter
+dependencies:
+  - type: docker
+    name: jdkato/vale
+    example: jdkato/vale
+  - type: githubAction
+    name: errata-ai/vale-action
+    example: errata-ai/vale-action
+files:
+  - .vale.ini

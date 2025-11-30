@@ -1,0 +1,7 @@
+tech: rekaui
+name: Reka UI
+type: ui
+dependencies:
+  - type: npm
+    name: reka-ui
+    example: reka-ui

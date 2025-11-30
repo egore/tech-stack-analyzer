@@ -1,0 +1,13 @@
+tech: duckdb
+name: DuckDB
+type: db
+dependencies:
+  - type: npm
+    name: duckdb
+    example: duckdb
+  - type: terraform.resource
+    name: airbyte_destination_duckdb
+    example: airbyte_destination_duckdb
+detect:
+  type: terraform
+  file: "*.tf"

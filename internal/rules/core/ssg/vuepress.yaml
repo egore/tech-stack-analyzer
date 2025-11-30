@@ -1,0 +1,12 @@
+tech: vuepress
+name: VuePress
+type: ssg
+dependencies:
+  - type: npm
+    name: vuepress
+    example: vuepress
+  - type: npm
+    name: "@vuepress/core"
+    example: "@vuepress/core"
+files:
+  - .vuepress

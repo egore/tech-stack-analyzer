@@ -1,0 +1,7 @@
+tech: atlassian.bitbucket
+name: Atlassian Bitbucket
+type: saas
+dependencies:
+  - type: php
+    name: bitbucket/client
+    example: bitbucket/client

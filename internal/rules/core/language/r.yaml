@@ -1,0 +1,7 @@
+tech: r
+name: R
+type: language
+extensions:
+  - .r
+  - .rd
+  - .rsx

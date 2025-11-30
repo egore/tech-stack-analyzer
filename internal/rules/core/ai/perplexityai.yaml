@@ -1,0 +1,15 @@
+tech: perplexityai
+name: Perplexity AI
+type: ai
+dotenv:
+  - PERPLEXITY_
+dependencies:
+  - type: npm
+    name: "@ai-sdk/perplexity"
+    example: "@ai-sdk/perplexity"
+  - type: npm
+    name: "@langchain/perplexity"
+    example: "@langchain/perplexity"
+  - type: npm
+    name: "@watzon/n8n-nodes-perplexity"
+    example: "@watzon/n8n-nodes-perplexity"

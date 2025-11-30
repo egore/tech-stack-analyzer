@@ -1,0 +1,9 @@
+tech: astro
+name: Astro
+type: ssg
+dependencies:
+  - type: npm
+    name: astro
+    example: astro
+files:
+  - astro.config.mjs

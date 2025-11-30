@@ -1,0 +1,7 @@
+tech: sitecore
+name: Sitecore
+type: hosting
+dependencies:
+  - type: npm
+    name: "@sitecore-jss/sitecore-jss"
+    example: "@sitecore-jss/sitecore-jss"
