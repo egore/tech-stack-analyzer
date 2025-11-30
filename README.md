@@ -213,10 +213,38 @@ The scanner outputs a hierarchical JSON structure representing the detected tech
 - **languages**: Object mapping programming languages to file counts
 - **dependencies**: Array of detected dependencies with format `[type, name, version]`
 - **childs**: Array of nested components (sub-projects, services, etc.)
-- **edges**: Array of relationships to other components with read/write access
+- **edges**: Array of relationships between components (e.g., service → database connections); created for architectural components like databases, SaaS services, and monitoring tools, but not for hosting/cloud providers
 - **inComponent**: Reference to parent component if this is a nested component
 - **licenses**: Array of detected licenses in this component
 - **reason**: Array explaining why technologies were detected
+
+### Example Full Output
+
+```json
+{
+  "id": "abc123",
+  "name": "main",
+  "path": ["/"],
+  "tech": "nodejs",
+  "techs": ["nodejs", "express", "postgresql"],
+  "languages": {
+    "TypeScript": 45,
+    "JavaScript": 12
+  },
+  "dependencies": [
+    ["npm", "express", "^4.18.0"],
+    ["npm", "pg", "^8.8.0"]
+  ],
+  "childs": [
+    {
+      "id": "def456",
+      "name": "frontend",
+      "tech": "npm",
+      "dependencies": [["npm", "react", "^18.2.0"]]
+    }
+  ]
+}
+```
 
 ### Aggregated Output
 
@@ -260,34 +288,6 @@ This is useful for:
 - Dependency auditing and security scanning
 - License compliance checking
 - Counting dependencies: `jq '.dependencies | length'`
-
-### Example Full Output
-
-```json
-{
-  "id": "abc123",
-  "name": "main",
-  "path": ["/"],
-  "tech": "nodejs",
-  "techs": ["nodejs", "express", "postgresql"],
-  "languages": {
-    "TypeScript": 45,
-    "JavaScript": 12
-  },
-  "dependencies": [
-    ["npm", "express", "^4.18.0"],
-    ["npm", "pg", "^8.8.0"]
-  ],
-  "childs": [
-    {
-      "id": "def456",
-      "name": "frontend",
-      "tech": "react",
-      "dependencies": [["npm", "react", "^18.2.0"]]
-    }
-  ]
-}
-```
 
 ## How to Build It
 
