@@ -17,6 +17,7 @@ The Tech Stack Analyzer automatically detects technologies, frameworks, database
 
 - **700+ Technology Rules** - Comprehensive detection across databases, frameworks, tools, cloud services
 - **Zero Dependencies** - Single binary deployment without Node.js runtime requirement
+- **Tech-Specific Metadata** - Structured properties for Docker (base images, ports) and Terraform (providers, resource counts)
 - **Multi-Technology Components** - Detects hybrid projects with multiple primary technologies in the same directory
 - **Professional Logging** - Structured logging with multiple levels (trace/debug/info/warn/error) and JSON/text formats
 - **Flexible Configuration** - Environment variables and command-line flags with proper precedence handling
@@ -84,7 +85,7 @@ The analyzer uses a command-based interface powered by [Cobra](https://github.co
 ./bin/stack-analyzer scan --aggregate techs /path/to/project
 ./bin/stack-analyzer scan --aggregate dependencies /path/to/project
 
-# List all available technologies (744 total)
+# List all available technologies
 ./bin/stack-analyzer info techs
 
 # Show rule details for a specific technology
@@ -199,7 +200,7 @@ Shows which technology types create components (appear in `tech` field) vs those
 stack-analyzer info techs
 stack-analyzer info techs | grep postgres
 ```
-Lists all 744 technology names from the embedded rules.
+Lists all technology names from the embedded rules.
 
 **`info rule [tech-name]`** - Show rule details
 ```bash
@@ -293,6 +294,64 @@ The scanner outputs a hierarchical JSON structure representing the detected tech
 - **inComponent**: Reference to parent component if this is a nested component
 - **licenses**: Array of detected licenses in this component
 - **reason**: Array explaining why technologies were detected
+- **properties**: Object containing tech-specific metadata (Docker, Terraform, Kubernetes, etc.)
+
+#### Properties Field
+
+The `properties` field provides structured metadata about specific technologies detected in the project. This field uses an industry-standard format compatible with JSON Schema, OpenAPI, and SBOM tools.
+
+**Supported Technologies:**
+
+**Docker** - Extracts information from Dockerfiles:
+```json
+"properties": {
+  "docker": [
+    {
+      "file": "/backend/Dockerfile",
+      "base_images": ["python:3.13", "python:3.13-slim"],
+      "exposed_ports": [8080],
+      "multi_stage": true,
+      "stages": ["builder"]
+    },
+    {
+      "file": "/frontend/Dockerfile",
+      "base_images": ["node:20-alpine", "nginx:alpine"],
+      "exposed_ports": [80],
+      "multi_stage": true,
+      "stages": ["builder"]
+    }
+  ]
+}
+```
+
+**Terraform** - Aggregates infrastructure resources:
+```json
+"properties": {
+  "terraform": [
+    {
+      "file": "/infrastructure/main.tf",
+      "providers": ["aws", "google"],
+      "resources_by_provider": {
+        "aws": 15,
+        "google": 3
+      },
+      "resources_by_category": {
+        "compute": 5,
+        "storage": 8,
+        "database": 3,
+        "networking": 2
+      },
+      "total_resources": 18
+    }
+  ]
+}
+```
+
+**Key Features:**
+- **Array format**: Supports multiple files (multiple Dockerfiles, .tf files, etc.)
+- **File tracking**: Each entry includes the source file path
+- **Component-scoped**: Properties can appear at root or in child components
+- **Tool-friendly**: Compatible with security scanners, SBOM generators, and CI/CD tools
 
 #### Multi-Technology Components
 
@@ -470,7 +529,7 @@ tech-stack-analyzer/
 │   ├── rules/             # Rule loading and validation
 │   │   └── core/          # Embedded technology rules (700+ rules in 32 categories)
 │   ├── scanner/           # Core scanning engine
-│   │   ├── components/    # Component detectors (11 detectors)
+│   │   ├── components/    # Component detectors
 │   │   ├── matchers/      # File and extension matchers
 │   │   └── parsers/       # Specialized file parsers
 │   └── types/             # Core data structures

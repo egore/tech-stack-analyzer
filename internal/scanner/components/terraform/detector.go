@@ -151,8 +151,16 @@ func (d *Detector) detectTerraformResource(file types.File, currentPath, basePat
 	}
 	payload := types.NewPayloadWithPath("virtual", relativeFilePath)
 
-	// Collect all dependencies for the parent payload
-	var dependencies []types.Dependency
+	// Aggregate resources into TerraformInfo
+	terraformInfo := terraformParser.AggregateTerraformResources(resources)
+	if terraformInfo != nil {
+		terraformInfo.File = relativeFilePath
+		// Add Terraform info to properties as array (Properties already initialized by NewPayloadWithPath)
+		payload.Properties["terraform"] = []interface{}{terraformInfo}
+	}
+
+	// Collect all dependencies for the parent payload (pre-allocate with known capacity)
+	dependencies := make([]types.Dependency, 0, len(resources))
 
 	// Create child components for each resource
 	for _, resource := range resources {

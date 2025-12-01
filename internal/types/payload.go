@@ -10,18 +10,19 @@ import (
 
 // Payload represents the analysis result for a directory or component
 type Payload struct {
-	ID           string         `json:"id"`
-	Name         string         `json:"name"`
-	Path         []string       `json:"path"`
-	Tech         []string       `json:"tech"` // Changed from *string to []string to support multiple primary technologies
-	Techs        []string       `json:"techs"`
-	Languages    map[string]int `json:"languages"`
-	Dependencies []Dependency   `json:"dependencies"`
-	Childs       []*Payload     `json:"childs"` // Changed from Children to Childs
-	Edges        []Edge         `json:"edges"`
-	InComponent  *Payload       `json:"inComponent"` // Added missing field
-	Licenses     []string       `json:"licenses"`    // Added missing field
-	Reason       []string       `json:"reason"`
+	ID           string                 `json:"id"`
+	Name         string                 `json:"name"`
+	Path         []string               `json:"path"`
+	Tech         []string               `json:"tech"` // Changed from *string to []string to support multiple primary technologies
+	Techs        []string               `json:"techs"`
+	Languages    map[string]int         `json:"languages"`
+	Dependencies []Dependency           `json:"dependencies"`
+	Childs       []*Payload             `json:"childs"` // Changed from Children to Childs
+	Edges        []Edge                 `json:"edges"`
+	InComponent  *Payload               `json:"inComponent"` // Added missing field
+	Licenses     []string               `json:"licenses"`    // Added missing field
+	Reason       []string               `json:"reason"`
+	Properties   map[string]interface{} `json:"properties,omitempty"` // Tech-specific metadata (Docker, Kubernetes, Terraform, etc.)
 }
 
 // Edge represents a relationship between components
@@ -62,6 +63,7 @@ func NewPayload(name string, paths []string) *Payload {
 		Edges:        make([]Edge, 0),
 		Licenses:     make([]string, 0),
 		Reason:       make([]string, 0),
+		Properties:   make(map[string]interface{}),
 	}
 }
 
@@ -107,6 +109,9 @@ func (p *Payload) AddChild(service *Payload) *Payload {
 			exist.AddDependency(dep)
 		}
 
+		// Merge properties
+		exist.mergeProperties(service.Properties)
+
 		return exist
 	}
 
@@ -139,6 +144,7 @@ func (p *Payload) Combine(other *Payload) {
 	p.mergeTechField(other.Tech)
 	p.mergeDependencies(other.Dependencies)
 	p.mergeLicenses(other.Licenses)
+	p.mergeProperties(other.Properties)
 }
 
 // Helper functions to reduce cognitive complexity
@@ -188,6 +194,38 @@ func (p *Payload) mergeLicenses(licenses []string) {
 	for _, license := range licenses {
 		if !p.containsString(p.Licenses, license) {
 			p.Licenses = append(p.Licenses, license)
+		}
+	}
+}
+
+func (p *Payload) mergeProperties(properties map[string]interface{}) {
+	if len(properties) == 0 {
+		return
+	}
+	if p.Properties == nil {
+		p.Properties = make(map[string]interface{})
+	}
+	for key, value := range properties {
+		// Special handling for array properties (docker, terraform) - merge arrays
+		if key == "docker" || key == "terraform" {
+			existing, existsInP := p.Properties[key]
+			newArray, isArray := value.([]interface{})
+
+			if existsInP && isArray {
+				// Both exist and new value is array - merge them
+				if existingArray, ok := existing.([]interface{}); ok {
+					p.Properties[key] = append(existingArray, newArray...)
+				} else {
+					// Existing is not array, wrap it and merge
+					p.Properties[key] = append([]interface{}{existing}, newArray...)
+				}
+			} else {
+				// Just set the value
+				p.Properties[key] = value
+			}
+		} else {
+			// For other properties, later values override earlier ones
+			p.Properties[key] = value
 		}
 	}
 }

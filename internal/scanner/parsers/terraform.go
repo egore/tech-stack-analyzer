@@ -30,6 +30,15 @@ type TerraformResource struct {
 	Category string // e.g., "compute", "storage", "database"
 }
 
+// TerraformInfo represents aggregated information from a Terraform file
+type TerraformInfo struct {
+	File                string         `json:"file,omitempty"`
+	Providers           []string       `json:"providers,omitempty"`
+	ResourcesByProvider map[string]int `json:"resources_by_provider,omitempty"`
+	ResourcesByCategory map[string]int `json:"resources_by_category,omitempty"`
+	TotalResources      int            `json:"total_resources,omitempty"`
+}
+
 // ParseTerraformLock parses .terraform.lock.hcl and extracts providers
 func (p *TerraformParser) ParseTerraformLock(content string) []TerraformProvider {
 	parser := hclparse.NewParser()
@@ -191,4 +200,41 @@ func categorizeResource(resourceType string) string {
 	}
 
 	return "other"
+}
+
+// AggregateTerraformResources aggregates resources into TerraformInfo
+func (p *TerraformParser) AggregateTerraformResources(resources []TerraformResource) *TerraformInfo {
+	if len(resources) == 0 {
+		return nil
+	}
+
+	info := &TerraformInfo{
+		ResourcesByProvider: make(map[string]int),
+		ResourcesByCategory: make(map[string]int),
+		TotalResources:      len(resources),
+	}
+
+	// Track unique providers (pre-allocate with reasonable capacity)
+	providerSet := make(map[string]bool, 4) // Most projects use 1-4 providers
+
+	for _, resource := range resources {
+		// Count by provider
+		if resource.Provider != "" {
+			info.ResourcesByProvider[resource.Provider]++
+			providerSet[resource.Provider] = true
+		}
+
+		// Count by category
+		if resource.Category != "" {
+			info.ResourcesByCategory[resource.Category]++
+		}
+	}
+
+	// Convert provider set to slice (pre-allocate with exact size)
+	info.Providers = make([]string, 0, len(providerSet))
+	for provider := range providerSet {
+		info.Providers = append(info.Providers, provider)
+	}
+
+	return info
 }
