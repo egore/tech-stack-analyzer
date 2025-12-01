@@ -45,39 +45,46 @@ func NewScanner(path string) (*Scanner, error) {
 	provider := provider.NewFSProvider(path)
 
 	// Load rules (simple, not lazy loaded - like TypeScript's loadAllRules)
-	rules, err := rules.LoadEmbeddedRules()
+	loadedRules, err := rules.LoadEmbeddedRules()
 	if err != nil {
 		return nil, fmt.Errorf("failed to load rules: %w", err)
 	}
 
+	// Load types configuration
+	typesConfig, err := rules.LoadTypesConfig()
+	if err != nil {
+		return nil, fmt.Errorf("failed to load types config: %w", err)
+	}
+	SetTypesConfig(typesConfig)
+
 	// Initialize dependency detector
-	depDetector := NewDependencyDetector(rules)
+	depDetector := NewDependencyDetector(loadedRules)
 
 	// Initialize component detector
-	compDetector := NewComponentDetector(depDetector, provider, rules)
+	compDetector := NewComponentDetector(depDetector, provider, loadedRules)
 
 	// Initialize JSON schema detector
-	jsonDetector := NewJSONSchemaDetector(provider, rules)
+	jsonDetector := NewJSONSchemaDetector(provider, loadedRules)
 
 	// Initialize dotenv detector
-	dotenvDetector := parsers.NewDotenvDetector(provider, rules)
+	dotenvDetector := parsers.NewDotenvDetector(provider, loadedRules)
 
 	// Initialize license detector
 	licenseDetector := NewLicenseDetector()
 
 	// Build matchers from rules (like TypeScript's loadAllRules)
-	matchers.BuildFileMatchersFromRules(rules)
-	matchers.BuildExtensionMatchersFromRules(rules)
+	matchers.BuildFileMatchersFromRules(loadedRules)
+	matchers.BuildExtensionMatchersFromRules(loadedRules)
 
 	// Initialize content matcher
 	contentMatcher := matchers.NewContentMatcherRegistry()
-	if err := contentMatcher.BuildFromRules(rules); err != nil {
+	if err := contentMatcher.BuildFromRules(loadedRules); err != nil {
 		return nil, fmt.Errorf("failed to build content matchers: %w", err)
 	}
 
 	return &Scanner{
 		provider:        provider,
-		rules:           rules,
+		rules:           loadedRules,
 		depDetector:     depDetector,
 		compDetector:    compDetector,
 		jsonDetector:    jsonDetector,
@@ -94,39 +101,46 @@ func NewScannerWithExcludes(path string, excludeDirs []string) (*Scanner, error)
 	provider := provider.NewFSProvider(path)
 
 	// Load rules (simple, not lazy loaded - like TypeScript's loadAllRules)
-	rules, err := rules.LoadEmbeddedRules()
+	loadedRules, err := rules.LoadEmbeddedRules()
 	if err != nil {
 		return nil, fmt.Errorf("failed to load rules: %w", err)
 	}
 
+	// Load types configuration
+	typesConfig, err := rules.LoadTypesConfig()
+	if err != nil {
+		return nil, fmt.Errorf("failed to load types config: %w", err)
+	}
+	SetTypesConfig(typesConfig)
+
 	// Initialize dependency detector
-	depDetector := NewDependencyDetector(rules)
+	depDetector := NewDependencyDetector(loadedRules)
 
 	// Initialize component detector
-	compDetector := NewComponentDetector(depDetector, provider, rules)
+	compDetector := NewComponentDetector(depDetector, provider, loadedRules)
 
 	// Initialize JSON schema detector
-	jsonDetector := NewJSONSchemaDetector(provider, rules)
+	jsonDetector := NewJSONSchemaDetector(provider, loadedRules)
 
 	// Initialize dotenv detector
-	dotenvDetector := parsers.NewDotenvDetector(provider, rules)
+	dotenvDetector := parsers.NewDotenvDetector(provider, loadedRules)
 
 	// Initialize license detector
 	licenseDetector := NewLicenseDetector()
 
 	// Build matchers from rules (like TypeScript's loadAllRules)
-	matchers.BuildFileMatchersFromRules(rules)
-	matchers.BuildExtensionMatchersFromRules(rules)
+	matchers.BuildFileMatchersFromRules(loadedRules)
+	matchers.BuildExtensionMatchersFromRules(loadedRules)
 
 	// Initialize content matcher
 	contentMatcher := matchers.NewContentMatcherRegistry()
-	if err := contentMatcher.BuildFromRules(rules); err != nil {
+	if err := contentMatcher.BuildFromRules(loadedRules); err != nil {
 		return nil, fmt.Errorf("failed to build content matchers: %w", err)
 	}
 
 	return &Scanner{
 		provider:        provider,
-		rules:           rules,
+		rules:           loadedRules,
 		depDetector:     depDetector,
 		compDetector:    compDetector,
 		jsonDetector:    jsonDetector,

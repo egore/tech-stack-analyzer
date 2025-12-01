@@ -206,26 +206,8 @@ func (d *ComponentDetector) createImplicitComponentForTech(payload *types.Payloa
 	// Find the rule for this tech
 	for _, rule := range d.rules {
 		if rule.Tech == tech {
-			// notAComponent set from TypeScript (lines 6-22 in helpers.ts)
-			notAComponent := map[string]bool{
-				"ci":              true,
-				"language":        true,
-				"runtime":         true,
-				"tool":            true,
-				"framework":       true,
-				"validation":      true,
-				"builder":         true,
-				"linter":          true,
-				"test":            true,
-				"orm":             true,
-				"package_manager": true,
-				"ui":              true,
-				"ui_framework":    true,
-				"iac":             true,
-			}
-
-			// If this tech type is in the notAComponent set, don't create a component
-			if notAComponent[rule.Type] {
+			// Check if this rule should create a component (uses _types.yaml)
+			if !ShouldCreateComponent(rule) {
 				return
 			}
 

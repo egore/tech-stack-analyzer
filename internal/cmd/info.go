@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 	"sort"
 
 	"github.com/petrarca/tech-stack-analyzer/internal/rules"
-	"github.com/petrarca/tech-stack-analyzer/internal/scanner"
 	"github.com/petrarca/tech-stack-analyzer/internal/types"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
@@ -56,20 +56,45 @@ func init() {
 }
 
 func runComponentTypes(cmd *cobra.Command, args []string) {
+	// Load types configuration
+	typesConfig, err := rules.LoadTypesConfig()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error loading types config: %v\n", err)
+		os.Exit(1)
+	}
+
+	// Separate component and non-component types
+	var componentTypes []string
+	var nonComponentTypes []string
+
+	for typeName, typeDef := range typesConfig.Types {
+		if typeDef.IsComponent {
+			componentTypes = append(componentTypes, typeName)
+		} else {
+			nonComponentTypes = append(nonComponentTypes, typeName)
+		}
+	}
+
+	// Sort for consistent output
+	sort.Strings(componentTypes)
+	sort.Strings(nonComponentTypes)
+
 	fmt.Println("=== Component Types (create components) ===")
-	types := scanner.GetComponentTypes()
-	for _, t := range types {
-		fmt.Println(t)
+	for _, t := range componentTypes {
+		if desc, ok := typesConfig.Types[t]; ok && desc.Description != "" {
+			fmt.Printf("%s - %s\n", t, desc.Description)
+		} else {
+			fmt.Println(t)
+		}
 	}
 
 	fmt.Println("\n=== Non-Component Types (tools/libraries only) ===")
-	nonComponentTypes := []string{
-		"ci", "language", "runtime", "tool", "framework",
-		"validation", "builder", "linter", "test", "orm",
-		"package_manager", "ui", "ui_framework", "iac", "iconset",
-	}
 	for _, t := range nonComponentTypes {
-		fmt.Println(t)
+		if desc, ok := typesConfig.Types[t]; ok && desc.Description != "" {
+			fmt.Printf("%s - %s\n", t, desc.Description)
+		} else {
+			fmt.Println(t)
+		}
 	}
 }
 

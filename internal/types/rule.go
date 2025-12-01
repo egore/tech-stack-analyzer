@@ -54,6 +54,17 @@ type DetectConfig struct {
 	Extract bool   `yaml:"extract,omitempty" json:"extract,omitempty"`
 }
 
+// TypeDefinition represents a technology type configuration
+type TypeDefinition struct {
+	IsComponent bool   `yaml:"is_component" json:"is_component"`
+	Description string `yaml:"description,omitempty" json:"description,omitempty"`
+}
+
+// TypesConfig represents the _types.yaml configuration file
+type TypesConfig struct {
+	Types map[string]TypeDefinition `yaml:"types" json:"types"`
+}
+
 // Compile compiles a dependency pattern to regex for performance
 func (d *Dependency) Compile() (*CompiledDependency, error) {
 	pattern := d.Name

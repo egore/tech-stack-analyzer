@@ -1,6 +1,9 @@
 # Tech Stack Analyzer
 
-A high-performance technology stack analyzer written in Go, re-implementing [specfy/stack-analyser](https://github.com/specfy/stack-analyser) with  improvements and extended technology support.
+> **Work in Progress**  
+> This project is under active development. The output format, API, and configuration structure may change. While the core functionality is stable, breaking changes may occur as we refine the functionalities and add new features. Use in production environments at your own discretion.
+
+A high-performance technology stack analyzer written in Go, re-implementing [specfy/stack-analyser](https://github.com/specfy/stack-analyser) with improvements and extended technology support.
 
 ## What This Project Does
 
@@ -263,10 +266,10 @@ This hybrid approach ensures **broad coverage** (detects almost any technology) 
 
 ### Component Classification
 
-The scanner distinguishes between **architectural components** and **tools/libraries**:
+The scanner distinguishes between **architectural components** and **tools/libraries** based on technology types defined in `internal/rules/core/_types.yaml`:
 
 **Technologies that CREATE components** (appear in `tech` field):
-- Infrastructure: `db`, `hosting`, `cloud`, `storage`, `queue`
+- Infrastructure: `database`, `hosting`, `cloud`, `storage`, `queue`
 - Services: `ai`, `auth`, `payment`, `notification`, `monitoring`, `analytics`
 - Applications: `app`, `cms`, `saas`, `communication`, `collaboration`
 - Others: `etl`, `automation`, `security`, `maps`, `crm`, `network`, `ssg`
@@ -278,7 +281,7 @@ The scanner distinguishes between **architectural components** and **tools/libra
 - UI utilities: `ui`, `ui_framework`, `iconset`
 - Infrastructure as Code: `iac`
 
-This classification is defined in `internal/scanner/component_types.go` and determines whether a detected technology represents an architectural decision (component) or an implementation detail (tool/library).
+This classification is **fully configurable** in `internal/rules/core/_types.yaml` and determines whether a detected technology represents an architectural decision (component) or an implementation detail (tool/library). See the [Technology Type Configuration](#technology-type-configuration) section for details on customizing this behavior.
 
 ### Content-Based Detection
 
@@ -319,27 +322,67 @@ content:
 - **Framework patterns**: React hooks, Vue composition API through code signatures
 - **Prevent false positives**: Only detect when actual usage is confirmed
 
-### Component Override
+### Technology Type Configuration
 
-Rules can override the default component classification using the `is_component` field:
+Technology types and their component behavior are defined in `internal/rules/core/_types.yaml`. This configuration file determines which technology types create architectural components versus being classified as tools/libraries.
+
+#### Type Configuration File
+
+```yaml
+# internal/rules/core/_types.yaml
+types:
+  database:
+    is_component: true
+    description: "Database systems (PostgreSQL, MongoDB, Redis, etc.)"
+  
+  framework:
+    is_component: false
+    description: "Application frameworks (React, Django, Spring, etc.)"
+```
+
+**Adding New Technology Types:**
+
+1. Add the type definition to `_types.yaml`:
+   ```yaml
+   my_new_type:
+     is_component: true  # or false
+     description: "Description of this type"
+   ```
+
+2. Use the type in your rules:
+   ```yaml
+   tech: my-tech
+   name: My Technology
+   type: my_new_type
+   ```
+
+**Benefits:**
+- **No code changes required** - Edit YAML, no recompilation needed
+- **Self-documenting** - Descriptions explain each type's purpose
+- **Centralized** - All type definitions in one place
+- **Discoverable** - Use `stack-analyzer info component-types` to list all types
+
+#### Per-Rule Component Override
+
+Individual rules can override the type's default behavior using the `is_component` field:
 
 ```yaml
 tech: mfc
-type: ui_framework
-is_component: true  # Override: create component despite ui_framework default
+type: ui_framework  # Default: is_component: false
+is_component: true  # Override: create component anyway
 ```
 
-**Values:**
-- `true` - Always create component (override default)
-- `false` - Never create component (override default)
-- Not specified - Use type-based logic (backward compatible)
+**Priority Order:**
+1. Rule's `is_component` field (highest priority)
+2. Type definition in `_types.yaml`
+3. Default to `false` if type not defined
 
 **Example Use Cases:**
 - **Promote to component**: `ui_framework` with `is_component: true` creates a component
-- **Demote from component**: `db` with `is_component: false` doesn't create a component
-- **Backward compatible**: Existing rules without the field work unchanged
+- **Demote from component**: `database` with `is_component: false` doesn't create a component
+- **New types**: Types not in `_types.yaml` default to no component creation
 
-This allows fine-grained control over which technologies appear as architectural components vs implementation details, independent of their type classification.
+This configuration-driven approach allows fine-grained control over which technologies appear as architectural components versus implementation details.
 
 ### Output Structure
 
