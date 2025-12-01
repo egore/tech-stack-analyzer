@@ -60,44 +60,102 @@ func (p *JavaParser) ParsePomXML(content string) []types.Dependency {
 func (p *JavaParser) ParseGradle(content string) []types.Dependency {
 	var dependencies []types.Dependency
 
-	// Pattern for implementation 'group:artifact:version'
-	// Pattern for implementation("group:artifact:version")
-	// Pattern for compile 'group:artifact:version'
-	// Pattern for testImplementation 'group:artifact:version'
-	depRegex := regexp.MustCompile(`(?:implementation|compile|testImplementation|api|compileOnly|runtimeOnly|testRuntimeOnly)\s*\(?\s*['"]([^:]+):([^:]+)(?::([^'"]+))?['"]\s*\)?`)
-
 	lines := strings.Split(content, "\n")
 
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
 
 		// Skip comments and empty lines
-		if line == "" || strings.HasPrefix(line, "//") || strings.HasPrefix(line, "/*") || strings.HasPrefix(line, "*") {
+		if p.shouldSkipLine(line) {
 			continue
 		}
 
-		matches := depRegex.FindStringSubmatch(line)
-		if matches == nil {
+		// Quick validation - is this even a dependency line?
+		if !p.isPotentialDependencyLine(line) {
 			continue
 		}
 
-		group := matches[1]
-		artifact := matches[2]
-		version := matches[3]
-
-		if group != "" && artifact != "" {
-			dependencyName := group + ":" + artifact
-			if version == "" {
-				version = "latest"
-			}
-
-			dependencies = append(dependencies, types.Dependency{
-				Type:    "gradle",
-				Name:    dependencyName,
-				Example: version,
-			})
+		gradleDep := p.parseGradleDependency(line)
+		if gradleDep != nil {
+			dependencies = append(dependencies, *gradleDep)
 		}
 	}
 
 	return dependencies
+}
+
+// GradleDependency represents a parsed Gradle dependency
+type GradleDependency struct {
+	Type     string
+	Group    string
+	Artifact string
+	Version  string
+}
+
+// shouldSkipLine checks if a line should be skipped during parsing
+func (p *JavaParser) shouldSkipLine(line string) bool {
+	return line == "" || strings.HasPrefix(line, "//") || strings.HasPrefix(line, "/*") || strings.HasPrefix(line, "*")
+}
+
+// isPotentialDependencyLine does quick validation before expensive regex matching
+func (p *JavaParser) isPotentialDependencyLine(line string) bool {
+	// Must contain a dependency type and quoted content with colon
+	hasDepType := strings.Contains(line, "implementation") ||
+		strings.Contains(line, "compile") ||
+		strings.Contains(line, "api") ||
+		strings.Contains(line, "runtimeOnly") ||
+		strings.Contains(line, "compileOnly") ||
+		strings.Contains(line, "annotationProcessor") ||
+		strings.Contains(line, "testImplementation") ||
+		strings.Contains(line, "testRuntimeOnly")
+
+	hasQuotedContent := (strings.Contains(line, "'") || strings.Contains(line, `"`)) && strings.Contains(line, ":")
+
+	return hasDepType && hasQuotedContent
+}
+
+// parseGradleDependency parses a single Gradle dependency line
+func (p *JavaParser) parseGradleDependency(line string) *types.Dependency {
+	// Supported dependency types
+	depTypes := []string{
+		"implementation", "compile", "testImplementation", "api",
+		"compileOnly", "runtimeOnly", "testRuntimeOnly", "annotationProcessor",
+	}
+
+	// Extract dependency type
+	depTypeRegex := regexp.MustCompile(`^\s*(` + strings.Join(depTypes, "|") + `)`)
+	depTypeMatch := depTypeRegex.FindStringSubmatch(line)
+	if len(depTypeMatch) < 2 {
+		return nil
+	}
+
+	// Extract the quoted dependency string
+	quotedRegex := regexp.MustCompile(`['"]([^'"]+)['"]`)
+	quotedMatch := quotedRegex.FindStringSubmatch(line)
+	if len(quotedMatch) < 2 {
+		return nil
+	}
+
+	// Parse the dependency parts
+	depString := quotedMatch[1]
+	parts := strings.Split(depString, ":")
+	if len(parts) < 2 || parts[0] == "" || parts[1] == "" {
+		return nil
+	}
+
+	group := parts[0]
+	artifact := parts[1]
+	version := "latest"
+
+	if len(parts) >= 3 && parts[2] != "" {
+		version = parts[2]
+	}
+
+	dependencyName := group + ":" + artifact
+
+	return &types.Dependency{
+		Type:    "gradle",
+		Name:    dependencyName,
+		Example: version,
+	}
 }

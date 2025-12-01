@@ -76,6 +76,13 @@ func (p *DotNetParser) ParseCsproj(content string) DotNetProject {
 		var legacyProject LegacyProject
 		if err := xml.Unmarshal([]byte(content), &legacyProject); err == nil {
 			project = p.parseLegacyProject(legacyProject, content)
+		} else {
+			// Both parsing attempts failed, return fallback project
+			project = DotNetProject{
+				Name:      p.extractProjectNameFromContent(content),
+				Framework: "",
+				Packages:  []DotNetPackage{},
+			}
 		}
 	}
 
@@ -86,11 +93,10 @@ func (p *DotNetParser) ParseCsproj(content string) DotNetProject {
 func (p *DotNetParser) parseModernProject(project Project, content string) DotNetProject {
 	var result DotNetProject
 
-	// Extract project name from AssemblyName or filename
+	// Extract project name and framework from PropertyGroups
 	for _, pg := range project.PropertyGroups {
 		if pg.AssemblyName != "" {
 			result.Name = pg.AssemblyName
-			break
 		}
 		if pg.TargetFramework != "" {
 			result.Framework = pg.TargetFramework
@@ -121,11 +127,10 @@ func (p *DotNetParser) parseModernProject(project Project, content string) DotNe
 func (p *DotNetParser) parseLegacyProject(project LegacyProject, content string) DotNetProject {
 	var result DotNetProject
 
-	// Extract project name from AssemblyName or filename
+	// Extract project name and framework from PropertyGroups
 	for _, pg := range project.PropertyGroups {
 		if pg.AssemblyName != "" {
 			result.Name = pg.AssemblyName
-			break
 		}
 		if pg.TargetFramework != "" {
 			result.Framework = pg.TargetFramework

@@ -28,7 +28,7 @@ func (p *DockerParser) ParseDockerCompose(content string) []DockerService {
 		services:           []DockerService{},
 		inServices:         false,
 		servicesIndent:     0,
-		serviceRegex:       regexp.MustCompile(`^(\s*)(\w+):`),
+		serviceRegex:       regexp.MustCompile(`^(\s*)([\w-]+):`), // Support hyphens in service names
 		imageRegex:         regexp.MustCompile(`^(\s*)image:\s*(.+)`),
 		containerNameRegex: regexp.MustCompile(`^(\s*)container_name:\s*(.+)`),
 	}
@@ -136,12 +136,12 @@ func (s *dockerComposeState) parseServiceProperties(line string) {
 	if matches := s.imageRegex.FindStringSubmatch(line); len(matches) > 2 {
 		if s.isValidPropertyIndent(matches[1]) {
 			image := strings.TrimSpace(matches[2])
-			s.currentService.Image = strings.Trim(image, `"`)
+			s.currentService.Image = s.trimQuotes(image)
 		}
 	} else if matches := s.containerNameRegex.FindStringSubmatch(line); len(matches) > 2 {
 		if s.isValidPropertyIndent(matches[1]) {
 			containerName := strings.TrimSpace(matches[2])
-			s.currentService.ContainerName = strings.Trim(containerName, `"`)
+			s.currentService.ContainerName = s.trimQuotes(containerName)
 		}
 	}
 }
@@ -149,6 +149,15 @@ func (s *dockerComposeState) parseServiceProperties(line string) {
 // isValidPropertyIndent checks if property is properly indented
 func (s *dockerComposeState) isValidPropertyIndent(indentStr string) bool {
 	return len(indentStr) > s.currentIndent
+}
+
+// trimQuotes removes both single and double quotes from a string
+func (s *dockerComposeState) trimQuotes(str string) string {
+	// Trim double quotes
+	str = strings.Trim(str, `"`)
+	// Trim single quotes
+	str = strings.Trim(str, `'`)
+	return str
 }
 
 // saveCurrentService saves the current service if it has an image

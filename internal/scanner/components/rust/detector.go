@@ -38,9 +38,9 @@ func (d *Detector) detectCargoToml(file types.File, currentPath, basePath string
 
 	// Parse Cargo.toml using parser
 	rustParser := parsers.NewRustParser()
-	projectName, license, dependencies, hasPackage := rustParser.ParseCargoToml(string(content))
+	projectName, license, dependencies, isWorkspace := rustParser.ParseCargoToml(string(content))
 
-	// Create payload (named if has package section, virtual otherwise)
+	// Create payload (named if not workspace and has package section, virtual otherwise)
 	var payload *types.Payload
 
 	relativeFilePath, _ := filepath.Rel(basePath, filepath.Join(currentPath, file.Name))
@@ -50,14 +50,14 @@ func (d *Detector) detectCargoToml(file types.File, currentPath, basePath string
 		relativeFilePath = "/" + relativeFilePath
 	}
 
-	if hasPackage && projectName != "" {
-		// Named component for projects with [package] section
+	if !isWorkspace && projectName != "" {
+		// Named component for projects with [package] section (not workspace)
 		payload = types.NewPayloadWithPath(projectName, relativeFilePath)
 
 		// Set tech field to rust
 		payload.AddPrimaryTech("rust")
 	} else {
-		// Virtual payload for workspace files without [package] section
+		// Virtual payload for workspace files or files without [package] section
 		payload = types.NewPayloadWithPath("virtual", relativeFilePath)
 	}
 
