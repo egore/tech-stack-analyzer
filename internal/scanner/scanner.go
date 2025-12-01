@@ -4,7 +4,11 @@ import (
 	"fmt"
 	"path/filepath"
 	"strings"
+	"time"
 
+	"github.com/bmatcuk/doublestar/v4"
+	"github.com/petrarca/tech-stack-analyzer/internal/config"
+	"github.com/petrarca/tech-stack-analyzer/internal/metadata"
 	"github.com/petrarca/tech-stack-analyzer/internal/provider"
 	"github.com/petrarca/tech-stack-analyzer/internal/rules"
 	"github.com/petrarca/tech-stack-analyzer/internal/scanner/components"
@@ -39,6 +43,9 @@ type Scanner struct {
 	excludeDirs     []string
 }
 
+// defaultIgnorePatterns holds the loaded ignore patterns from ignore.yaml
+var defaultIgnorePatterns []string
+
 // NewScanner creates a new scanner (mirroring TypeScript's analyser function)
 func NewScanner(path string) (*Scanner, error) {
 	// Create provider for the target path (like TypeScript's FSProvider)
@@ -51,11 +58,20 @@ func NewScanner(path string) (*Scanner, error) {
 	}
 
 	// Load types configuration
-	typesConfig, err := rules.LoadTypesConfig()
+	typesConfig, err := config.LoadTypesConfig()
 	if err != nil {
 		return nil, fmt.Errorf("failed to load types config: %w", err)
 	}
 	SetTypesConfig(typesConfig)
+
+	// Load ignore patterns configuration (only once)
+	if len(defaultIgnorePatterns) == 0 {
+		ignoreConfig, err := config.LoadIgnoreConfig()
+		if err != nil {
+			return nil, fmt.Errorf("failed to load ignore config: %w", err)
+		}
+		defaultIgnorePatterns = ignoreConfig.GetFlatIgnoreList()
+	}
 
 	// Initialize dependency detector
 	depDetector := NewDependencyDetector(loadedRules)
@@ -107,11 +123,20 @@ func NewScannerWithExcludes(path string, excludeDirs []string) (*Scanner, error)
 	}
 
 	// Load types configuration
-	typesConfig, err := rules.LoadTypesConfig()
+	typesConfig, err := config.LoadTypesConfig()
 	if err != nil {
 		return nil, fmt.Errorf("failed to load types config: %w", err)
 	}
 	SetTypesConfig(typesConfig)
+
+	// Load ignore patterns configuration (only once)
+	if len(defaultIgnorePatterns) == 0 {
+		ignoreConfig, err := config.LoadIgnoreConfig()
+		if err != nil {
+			return nil, fmt.Errorf("failed to load ignore config: %w", err)
+		}
+		defaultIgnorePatterns = ignoreConfig.GetFlatIgnoreList()
+	}
 
 	// Initialize dependency detector
 	depDetector := NewDependencyDetector(loadedRules)
@@ -153,16 +178,60 @@ func NewScannerWithExcludes(path string, excludeDirs []string) (*Scanner, error)
 
 // Scan performs analysis following the original TypeScript pattern
 func (s *Scanner) Scan() (*types.Payload, error) {
+	basePath := s.provider.GetBasePath()
+
+	// Load configuration from .stack-analyzer.yml if it exists
+	cfg, err := config.LoadConfig(basePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load config: %w", err)
+	}
+
+	// Create scan metadata
+	scanMeta := metadata.NewScanMetadata(basePath, "1.0.0", s.excludeDirs)
+	startTime := time.Now()
+
 	// Create main payload like in TypeScript: new Payload({ name: 'main', folderPath: '/' })
 	payload := types.NewPayloadWithPath("main", "/")
 
+	// Add configured techs to payload
+	for _, tech := range cfg.Techs {
+		payload.AddTech(tech.Tech, tech.Reason)
+	}
+
 	// Start recursion from base path (like TypeScript's payload.recurse(provider, provider.basePath))
-	err := s.recurse(payload, s.provider.GetBasePath())
+	err = s.recurse(payload, basePath)
 	if err != nil {
 		return nil, err
 	}
 
+	// Set scan duration
+	scanMeta.SetDuration(time.Since(startTime))
+
+	// Count files and directories (approximate from payload)
+	fileCount, dirCount := s.countFilesAndDirs(payload)
+	scanMeta.SetFileCounts(fileCount, dirCount)
+
+	// Set custom properties from config
+	scanMeta.SetProperties(cfg.Properties)
+
+	// Attach metadata to root payload
+	payload.Metadata = scanMeta
+
 	return payload, nil
+}
+
+// countFilesAndDirs recursively counts files and directories in the payload tree
+func (s *Scanner) countFilesAndDirs(payload *types.Payload) (int, int) {
+	fileCount := len(payload.Languages) // Approximate: language count as file indicator
+	dirCount := 1                       // Current directory
+
+	for _, child := range payload.Childs {
+		childFiles, childDirs := s.countFilesAndDirs(child)
+		fileCount += childFiles
+		dirCount += childDirs
+	}
+
+	return fileCount, dirCount
 }
 
 // ScanFile performs analysis on a single file, treating it as a directory with just that file
@@ -214,6 +283,11 @@ func (s *Scanner) recurse(payload *types.Payload, filePath string) error {
 	// Process each file/directory (exactly like TypeScript's loop)
 	for _, file := range files {
 		if file.Type == "file" {
+			// Check if file should be excluded
+			if s.shouldExcludeFile(file.Name, filePath) {
+				continue
+			}
+
 			// Detect language from file name (like TypeScript's detectLang)
 			// Languages go into the current context (might be a component)
 			ctx.DetectLanguage(file.Name)
@@ -580,26 +654,60 @@ func (s *Scanner) findImplicitComponent(payload *types.Payload, rule types.Rule,
 	}
 }
 
+// shouldExcludeFile checks if a file should be excluded based on user patterns
+func (s *Scanner) shouldExcludeFile(fileName, currentPath string) bool {
+	if len(s.excludeDirs) == 0 {
+		return false
+	}
+
+	// Get relative path from base path
+	basePath := s.provider.GetBasePath()
+	fullPath := filepath.Join(currentPath, fileName)
+	relPath, err := filepath.Rel(basePath, fullPath)
+	if err != nil {
+		relPath = fileName // Fallback to just filename
+	}
+
+	// Check against exclude patterns
+	for _, pattern := range s.excludeDirs {
+		// Try glob match against relative path
+		matched, err := doublestar.Match(pattern, relPath)
+		if err == nil && matched {
+			return true
+		}
+
+		// Also try matching just the filename
+		matched, err = doublestar.Match(pattern, fileName)
+		if err == nil && matched {
+			return true
+		}
+	}
+
+	return false
+}
+
 // shouldIgnoreDirectory checks if a directory should be ignored during scanning
 // Uses modular ignore patterns defined in ignore_patterns.go
 func (s *Scanner) shouldIgnoreDirectory(name string) bool {
-	// Check user-specified exclude directories first
-	if s.excludeDirs != nil {
-		lowerName := strings.ToLower(name)
-		for _, excludeDir := range s.excludeDirs {
-			// Support both exact match and path suffix match
-			// e.g., "internal/rules" matches "internal/rules" and "rules" matches "rules"
-			if lowerName == strings.ToLower(excludeDir) {
+	// Check user-specified exclude patterns first (supports glob patterns)
+	if len(s.excludeDirs) > 0 {
+		for _, pattern := range s.excludeDirs {
+			// Try glob match first
+			matched, err := doublestar.Match(pattern, name)
+			if err == nil && matched {
+				return true
+			}
+
+			// Fallback to simple name match for backward compatibility
+			if strings.EqualFold(name, pattern) {
 				return true
 			}
 		}
 	}
 
-	// Get all ignore patterns from modular system
-	ignored := GetFlatIgnoreList()
-
+	// Get all ignore patterns from configuration
 	lowerName := strings.ToLower(name)
-	for _, pattern := range ignored {
+	for _, pattern := range defaultIgnorePatterns {
 		// Use exact match to avoid false positives (e.g., .github matching .git)
 		if lowerName == strings.ToLower(pattern) {
 			return true

@@ -29,7 +29,8 @@ Examples:
   stack-analyzer scan /path/to/project
   stack-analyzer scan /path/to/pom.xml
   stack-analyzer scan --aggregate techs,languages /path/to/project
-  stack-analyzer scan --exclude-dir vendor,node_modules /path/to/project`,
+  stack-analyzer scan --exclude vendor,node_modules /path/to/project
+  stack-analyzer scan --exclude "**/__tests__/**" --exclude "*.log" /path/to/project`,
 	Args: cobra.MaximumNArgs(1),
 	Run:  runScan,
 }
@@ -52,9 +53,8 @@ func init() {
 	scanCmd.Flags().StringVar(&settings.Aggregate, "aggregate", aggregate, "Aggregate fields: tech,techs,languages,licenses,dependencies")
 	scanCmd.Flags().BoolVar(&settings.PrettyPrint, "pretty", prettyPrint, "Pretty print JSON output")
 
-	// Exclude dirs needs special handling since it's a slice
-	excludeDirsStr := strings.Join(settings.ExcludeDirs, ",")
-	scanCmd.Flags().StringVar(&excludeDirsStr, "exclude-dir", excludeDirsStr, "Comma-separated directories to exclude")
+	// Exclude patterns - support multiple flags or comma-separated values
+	scanCmd.Flags().StringSliceVar(&settings.ExcludeDirs, "exclude", settings.ExcludeDirs, "Patterns to exclude (supports glob patterns, can be specified multiple times)")
 
 	// Logging flags - use defaults from environment variables
 	scanCmd.Flags().String("log-level", logLevel, "Log level: trace, debug, info, warn, error, fatal, panic")
@@ -99,14 +99,12 @@ func runScan(cmd *cobra.Command, args []string) {
 	}
 	isFile := !fileInfo.IsDir()
 
-	// Get the exclude-dirs flag value and parse it
-	excludeDirsStr, _ := cmd.Flags().GetString("exclude-dir")
-	var excludeList []string
-	if excludeDirsStr != "" {
-		excludeList = strings.Split(excludeDirsStr, ",")
-		for i, dir := range excludeList {
-			excludeList[i] = strings.TrimSpace(dir)
-		}
+	// Get the exclude flag value (already parsed as StringSlice by cobra)
+	excludeList, _ := cmd.Flags().GetStringSlice("exclude")
+
+	// Trim whitespace from each pattern
+	for i, pattern := range excludeList {
+		excludeList[i] = strings.TrimSpace(pattern)
 	}
 
 	// Update settings with actual flag values

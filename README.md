@@ -3,7 +3,7 @@
 > **Work in Progress**  
 > This project is under active development. The output format, API, and configuration structure may change. While the core functionality is stable, breaking changes may occur as we refine the functionalities and add new features. Use in production environments at your own discretion.
 
-A high-performance technology stack analyzer written in Go, re-implementing [specfy/stack-analyser](https://github.com/specfy/stack-analyser) with improvements and extended technology support.
+A technology stack analyzer written in Go, re-implementing [specfy/stack-analyser](https://github.com/specfy/stack-analyser) with improvements and extended technology support.
 
 ## What This Project Does
 
@@ -19,16 +19,18 @@ The Tech Stack Analyzer automatically detects technologies, frameworks, database
 ## Key Features
 
 - **700+ Technology Rules** - Comprehensive detection across databases, frameworks, tools, cloud services
+- **Zero Dependencies** - Single binary deployment without Node.js runtime requirement
+- **Project Configuration** - `.stack-analyzer.yml` for custom metadata, exclusions, and external dependencies
+- **Scan Metadata** - Automatic tracking of scan execution (timestamp, duration, git info, file counts)
+- **Glob Pattern Exclusions** - Flexible `--exclude` flag supporting `**`, `*`, `?` patterns for files and directories
 - **Content-Based Detection** - Validates technologies through regex pattern matching in file contents for precise identification
 - **Configurable Components** - Override default component classification per rule with `is_component` field
-- **Zero Dependencies** - Single binary deployment without Node.js runtime requirement
+- **Externalized Configuration** - Type definitions and ignore patterns in YAML (no code changes needed)
 - **Tech-Specific Metadata** - Structured properties for Docker (base images, ports) and Terraform (providers, resource counts)
 - **Multi-Technology Components** - Detects hybrid projects with multiple primary technologies in the same directory
 - **Professional Logging** - Structured logging with multiple levels (trace/debug/info/warn/error) and JSON/text formats
-- **Flexible Configuration** - Environment variables and command-line flags with proper precedence handling
 - **Hierarchical Output** - Component-based analysis with parent-child relationships
 - **Aggregated Views** - Rollup summaries for quick technology stack overviews
-- **Fast Performance** - Optimized Go implementation with efficient file processing
 
 ## How to Use It
 
@@ -77,8 +79,8 @@ The analyzer uses a command-based interface powered by [Cobra](https://github.co
 # Save results to file
 ./bin/stack-analyzer scan /path/to/project --output results.json
 
-# Exclude specific directories
-./bin/stack-analyzer scan /path/to/project --exclude-dir "vendor,node_modules,bin"
+# Exclude specific directories and files (supports glob patterns)
+./bin/stack-analyzer scan /path/to/project --exclude "vendor" --exclude "node_modules" --exclude "*.log"
 
 # Scan a single file (useful for quick testing)
 ./bin/stack-analyzer scan /path/to/pom.xml
@@ -170,7 +172,7 @@ stack-analyzer scan [path] [flags]
 **Flags:**
 - `--output, -o` - Output file path (default: stdout)
 - `--aggregate` - Aggregate fields: `tech,techs,languages,licenses,dependencies`
-- `--exclude-dir` - Comma-separated directories to exclude
+- `--exclude` - Patterns to exclude (supports glob patterns like `**/__tests__/**`, `*.log`; can be specified multiple times)
 - `--pretty` - Pretty print JSON output (default: true)
 - `--log-level` - Log level: trace, debug, info, warn, error, fatal, panic (default: info)
 - `--log-format` - Log format: text or json (default: text)
@@ -182,8 +184,9 @@ stack-analyzer scan .
 stack-analyzer scan /path/to/project --output results.json
 stack-analyzer scan --aggregate techs,languages,dependencies /path
 
-# Advanced configuration
-stack-analyzer scan /path --exclude-dir vendor,node_modules
+# Exclude patterns (glob support)
+stack-analyzer scan /path --exclude vendor --exclude node_modules
+stack-analyzer scan /path --exclude "**/__tests__/**" --exclude "*.log"
 
 # Logging examples
 stack-analyzer scan /path --log-level debug --log-format json
@@ -224,64 +227,27 @@ Displays the complete rule definition for a given technology.
 
 ### Detection Approach
 
-The scanner uses a **two-tier detection system** to provide comprehensive technology analysis:
+The scanner uses a **two-tier detection system**:
 
-#### **Universal Technology Detection**
-- **Works with all technologies** through pattern matching and dependency analysis
-- **700+ technology rules** covering databases, frameworks, tools, cloud services
-- **Multi-language support** - detects npm packages, Python libraries, Java dependencies, etc.
-- **File-based detection** - identifies technologies through configuration files, environment variables, and file patterns
-
-#### **Specialized Component Detectors**
-For major technology stacks, the scanner provides **deep analysis** through dedicated component detectors:
-
-- **Python Projects**: Parses `pyproject.toml`, `requirements.txt`, `setup.py` to extract package versions, dependencies, and project metadata
-- **Node.js Applications**: Analyzes `package.json`, `package-lock.json`, `yarn.lock` for npm/yarn packages, scripts, and project configuration
-- **Java/Kotlin Projects**: Parses `pom.xml` (Maven) and `build.gradle` (Gradle) for dependencies, plugins, and project structure
-- **.NET Applications**: Extracts NuGet packages, framework versions, and project references from `.csproj` files
-- **Docker Environments**: Analyzes `docker-compose.yml` and `Dockerfile` to identify services, networks, and container configurations
-- **Terraform Infrastructure**: Parses HCL files to detect cloud providers, resources, and infrastructure components
-- **Ruby Projects**: Extracts gems and dependencies from `Gemfile` and `gemspec` files
-- **Rust Projects**: Analyzes `Cargo.toml` for crate dependencies and project metadata
-- **PHP Projects**: Parses `composer.json` for PHP packages and project configuration
-- **Deno Projects**: Analyzes `deno.json` and import maps for Deno-specific dependencies
-
-#### **What This Means**
-
-**Universal Detection** ensures that even technologies without specialized detectors are identified through:
+**1. Universal Technology Detection** - Works with all technologies through pattern matching:
+- Comprehensive technology rules covering databases, frameworks, tools, cloud services
 - Package manager dependencies (npm, pip, cargo, composer, nuget, maven)
-- Docker image references
-- Configuration file patterns
-- Environment variable prefixes
-- File extensions and naming conventions
+- Configuration files, environment variables, and file patterns
+- Docker image references and file extensions
 
-**Specialized Detection** provides enhanced capabilities for major stacks:
-- **Version extraction** - Exact package versions, not just presence
-- **Dependency relationships** - Maps how components depend on each other
-- **Configuration analysis** - Extracts meaningful settings and metadata
-- **Project structure** - Identifies sub-projects, modules, and services
-- **Edge relationships** - Builds dependency graphs between components
+**2. Specialized Component Detectors** - Deep analysis for major stacks (Python, Node.js, Java/Kotlin, .NET, Docker, Terraform, Ruby, Rust, PHP, Deno, Go):
+- Exact package versions and dependency relationships
+- Configuration analysis and project structure
+- Sub-projects, modules, and service identification
+- Dependency graph construction
 
-This hybrid approach ensures **broad coverage** (detects almost any technology) while providing **deep insights** for the most common technology stacks.
+This ensures broad coverage while providing detailed insights for common technology stacks.
 
 ### Component Classification
 
-The scanner distinguishes between **architectural components** and **tools/libraries** based on technology types defined in `internal/rules/core/_types.yaml`:
+The scanner distinguishes between **architectural components** and **tools/libraries**. Technologies like databases, hosting services, and SaaS platforms create components (appear in `tech` field), while development tools, frameworks, and languages are listed only in the `techs` array.
 
-**Technologies that CREATE components** (appear in `tech` field):
-- Infrastructure: `database`, `hosting`, `cloud`, `storage`, `queue`
-- Services: `ai`, `auth`, `payment`, `notification`, `monitoring`, `analytics`
-- Applications: `app`, `cms`, `saas`, `communication`, `collaboration`
-- Others: `etl`, `automation`, `security`, `maps`, `crm`, `network`, `ssg`
-
-**Technologies that DON'T create components** (only in `techs` array):
-- Development: `ci`, `builder`, `linter`, `test`, `validation`, `tool`
-- Code organization: `framework`, `orm`, `package_manager`
-- Languages: `language`, `runtime`
-- UI utilities: `ui`, `ui_framework`, `iconset`
-- Infrastructure as Code: `iac`
-
-This classification is **fully configurable** in `internal/rules/core/_types.yaml` and determines whether a detected technology represents an architectural decision (component) or an implementation detail (tool/library). See the [Technology Type Configuration](#technology-type-configuration) section for details on customizing this behavior.
+This classification is fully configurable through type definitions and per-rule overrides. See the [Technology Type Configuration](#technology-type-configuration) section for details.
 
 ### Content-Based Detection
 
@@ -324,12 +290,12 @@ content:
 
 ### Technology Type Configuration
 
-Technology types and their component behavior are defined in `internal/rules/core/_types.yaml`. This configuration file determines which technology types create architectural components versus being classified as tools/libraries.
+Technology types and their component behavior are defined in `internal/config/types.yaml`. This configuration file determines which technology types create architectural components versus being classified as tools/libraries.
 
 #### Type Configuration File
 
 ```yaml
-# internal/rules/core/_types.yaml
+# internal/config/types.yaml
 types:
   database:
     is_component: true
@@ -342,7 +308,7 @@ types:
 
 **Adding New Technology Types:**
 
-1. Add the type definition to `_types.yaml`:
+1. Add the type definition to `internal/config/types.yaml`:
    ```yaml
    my_new_type:
      is_component: true  # or false
@@ -374,15 +340,94 @@ is_component: true  # Override: create component anyway
 
 **Priority Order:**
 1. Rule's `is_component` field (highest priority)
-2. Type definition in `_types.yaml`
+2. Type definition in `types.yaml`
 3. Default to `false` if type not defined
 
 **Example Use Cases:**
 - **Promote to component**: `ui_framework` with `is_component: true` creates a component
 - **Demote from component**: `database` with `is_component: false` doesn't create a component
-- **New types**: Types not in `_types.yaml` default to no component creation
+- **New types**: Types not in `types.yaml` default to no component creation
 
 This configuration-driven approach allows fine-grained control over which technologies appear as architectural components versus implementation details.
+
+## Project Configuration
+
+### `.stack-analyzer.yml` Configuration File
+
+Place a `.stack-analyzer.yml` file in your project root to customize scan behavior, add metadata, and document external dependencies.
+
+```yaml
+# .stack-analyzer.yml - Tech Stack Analyzer Configuration
+
+# Custom properties added to metadata.properties in scan output
+properties:
+  product: "My Product Name"
+  team: "Platform Engineering"
+  environment: "production"
+  owner: "engineering@company.com"
+
+# Files and directories to exclude from scanning
+# Supports glob patterns (**, *, ?)
+exclude:
+  - "node_modules"
+  - "vendor"
+  - "*.log"
+  - "**/__tests__/**"
+  - "**/*.test.js"
+
+# Technologies to add to scan results (even if not auto-detected)
+techs:
+  - tech: "aws"
+    reason: "Deployed on AWS ECS"
+  - tech: "datadog"
+    reason: "Monitoring via Datadog"
+```
+
+**Configuration Options:**
+
+- **`properties`** - Custom metadata added to `metadata.properties` in output
+  - Document product context, ownership, deployment information
+  - Any key-value pairs relevant to your project
+  
+- **`exclude`** - Patterns to exclude from scanning
+  - Supports glob patterns: `**`, `*`, `?`
+  - Matches files and directories
+  - Merged with CLI `--exclude` flags
+  
+- **`techs`** - Technologies to force-add to scan results
+  - Useful for external dependencies (AWS, SaaS services)
+  - Each tech has optional `reason` field
+  - Added to root payload's `techs` array
+
+**Example Output with Configuration:**
+
+```json
+{
+  "metadata": {
+    "timestamp": "2025-12-01T14:45:35Z",
+    "scan_path": "/path/to/project",
+    "properties": {
+      "product": "My Product Name",
+      "team": "Platform Engineering",
+      "environment": "production"
+    }
+  },
+  "techs": ["nodejs", "aws", "datadog"],
+  "reason": [
+    "matched file: package.json",
+    "Deployed on AWS ECS",
+    "Monitoring via Datadog"
+  ]
+}
+```
+
+**Benefits:**
+- **Version controlled** - Configuration lives with code
+- **Team-shared** - Everyone uses same exclusions and metadata
+- **Documented** - External dependencies explicitly listed
+- **Flexible** - Custom metadata for any use case
+
+See `.stack-analyzer.yml.example` for a complete configuration template.
 
 ### Output Structure
 
@@ -401,6 +446,50 @@ The scanner outputs a hierarchical JSON structure representing the detected tech
 - **licenses**: Array of detected licenses in this component
 - **reason**: Array explaining why technologies were detected
 - **properties**: Object containing tech-specific metadata (Docker, Terraform, Kubernetes, etc.)
+- **metadata**: Scan execution metadata (only in root payload)
+
+#### Metadata Field
+
+The `metadata` field (present only in the root payload) provides information about the scan execution:
+
+```json
+{
+  "metadata": {
+    "timestamp": "2025-12-01T14:45:35Z",
+    "scan_path": "/absolute/path/to/project",
+    "scanner_version": "1.0.0",
+    "duration_ms": 1173,
+    "file_count": 523,
+    "directory_count": 87,
+    "excluded_dirs": ["node_modules", "vendor"],
+    "git": {
+      "branch": "main",
+      "commit": "a1b2c3d",
+      "is_dirty": true,
+      "remote_url": "https://github.com/user/repo.git"
+    },
+    "properties": {
+      "product": "My Product",
+      "team": "Engineering"
+    }
+  }
+}
+```
+
+**Metadata Fields:**
+- **timestamp**: ISO 8601 timestamp when scan was performed
+- **scan_path**: Absolute path to scanned directory
+- **scanner_version**: Version of the analyzer
+- **duration_ms**: Scan duration in milliseconds
+- **file_count**: Total files scanned
+- **directory_count**: Total directories traversed
+- **excluded_dirs**: List of excluded patterns
+- **git**: Git repository information (if in a git repo)
+  - **branch**: Current branch name
+  - **commit**: Short commit hash (7 characters)
+  - **is_dirty**: Whether there are uncommitted changes
+  - **remote_url**: Origin remote URL
+- **properties**: Custom properties from `.stack-analyzer.yml`
 
 #### Properties Field
 
@@ -668,7 +757,7 @@ Each detector handles specific project types:
 #### 4. Language Detection (`github.com/go-enry/go-enry/v2`)
 - **GitHub Linguist integration** for comprehensive language detection
 - **1500+ languages** supported through open-source language database
-- **Smart detection** by file extension and filename patterns
+- **Detection** by file extension and filename patterns
 - **Handles special files** like Makefile, Dockerfile, etc.
 
 #### 5. Parser System (`internal/scanner/parsers/`)
@@ -715,7 +804,7 @@ detect:
 
 #### 2. Rule Categories
 
-The rules are organized into 32 categories:
+The rules are organized into 30+ categories:
 
 ```
 internal/rules/core/
@@ -976,11 +1065,11 @@ This Go implementation provides practical improvements focused on deployment sim
 - **Extended Technology Support**: Added Java/Kotlin and .NET component detectors alongside existing Node.js, Python, Docker, Terraform, Ruby, Rust, PHP, Deno, and Go support
 - **Enhanced Database Coverage**: Improved detection for Oracle, MongoDB, Redis, and other enterprise databases
 - **Modular Architecture**: Clean component detector system for easier maintenance and extension
-- **Comprehensive Rules**: 700+ technology rules across 32 categories covering modern enterprise stacks
+- **Comprehensive Rules**: 700+ technology rules across 30+ categories covering modern enterprise stacks
 
 ### Contributors
 Thank you to all contributors who help improve this project.
 
 ---
 
-Built with Go - Delivering fast technology stack analysis for modern development teams.
+Built with Go - Delivering technology stack analysis for modern development teams.

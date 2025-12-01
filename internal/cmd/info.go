@@ -7,6 +7,7 @@ import (
 	"os"
 	"sort"
 
+	"github.com/petrarca/tech-stack-analyzer/internal/config"
 	"github.com/petrarca/tech-stack-analyzer/internal/rules"
 	"github.com/petrarca/tech-stack-analyzer/internal/types"
 	"github.com/spf13/cobra"
@@ -57,7 +58,7 @@ func init() {
 
 func runComponentTypes(cmd *cobra.Command, args []string) {
 	// Load types configuration
-	typesConfig, err := rules.LoadTypesConfig()
+	typesConfig, err := config.LoadTypesConfig()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error loading types config: %v\n", err)
 		os.Exit(1)

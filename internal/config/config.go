@@ -1,0 +1,119 @@
+package config
+
+import (
+	_ "embed"
+	"fmt"
+	"os"
+	"path/filepath"
+
+	"github.com/petrarca/tech-stack-analyzer/internal/types"
+	"gopkg.in/yaml.v3"
+)
+
+//go:embed types.yaml
+var typesConfigData []byte
+
+//go:embed ignore.yaml
+var ignoreConfigData []byte
+
+// ScanConfig represents the .stack-analyzer.yml configuration file
+type ScanConfig struct {
+	Properties map[string]interface{} `yaml:"properties,omitempty"`
+	Exclude    []string               `yaml:"exclude,omitempty"`
+	Techs      []ConfigTech           `yaml:"techs,omitempty"`
+}
+
+// ConfigTech represents a technology to add to the scan
+type ConfigTech struct {
+	Tech   string `yaml:"tech"`
+	Reason string `yaml:"reason,omitempty"`
+}
+
+// LoadConfig attempts to load .stack-analyzer.yml from the scan root
+// Returns nil if file doesn't exist (not an error)
+func LoadConfig(scanPath string) (*ScanConfig, error) {
+	configPath := filepath.Join(scanPath, ".stack-analyzer.yml")
+
+	// Check if config file exists
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		// No config file - return empty config (not an error)
+		return &ScanConfig{}, nil
+	}
+
+	// Read config file
+	data, err := os.ReadFile(configPath)
+	if err != nil {
+		return nil, err
+	}
+
+	// Parse YAML
+	var config ScanConfig
+	if err := yaml.Unmarshal(data, &config); err != nil {
+		return nil, err
+	}
+
+	return &config, nil
+}
+
+// MergeExcludes merges config excludes with CLI excludes
+// CLI excludes take precedence
+func (c *ScanConfig) MergeExcludes(cliExcludes []string) []string {
+	if c == nil {
+		return cliExcludes
+	}
+
+	// Create a map to deduplicate
+	excludeMap := make(map[string]bool)
+
+	// Add config excludes first
+	for _, exclude := range c.Exclude {
+		excludeMap[exclude] = true
+	}
+
+	// Add CLI excludes (will override if duplicate)
+	for _, exclude := range cliExcludes {
+		excludeMap[exclude] = true
+	}
+
+	// Convert back to slice
+	result := make([]string, 0, len(excludeMap))
+	for exclude := range excludeMap {
+		result = append(result, exclude)
+	}
+
+	return result
+}
+
+// LoadTypesConfig loads the types configuration from types.yaml
+func LoadTypesConfig() (*types.TypesConfig, error) {
+	var config types.TypesConfig
+	if err := yaml.Unmarshal(typesConfigData, &config); err != nil {
+		return nil, fmt.Errorf("failed to parse types.yaml: %w", err)
+	}
+
+	return &config, nil
+}
+
+// IgnoreConfig represents the ignore.yaml configuration
+type IgnoreConfig struct {
+	Patterns map[string][]string `yaml:"patterns"`
+}
+
+// LoadIgnoreConfig loads the ignore patterns from ignore.yaml
+func LoadIgnoreConfig() (*IgnoreConfig, error) {
+	var config IgnoreConfig
+	if err := yaml.Unmarshal(ignoreConfigData, &config); err != nil {
+		return nil, fmt.Errorf("failed to parse ignore.yaml: %w", err)
+	}
+
+	return &config, nil
+}
+
+// GetFlatIgnoreList returns a flattened list of all ignore patterns
+func (c *IgnoreConfig) GetFlatIgnoreList() []string {
+	var flat []string
+	for _, categoryPatterns := range c.Patterns {
+		flat = append(flat, categoryPatterns...)
+	}
+	return flat
+}

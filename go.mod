@@ -3,6 +3,7 @@ module github.com/petrarca/tech-stack-analyzer
 go 1.25.4
 
 require (
+	github.com/bmatcuk/doublestar/v4 v4.9.1
 	github.com/go-enry/go-enry/v2 v2.9.2
 	github.com/go-enry/go-license-detector/v4 v4.3.1
 	github.com/hashicorp/hcl/v2 v2.24.0

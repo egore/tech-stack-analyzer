@@ -64,21 +64,6 @@ func LoadEmbeddedRules() ([]types.Rule, error) {
 	return rules, nil
 }
 
-// LoadTypesConfig loads the types configuration from _types.yaml
-func LoadTypesConfig() (*types.TypesConfig, error) {
-	content, err := coreRulesFS.ReadFile("core/_types.yaml")
-	if err != nil {
-		return nil, fmt.Errorf("failed to read _types.yaml: %w", err)
-	}
-
-	var config types.TypesConfig
-	if err := yaml.Unmarshal(content, &config); err != nil {
-		return nil, fmt.Errorf("failed to parse _types.yaml: %w", err)
-	}
-
-	return &config, nil
-}
-
 // LoadExternalRules loads rules from an external directory
 func LoadExternalRules(rulesDir string) ([]types.Rule, error) {
 	var rules []types.Rule
