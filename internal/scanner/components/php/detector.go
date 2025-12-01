@@ -56,8 +56,7 @@ func (d *Detector) detectComposerJSON(file types.File, currentPath, basePath str
 	payload := types.NewPayloadWithPath(projectName, relativeFilePath)
 
 	// Set tech field to php
-	tech := "php"
-	payload.Tech = &tech
+	payload.AddPrimaryTech("php")
 
 	// Extract dependency names for tech matching
 	var depNames []string

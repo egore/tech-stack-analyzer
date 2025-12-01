@@ -95,7 +95,7 @@ func (d *Detector) detectDockerCompose(file types.File, currentPath, basePath st
 
 		// Create child component
 		childPayload := types.NewPayloadWithPath(serviceName, relativeFilePath)
-		childPayload.Tech = &tech
+		childPayload.AddPrimaryTech(tech)
 		childPayload.Dependencies = []types.Dependency{
 			{
 				Type:    "docker",

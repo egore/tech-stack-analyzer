@@ -13,7 +13,7 @@ type Payload struct {
 	ID           string         `json:"id"`
 	Name         string         `json:"name"`
 	Path         []string       `json:"path"`
-	Tech         *string        `json:"tech"`
+	Tech         []string       `json:"tech"` // Changed from *string to []string to support multiple primary technologies
 	Techs        []string       `json:"techs"`
 	Languages    map[string]int `json:"languages"`
 	Dependencies []Dependency   `json:"dependencies"`
@@ -76,7 +76,7 @@ func (p *Payload) AddChild(service *Payload) *Payload {
 	var exist *Payload
 	for _, child := range p.Childs {
 		// we only merge if a tech is similar otherwise it's too easy to get a false-positive
-		if (child.Tech == nil || *child.Tech == "") && (service.Tech == nil || *service.Tech == "") {
+		if len(child.Tech) == 0 && len(service.Tech) == 0 {
 			continue
 		}
 		if child.Name == service.Name {
@@ -87,16 +87,16 @@ func (p *Payload) AddChild(service *Payload) *Payload {
 		// This was causing all Node.js components to be merged together
 	}
 
-	// Handle hosting/cloud techs with dots (like TypeScript lines 140-153)
-	// TODO: Implement hosting/cloud tech logic with listIndexed
-	// For now, skip this complex hosting logic
-	_ = service.Tech // Suppress unused warning
-
 	if exist != nil {
 		// Merge with existing component (like TypeScript lines 155-175)
 		// Log all paths where it was found
 		for _, path := range service.Path {
 			exist.AddPath(path)
+		}
+
+		// Merge primary techs
+		for _, tech := range service.Tech {
+			exist.AddPrimaryTech(tech)
 		}
 
 		// Update edges to point to the initial component (simplified for Go)
@@ -165,9 +165,14 @@ func (p *Payload) mergeTechs(techs []string) {
 	}
 }
 
-func (p *Payload) mergeTechField(tech *string) {
-	if tech != nil && *tech != "" && !p.containsString(p.Techs, *tech) {
-		p.Techs = append(p.Techs, *tech)
+func (p *Payload) mergeTechField(techs []string) {
+	for _, tech := range techs {
+		if tech != "" {
+			p.AddPrimaryTech(tech)
+			if !p.containsString(p.Techs, tech) {
+				p.Techs = append(p.Techs, tech)
+			}
+		}
 	}
 }
 
@@ -253,6 +258,27 @@ func (p *Payload) AddLanguage(language string) {
 	p.Languages[language]++
 }
 
+// AddPrimaryTech adds a technology to the primary tech array (avoiding duplicates)
+func (p *Payload) AddPrimaryTech(tech string) {
+	// Avoid duplicates
+	for _, t := range p.Tech {
+		if t == tech {
+			return
+		}
+	}
+	p.Tech = append(p.Tech, tech)
+}
+
+// HasPrimaryTech checks if a technology is in the primary tech array
+func (p *Payload) HasPrimaryTech(tech string) bool {
+	for _, t := range p.Tech {
+		if t == tech {
+			return true
+		}
+	}
+	return false
+}
+
 // AddLicense adds a license to the payload (like TypeScript addLicenses)
 func (p *Payload) AddLicense(license string) {
 	// Avoid duplicates (like TypeScript Set behavior)
@@ -284,10 +310,10 @@ func (p *Payload) AddDependency(dep Dependency) {
 // DetectLanguage detects the language from a file name using go-enry (GitHub Linguist)
 func (p *Payload) DetectLanguage(filename string) {
 	// Try detection by extension first (fast path)
-	lang, safe := enry.GetLanguageByExtension(filename)
+	lang, _ := enry.GetLanguageByExtension(filename)
 
-	// If not confident or no result, try by filename (handles special files like Makefile, Dockerfile)
-	if !safe || lang == "" {
+	// If no result from extension, try by filename (handles special files like Makefile, Dockerfile)
+	if lang == "" {
 		lang, _ = enry.GetLanguageByFilename(filename)
 	}
 
@@ -304,9 +330,9 @@ func (p *Payload) GetFullPath() string {
 
 // String returns a string representation
 func (p *Payload) String() string {
-	techStr := "nil"
-	if p.Tech != nil {
-		techStr = *p.Tech
+	techStr := "[]"
+	if len(p.Tech) > 0 {
+		techStr = fmt.Sprintf("%v", p.Tech)
 	}
 	return fmt.Sprintf("Payload{id:%s, name:%s, tech:%s, techs:%v}",
 		p.ID, p.Name, techStr, p.Techs)

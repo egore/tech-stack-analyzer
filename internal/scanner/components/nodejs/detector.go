@@ -59,8 +59,7 @@ func (d *Detector) Detect(files []types.File, currentPath, basePath string, prov
 		payload := types.NewPayloadWithPath(packageJSON.Name, relativeFilePath)
 
 		// Set tech field to nodejs
-		tech := "nodejs"
-		payload.Tech = &tech
+		payload.AddPrimaryTech("nodejs")
 
 		// Merge dependencies
 		allDeps := make(map[string]string)

@@ -19,26 +19,43 @@ func (d *Detector) Name() string {
 
 func (d *Detector) Detect(files []types.File, currentPath, basePath string, provider types.Provider, depDetector components.DependencyDetector) []*types.Payload {
 	var results []*types.Payload
+	var payload *types.Payload
 
-	// Check for pom.xml (Maven)
+	// Check for pom.xml (Maven) first
 	for _, file := range files {
 		if file.Name == "pom.xml" {
-			payload := d.detectPomXML(file, currentPath, basePath, provider, depDetector)
-			if payload != nil {
-				results = append(results, payload)
+			payload = d.detectPomXML(file, currentPath, basePath, provider, depDetector)
+			break
+		}
+	}
+
+	// If no pom.xml, check for build.gradle or build.gradle.kts (Gradle)
+	if payload == nil {
+		gradleRegex := regexp.MustCompile(`^build\.gradle(\.kts)?$`)
+		for _, file := range files {
+			if gradleRegex.MatchString(file.Name) {
+				payload = d.detectGradle(file, currentPath, basePath, provider, depDetector)
+				break
+			}
+		}
+	} else {
+		// If we found pom.xml, also check for gradle files and add them to the path
+		gradleRegex := regexp.MustCompile(`^build\.gradle(\.kts)?$`)
+		for _, file := range files {
+			if gradleRegex.MatchString(file.Name) {
+				relativeFilePath, _ := filepath.Rel(basePath, filepath.Join(currentPath, file.Name))
+				if relativeFilePath != "." {
+					relativeFilePath = "/" + relativeFilePath
+					payload.AddPath(relativeFilePath)
+				}
+				// Also add gradle tech
+				payload.AddTech("gradle", "matched file: "+file.Name)
 			}
 		}
 	}
 
-	// Check for build.gradle or build.gradle.kts (Gradle)
-	gradleRegex := regexp.MustCompile(`^build\.gradle(\.kts)?$`)
-	for _, file := range files {
-		if gradleRegex.MatchString(file.Name) {
-			payload := d.detectGradle(file, currentPath, basePath, provider, depDetector)
-			if payload != nil {
-				results = append(results, payload)
-			}
-		}
+	if payload != nil {
+		results = append(results, payload)
 	}
 
 	return results
@@ -66,8 +83,7 @@ func (d *Detector) detectPomXML(file types.File, currentPath, basePath string, p
 	payload := types.NewPayloadWithPath(projectName, relativeFilePath)
 
 	// Set tech field to java (covers both Java and Kotlin projects)
-	tech := "java"
-	payload.Tech = &tech
+	payload.AddPrimaryTech("java")
 
 	// Parse pom.xml for dependencies using parser
 	javaParser := parsers.NewJavaParser()
@@ -119,8 +135,7 @@ func (d *Detector) detectGradle(file types.File, currentPath, basePath string, p
 	payload := types.NewPayloadWithPath(projectName, relativeFilePath)
 
 	// Set tech field to java (covers both Java and Kotlin projects)
-	tech := "java"
-	payload.Tech = &tech
+	payload.AddPrimaryTech("java")
 
 	// Parse Gradle file for dependencies using parser
 	javaParser := parsers.NewJavaParser()

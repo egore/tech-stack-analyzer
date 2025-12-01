@@ -7,8 +7,7 @@ package scanner
 func GetIgnorePatterns() map[string][]string {
 	return map[string][]string{
 		"common": {
-			"dist", "build", "bin", "static", "public", "vendor",
-			"migrations", "tests", "e2e", "__fixtures__", "__snapshots__", "tmp",
+			"__fixtures__", "__snapshots__",
 		},
 		"git": {
 			".git", ".gitlab", ".svn",
@@ -25,7 +24,7 @@ func GetIgnorePatterns() map[string][]string {
 			".next", ".nuxt", ".vuepress",
 		},
 		"java": {
-			"target", ".gradle", ".m2",
+			".gradle", ".m2",
 		},
 		"dotnet": {
 			"obj", "packages",

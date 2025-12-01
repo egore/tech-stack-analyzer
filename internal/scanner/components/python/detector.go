@@ -49,8 +49,7 @@ func (d *Detector) Detect(files []types.File, currentPath, basePath string, prov
 		payload := types.NewPayloadWithPath(projectName, relativeFilePath)
 
 		// Set tech field to python
-		tech := "python"
-		payload.Tech = &tech
+		payload.AddPrimaryTech("python")
 
 		// Parse dependencies
 		dependencies := parseDependencies(string(content))

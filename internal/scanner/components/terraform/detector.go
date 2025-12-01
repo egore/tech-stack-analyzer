@@ -99,7 +99,7 @@ func (d *Detector) detectTerraformLock(file types.File, currentPath, basePath st
 
 		// Create child component
 		childPayload := types.NewPayloadWithPath(provider.Name, relativeFilePath)
-		childPayload.Tech = &tech
+		childPayload.AddPrimaryTech(tech)
 		childPayload.Dependencies = []types.Dependency{
 			{
 				Type:    "terraform",
@@ -175,7 +175,7 @@ func (d *Detector) detectTerraformResource(file types.File, currentPath, basePat
 
 		// Create child component
 		childPayload := types.NewPayloadWithPath(resource, relativeFilePath)
-		childPayload.Tech = &tech
+		childPayload.AddPrimaryTech(tech)
 		childPayload.Dependencies = []types.Dependency{
 			{
 				Type:    "terraform.resource",

@@ -55,8 +55,7 @@ func (d *Detector) detectCargoToml(file types.File, currentPath, basePath string
 		payload = types.NewPayloadWithPath(projectName, relativeFilePath)
 
 		// Set tech field to rust
-		tech := "rust"
-		payload.Tech = &tech
+		payload.AddPrimaryTech("rust")
 	} else {
 		// Virtual payload for workspace files without [package] section
 		payload = types.NewPayloadWithPath("virtual", relativeFilePath)

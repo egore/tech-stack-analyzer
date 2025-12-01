@@ -239,17 +239,83 @@ func (s *Scanner) applyRules(payload *types.Payload, files []types.File, current
 }
 
 func (s *Scanner) detectComponents(payload, ctx *types.Payload, files []types.File, currentPath string) *types.Payload {
+	var namedComponents []*types.Payload
+	var virtualComponents []*types.Payload
+
+	// Collect all components from all detectors
 	for _, detector := range components.GetDetectors() {
 		detectedComponents := detector.Detect(files, currentPath, s.provider.GetBasePath(), s.provider, s.depDetector)
 		for _, component := range detectedComponents {
 			if component.Name == "virtual" {
-				s.mergeVirtualPayload(payload, component, currentPath)
+				virtualComponents = append(virtualComponents, component)
 			} else {
-				ctx = s.addNamedComponent(payload, component, currentPath)
+				namedComponents = append(namedComponents, component)
 			}
 		}
 	}
+
+	// Merge virtual components first
+	for _, virtual := range virtualComponents {
+		s.mergeVirtualPayload(payload, virtual, currentPath)
+	}
+
+	// Handle named components
+	if len(namedComponents) == 0 {
+		return ctx
+	} else if len(namedComponents) == 1 {
+		// Single component - add it normally
+		ctx = s.addNamedComponent(payload, namedComponents[0], currentPath)
+	} else {
+		// Multiple components in same directory - merge them
+		merged := s.mergeComponents(namedComponents)
+		ctx = s.addNamedComponent(payload, merged, currentPath)
+	}
+
 	return ctx
+}
+
+func (s *Scanner) mergeComponents(components []*types.Payload) *types.Payload {
+	if len(components) == 0 {
+		return nil
+	}
+
+	// Use first component as base
+	base := components[0]
+
+	// Merge all other components into the base
+	for i := 1; i < len(components); i++ {
+		comp := components[i]
+
+		// Merge primary techs
+		for _, tech := range comp.Tech {
+			base.AddPrimaryTech(tech)
+		}
+
+		// Merge all techs
+		for _, tech := range comp.Techs {
+			base.AddTech(tech, "merged from multiple detectors")
+		}
+
+		// Merge dependencies
+		for _, dep := range comp.Dependencies {
+			base.AddDependency(dep)
+		}
+
+		// Merge paths
+		for _, path := range comp.Path {
+			base.AddPath(path)
+		}
+
+		// Merge licenses
+		for _, license := range comp.Licenses {
+			base.AddLicense(license)
+		}
+
+		// Merge reasons
+		base.Reason = append(base.Reason, comp.Reason...)
+	}
+
+	return base
 }
 
 func (s *Scanner) mergeVirtualPayload(target, virtual *types.Payload, currentPath string) {
@@ -374,7 +440,7 @@ func (s *Scanner) findImplicitComponent(payload *types.Payload, rule types.Rule,
 	// Create a new child component (like TypeScript lines 47-54)
 	// CRITICAL FIX: Use parent's path, not currentPath (like TypeScript: folderPath: pl.path)
 	component := types.NewPayload(rule.Name, payload.Path)
-	component.Tech = &rule.Tech
+	component.AddPrimaryTech(rule.Tech)
 	component.Reason = append(component.Reason, fmt.Sprintf("matched file: %s", currentPath))
 
 	// Add the component as a child

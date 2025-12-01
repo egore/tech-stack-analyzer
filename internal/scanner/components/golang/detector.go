@@ -40,8 +40,7 @@ func (d *Detector) Detect(files []types.File, currentPath, basePath string, prov
 				relativeFilePath = "/" + relativeFilePath
 			}
 			payload := types.NewPayloadWithPath(folderName, relativeFilePath)
-			tech := "golang"
-			payload.Tech = &tech
+			payload.AddPrimaryTech("golang")
 			results = append(results, payload)
 			break
 		}
@@ -67,8 +66,7 @@ func (d *Detector) detectGoMod(file types.File, currentPath, basePath string, pr
 	payload := types.NewPayloadWithPath(folderName, relativeFilePath)
 
 	// Set tech field to golang
-	tech := "golang"
-	payload.Tech = &tech
+	payload.AddPrimaryTech("golang")
 
 	// Parse go.mod for dependencies
 	// Format: \t<url> v<version>

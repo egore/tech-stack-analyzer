@@ -52,8 +52,7 @@ func (d *Detector) detectGemfile(file types.File, currentPath, basePath string, 
 	payload := types.NewPayloadWithPath(projectName, relativeFilePath)
 
 	// Set tech field to ruby
-	tech := "ruby"
-	payload.Tech = &tech
+	payload.AddPrimaryTech("ruby")
 
 	// Parse Gemfile for dependencies using parser
 	rubyParser := parsers.NewRubyParser()

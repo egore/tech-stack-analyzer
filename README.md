@@ -208,7 +208,7 @@ The scanner outputs a hierarchical JSON structure representing the detected tech
 - **id**: Unique identifier for each component
 - **name**: Component name (e.g., "main", "frontend", "backend")
 - **path**: File system path relative to the project root
-- **tech**: Primary technology detected for this component (architectural components only)
+- **tech**: Array of primary technologies for this component (e.g., `["nodejs", "java"]` for hybrid projects)
 - **techs**: Array of all technologies detected in this component (components + tools/libraries)
 - **languages**: Object mapping programming languages to file counts
 - **dependencies**: Array of detected dependencies with format `[type, name, version]`
@@ -218,6 +218,27 @@ The scanner outputs a hierarchical JSON structure representing the detected tech
 - **licenses**: Array of detected licenses in this component
 - **reason**: Array explaining why technologies were detected
 
+#### Multi-Technology Components
+
+When multiple technology stacks are detected in the same directory (e.g., a directory with both `package.json` and `pom.xml`), the scanner automatically merges them into a single component with multiple primary technologies. This accurately represents hybrid projects that combine different technology stacks:
+
+```json
+{
+  "name": "hybrid-service",
+  "tech": ["nodejs", "java"],
+  "techs": ["nodejs", "java", "maven", "npm", "typescript"],
+  "languages": {
+    "TypeScript": 150,
+    "Java": 45
+  }
+}
+```
+
+This is common in projects with:
+- Node.js frontend + Java backend in the same module
+- Integration tests (Playwright/TypeScript) alongside Java applications
+- Build tools from multiple ecosystems
+
 ### Example Full Output
 
 ```json
@@ -225,7 +246,7 @@ The scanner outputs a hierarchical JSON structure representing the detected tech
   "id": "abc123",
   "name": "main",
   "path": ["/"],
-  "tech": "nodejs",
+  "tech": ["nodejs"],
   "techs": ["nodejs", "express", "postgresql"],
   "languages": {
     "TypeScript": 45,
@@ -239,7 +260,7 @@ The scanner outputs a hierarchical JSON structure representing the detected tech
     {
       "id": "def456",
       "name": "frontend",
-      "tech": "npm",
+      "tech": ["nodejs"],
       "dependencies": [["npm", "react", "^18.2.0"]]
     }
   ]
@@ -276,7 +297,7 @@ Use the `--aggregate` flag to get a simplified, rolled-up view of your entire co
 ```
 
 **Available fields:**
-- `tech` - Primary/architectural technologies (databases, services, infrastructure)
+- `tech` - Primary technologies
 - `techs` - All detected technologies (includes frameworks, tools, libraries)
 - `languages` - Programming languages with file counts
 - `licenses` - Detected licenses from LICENSE files and package manifests

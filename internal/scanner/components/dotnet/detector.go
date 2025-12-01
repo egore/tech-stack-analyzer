@@ -57,14 +57,13 @@ func (d *Detector) detectDotNetProject(file types.File, currentPath, basePath st
 	payload := types.NewPayloadWithPath(project.Name, relativeFilePath)
 
 	// Set tech to dotnet
-	tech := "dotnet"
-	payload.Tech = &tech
+	payload.AddPrimaryTech("dotnet")
 
 	// Add framework info to techs
 	if project.Framework != "" {
-		payload.AddTech(tech, "framework: "+project.Framework)
+		payload.AddTech("dotnet", "framework: "+project.Framework)
 	} else {
-		payload.AddTech(tech, "matched file: "+file.Name)
+		payload.AddTech("dotnet", "matched file: "+file.Name)
 	}
 
 	// Create dependencies list
@@ -91,14 +90,14 @@ func (d *Detector) detectDotNetProject(file types.File, currentPath, basePath st
 			break // Take first match
 		}
 
-		if childTech != "" && childTech != tech { // Only create child if different tech
+		if childTech != "" && childTech != "dotnet" { // Only create child if different tech
 			if len(reasons) == 0 {
 				reasons = []string{"matched: " + pkg.Name}
 			}
 
 			// Create child component for matched tech
 			childPayload := types.NewPayloadWithPath(pkg.Name, relativeFilePath)
-			childPayload.Tech = &childTech
+			childPayload.AddPrimaryTech(childTech)
 			childPayload.Dependencies = []types.Dependency{dep}
 
 			// Add techs and reasons to child

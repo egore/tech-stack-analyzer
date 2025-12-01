@@ -74,9 +74,11 @@ func (a *Aggregator) collectPrimaryTechs(payload *types.Payload) []string {
 
 // collectPrimaryTechsRecursive helper function
 func (a *Aggregator) collectPrimaryTechsRecursive(payload *types.Payload, techSet map[string]bool) {
-	// Add primary tech from current payload (if set)
-	if payload.Tech != nil && *payload.Tech != "" {
-		techSet[*payload.Tech] = true
+	// Add all primary techs from current payload
+	for _, tech := range payload.Tech {
+		if tech != "" {
+			techSet[tech] = true
+		}
 	}
 
 	// Recursively process children
