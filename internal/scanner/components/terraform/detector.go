@@ -134,9 +134,9 @@ func (d *Detector) detectTerraformResource(file types.File, currentPath, basePat
 		return nil
 	}
 
-	// Parse terraform resource file using parser
+	// Parse terraform resource file using parser - get full resource information
 	terraformParser := parsers.NewTerraformParser()
-	resources := terraformParser.ParseTerraformResource(string(content))
+	resources := terraformParser.ParseTerraformResources(string(content))
 
 	if len(resources) == 0 {
 		return nil
@@ -151,10 +151,20 @@ func (d *Detector) detectTerraformResource(file types.File, currentPath, basePat
 	}
 	payload := types.NewPayloadWithPath("virtual", relativeFilePath)
 
-	// Create child components for each resource type
+	// Collect all dependencies for the parent payload
+	var dependencies []types.Dependency
+
+	// Create child components for each resource
 	for _, resource := range resources {
+		// Add resource to dependencies list with full information
+		dependencies = append(dependencies, types.Dependency{
+			Type:    "terraform-resource",
+			Name:    resource.Type, // e.g., "aws_instance"
+			Example: resource.Name, // e.g., "web_server"
+		})
+
 		// Match resource type against dependency rules
-		matchedTechs := depDetector.MatchDependencies([]string{resource}, "terraform.resource")
+		matchedTechs := depDetector.MatchDependencies([]string{resource.Type}, "terraform.resource")
 
 		// Determine tech and reasons
 		var tech string
@@ -170,17 +180,17 @@ func (d *Detector) detectTerraformResource(file types.File, currentPath, basePat
 		}
 
 		if len(reasons) == 0 {
-			reasons = []string{"matched: " + resource}
+			reasons = []string{"matched: " + resource.Type}
 		}
 
-		// Create child component
-		childPayload := types.NewPayloadWithPath(resource, relativeFilePath)
+		// Create child component with resource name as the component name
+		childPayload := types.NewPayloadWithPath(resource.Type, relativeFilePath)
 		childPayload.AddPrimaryTech(tech)
 		childPayload.Dependencies = []types.Dependency{
 			{
-				Type:    "terraform.resource",
-				Name:    resource,
-				Example: "unknown",
+				Type:    "terraform-resource",
+				Name:    resource.Type,
+				Example: resource.Name,
 			},
 		}
 
@@ -192,6 +202,9 @@ func (d *Detector) detectTerraformResource(file types.File, currentPath, basePat
 		// Add child to parent payload
 		payload.AddChild(childPayload)
 	}
+
+	// Set dependencies on parent payload
+	payload.Dependencies = dependencies
 
 	return []*types.Payload{payload}
 }
