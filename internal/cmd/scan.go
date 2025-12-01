@@ -3,22 +3,20 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/petrarca/tech-stack-analyzer/internal/aggregator"
+	"github.com/petrarca/tech-stack-analyzer/internal/config"
 	"github.com/petrarca/tech-stack-analyzer/internal/scanner"
 	"github.com/petrarca/tech-stack-analyzer/internal/types"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
 var (
-	outputFile  string
-	excludeDirs string
-	aggregate   string
-	prettyPrint bool
+	settings *config.Settings
 )
 
 var scanCmd = &cobra.Command{
@@ -39,13 +37,48 @@ Examples:
 func init() {
 	rootCmd.AddCommand(scanCmd)
 
-	scanCmd.Flags().StringVarP(&outputFile, "output", "o", "", "Output file path (default: stdout)")
-	scanCmd.Flags().StringVar(&excludeDirs, "exclude-dir", "", "Comma-separated directories to exclude")
-	scanCmd.Flags().StringVar(&aggregate, "aggregate", "", "Aggregate fields: tech,techs,languages,licenses,dependencies")
-	scanCmd.Flags().BoolVar(&prettyPrint, "pretty", true, "Pretty print JSON output")
+	// Initialize settings with defaults and environment variables
+	settings = config.LoadSettings()
+
+	// Store environment variable values for flag defaults
+	outputFile := settings.OutputFile
+	aggregate := settings.Aggregate
+	prettyPrint := settings.PrettyPrint
+	logLevel := settings.LogLevel.String()
+	logFormat := settings.LogFormat
+
+	// Set up flags with defaults from environment variables
+	scanCmd.Flags().StringVarP(&settings.OutputFile, "output", "o", outputFile, "Output file path (default: stdout)")
+	scanCmd.Flags().StringVar(&settings.Aggregate, "aggregate", aggregate, "Aggregate fields: tech,techs,languages,licenses,dependencies")
+	scanCmd.Flags().BoolVar(&settings.PrettyPrint, "pretty", prettyPrint, "Pretty print JSON output")
+
+	// Exclude dirs needs special handling since it's a slice
+	excludeDirsStr := strings.Join(settings.ExcludeDirs, ",")
+	scanCmd.Flags().StringVar(&excludeDirsStr, "exclude-dir", excludeDirsStr, "Comma-separated directories to exclude")
+
+	// Logging flags - use defaults from environment variables
+	scanCmd.Flags().String("log-level", logLevel, "Log level: trace, debug, info, warn, error, fatal, panic")
+	scanCmd.Flags().String("log-format", logFormat, "Log format: text or json")
 }
 
 func runScan(cmd *cobra.Command, args []string) {
+	// Get logging flags and configure logger
+	logLevel, _ := cmd.Flags().GetString("log-level")
+	logFormat, _ := cmd.Flags().GetString("log-format")
+
+	// Update settings with flag values
+	if level, err := logrus.ParseLevel(logLevel); err == nil {
+		settings.LogLevel = level
+	}
+	settings.LogFormat = logFormat
+
+	// Configure logger
+	logger := settings.ConfigureLogger()
+	logger.WithFields(logrus.Fields{
+		"version": "1.0.0",
+		"command": "scan",
+	}).Info("Starting Tech Stack Analyzer")
+
 	// Get path from args or use current directory
 	path := "."
 	if len(args) > 0 {
@@ -56,23 +89,32 @@ func runScan(cmd *cobra.Command, args []string) {
 	path = strings.TrimSpace(path)
 	absPath, err := filepath.Abs(path)
 	if err != nil {
-		log.Fatalf("Invalid path: %v", err)
+		logger.WithError(err).Fatal("Invalid path")
 	}
 
 	// Check if path exists and determine if it's a file or directory
 	fileInfo, err := os.Stat(absPath)
 	if os.IsNotExist(err) {
-		log.Fatalf("Path does not exist: %s", absPath)
+		logger.WithField("path", absPath).Fatal("Path does not exist")
 	}
 	isFile := !fileInfo.IsDir()
 
-	// Parse exclude dirs
+	// Get the exclude-dirs flag value and parse it
+	excludeDirsStr, _ := cmd.Flags().GetString("exclude-dir")
 	var excludeList []string
-	if excludeDirs != "" {
-		excludeList = strings.Split(excludeDirs, ",")
+	if excludeDirsStr != "" {
+		excludeList = strings.Split(excludeDirsStr, ",")
 		for i, dir := range excludeList {
 			excludeList[i] = strings.TrimSpace(dir)
 		}
+	}
+
+	// Update settings with actual flag values
+	settings.ExcludeDirs = excludeList
+
+	// Validate settings
+	if err := settings.Validate(); err != nil {
+		logger.WithError(err).Fatal("Invalid settings")
 	}
 
 	// Initialize scanner
@@ -81,39 +123,51 @@ func runScan(cmd *cobra.Command, args []string) {
 		scannerPath = filepath.Dir(absPath)
 	}
 
-	s, err := scanner.NewScannerWithExcludes(scannerPath, excludeList)
+	logger.WithFields(logrus.Fields{
+		"path":         scannerPath,
+		"exclude_dirs": settings.ExcludeDirs,
+	}).Info("Initializing scanner")
+
+	s, err := scanner.NewScannerWithExcludes(scannerPath, settings.ExcludeDirs)
 	if err != nil {
-		log.Fatalf("Failed to create scanner: %v", err)
+		logger.WithError(err).Fatal("Failed to create scanner")
 	}
 
 	// Scan project or file
 	var payload interface{}
 	if isFile {
-		log.Printf("Scanning file %s...", absPath)
+		logger.WithField("file", absPath).Info("Scanning file")
 		payload, err = s.ScanFile(filepath.Base(absPath))
 	} else {
-		log.Printf("Scanning %s...", absPath)
+		logger.WithField("directory", absPath).Info("Scanning directory")
 		payload, err = s.Scan()
 	}
 
 	if err != nil {
-		log.Fatalf("Failed to scan: %v", err)
+		logger.WithError(err).Fatal("Failed to scan")
 	}
 
 	// Generate output (aggregated or full payload)
-	jsonData, err := generateOutput(payload, aggregate, prettyPrint)
+	logger.WithFields(logrus.Fields{
+		"aggregate":    settings.Aggregate,
+		"pretty_print": settings.PrettyPrint,
+	}).Debug("Generating output")
+
+	jsonData, err := generateOutput(payload, settings.Aggregate, settings.PrettyPrint)
 	if err != nil {
-		log.Fatalf("Failed to marshal JSON: %v", err)
+		logger.WithError(err).Fatal("Failed to marshal JSON")
 	}
 
 	// Write output
-	if outputFile != "" {
-		err = os.WriteFile(outputFile, jsonData, 0644)
+	if settings.OutputFile != "" {
+		logger.WithField("output_file", settings.OutputFile).Info("Writing results to file")
+		err = os.WriteFile(settings.OutputFile, jsonData, 0644)
 		if err != nil {
-			log.Fatalf("Failed to write output file: %v", err)
+			logger.WithError(err).Fatal("Failed to write output file")
 		}
-		log.Printf("Results written to %s", outputFile)
+		logger.WithField("file", settings.OutputFile).Info("Results written successfully")
 	} else {
+		logger.Debug("Outputting to stdout")
 		fmt.Println(string(jsonData))
 	}
 }

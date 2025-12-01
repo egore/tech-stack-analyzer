@@ -13,6 +13,17 @@ The Tech Stack Analyzer automatically detects technologies, frameworks, database
 - **Infrastructure** - Detects Docker, Kubernetes, Terraform, GitLab configurations
 - **DevOps Tools** - Identifies CI/CD pipelines, monitoring, and deployment tools
 
+## Key Features
+
+- **700+ Technology Rules** - Comprehensive detection across databases, frameworks, tools, cloud services
+- **Zero Dependencies** - Single binary deployment without Node.js runtime requirement
+- **Multi-Technology Components** - Detects hybrid projects with multiple primary technologies in the same directory
+- **Professional Logging** - Structured logging with multiple levels (trace/debug/info/warn/error) and JSON/text formats
+- **Flexible Configuration** - Environment variables and command-line flags with proper precedence handling
+- **Hierarchical Output** - Component-based analysis with parent-child relationships
+- **Aggregated Views** - Rollup summaries for quick technology stack overviews
+- **Fast Performance** - Optimized Go implementation with efficient file processing
+
 ## How to Use It
 
 ### Prerequisites
@@ -84,6 +95,61 @@ The analyzer uses a command-based interface powered by [Cobra](https://github.co
 ./bin/stack-analyzer info component-types
 ```
 
+### Configuration & Logging
+
+The scanner supports configuration through command-line flags and environment variables. Environment variables provide defaults that can be overridden by flags.
+
+#### Environment Variables
+
+```bash
+# Output configuration
+export STACK_ANALYZER_OUTPUT=/tmp/scan-results.json
+export STACK_ANALYZER_PRETTY=false
+
+# Scan behavior
+export STACK_ANALYZER_EXCLUDE_DIRS=vendor,node_modules,build
+export STACK_ANALYZER_AGGREGATE=tech,techs,languages
+
+# Logging
+export STACK_ANALYZER_LOG_LEVEL=debug      # trace, debug, info, warn, error, fatal, panic
+export STACK_ANALYZER_LOG_FORMAT=json      # text or json
+```
+
+#### Logging
+
+The scanner provides professional logging with multiple levels and formats:
+
+```bash
+# Debug logging with structured fields
+./bin/stack-analyzer scan /path --log-level debug
+
+# JSON logging for automated processing
+./bin/stack-analyzer scan /path --log-format json
+
+# Trace level for maximum detail
+./bin/stack-analyzer scan /path --log-level trace
+
+# Environment variables for logging
+STACK_ANALYZER_LOG_LEVEL=debug STACK_ANALYZER_LOG_FORMAT=json \
+  ./bin/stack-analyzer scan /path
+```
+
+**Log Output Examples:**
+
+Text format:
+```
+INFO[2025-12-01 11:24:14] Starting Tech Stack Analyzer command=scan version=1.0.0
+INFO[2025-12-01 11:24:14] Initializing scanner exclude_dirs="[]" max_depth=-1 path=/path
+DEBU[2025-12-01 11:24:14] Generating output aggregate=tech pretty_print=true
+```
+
+JSON format:
+```json
+{"command":"scan","level":"info","msg":"Starting Tech Stack Analyzer","time":"2025-12-01 11:24:16","version":"1.0.0"}
+{"path":"/path","level":"info","msg":"Initializing scanner","time":"2025-12-01 11:24:16"}
+{"aggregate":"tech","level":"debug","msg":"Generating output","pretty_print":true,"time":"2025-12-01 11:24:16"}
+```
+
 ### Commands
 
 #### `scan` - Analyze a project or file
@@ -100,12 +166,22 @@ stack-analyzer scan [path] [flags]
 - `--aggregate` - Aggregate fields: `tech,techs,languages,licenses,dependencies`
 - `--exclude-dir` - Comma-separated directories to exclude
 - `--pretty` - Pretty print JSON output (default: true)
+- `--log-level` - Log level: trace, debug, info, warn, error, fatal, panic (default: info)
+- `--log-format` - Log format: text or json (default: text)
 
 **Examples:**
 ```bash
+# Basic usage
 stack-analyzer scan .
 stack-analyzer scan /path/to/project --output results.json
 stack-analyzer scan --aggregate techs,languages,dependencies /path
+
+# Advanced configuration
+stack-analyzer scan /path --exclude-dir vendor,node_modules
+
+# Logging examples
+stack-analyzer scan /path --log-level debug --log-format json
+stack-analyzer scan /path --log-level trace
 ```
 
 #### `info` - Display information about rules and types
