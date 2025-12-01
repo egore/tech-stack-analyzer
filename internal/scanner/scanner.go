@@ -35,6 +35,7 @@ type Scanner struct {
 	jsonDetector    *JSONSchemaDetector
 	dotenvDetector  *parsers.DotenvDetector
 	licenseDetector *LicenseDetector
+	contentMatcher  *matchers.ContentMatcherRegistry
 	excludeDirs     []string
 }
 
@@ -68,6 +69,12 @@ func NewScanner(path string) (*Scanner, error) {
 	matchers.BuildFileMatchersFromRules(rules)
 	matchers.BuildExtensionMatchersFromRules(rules)
 
+	// Initialize content matcher
+	contentMatcher := matchers.NewContentMatcherRegistry()
+	if err := contentMatcher.BuildFromRules(rules); err != nil {
+		return nil, fmt.Errorf("failed to build content matchers: %w", err)
+	}
+
 	return &Scanner{
 		provider:        provider,
 		rules:           rules,
@@ -76,6 +83,7 @@ func NewScanner(path string) (*Scanner, error) {
 		jsonDetector:    jsonDetector,
 		dotenvDetector:  dotenvDetector,
 		licenseDetector: licenseDetector,
+		contentMatcher:  contentMatcher,
 		excludeDirs:     nil,
 	}, nil
 }
@@ -110,6 +118,12 @@ func NewScannerWithExcludes(path string, excludeDirs []string) (*Scanner, error)
 	matchers.BuildFileMatchersFromRules(rules)
 	matchers.BuildExtensionMatchersFromRules(rules)
 
+	// Initialize content matcher
+	contentMatcher := matchers.NewContentMatcherRegistry()
+	if err := contentMatcher.BuildFromRules(rules); err != nil {
+		return nil, fmt.Errorf("failed to build content matchers: %w", err)
+	}
+
 	return &Scanner{
 		provider:        provider,
 		rules:           rules,
@@ -118,6 +132,7 @@ func NewScannerWithExcludes(path string, excludeDirs []string) (*Scanner, error)
 		jsonDetector:    jsonDetector,
 		dotenvDetector:  dotenvDetector,
 		licenseDetector: licenseDetector,
+		contentMatcher:  contentMatcher,
 		excludeDirs:     excludeDirs,
 	}, nil
 }
@@ -374,11 +389,110 @@ func (s *Scanner) detectByFilesAndExtensions(ctx *types.Payload, files []types.F
 	fileMatches := matchers.MatchFiles(files, currentPath, s.provider.GetBasePath())
 	s.processTechMatches(ctx, fileMatches, matchedTechs, currentPath, true)
 
-	// Extension-based detection
+	// Extension-based detection (only for rules without content requirements)
 	extensionMatches := matchers.MatchExtensions(files)
 	s.processTechMatches(ctx, extensionMatches, matchedTechs, currentPath, false)
 
+	// Content-based detection (for rules WITH content requirements)
+	// These rules require BOTH extension AND content to match
+	s.detectByContent(ctx, files, currentPath, matchedTechs)
+
 	return matchedTechs
+}
+
+func (s *Scanner) detectByContent(ctx *types.Payload, files []types.File, currentPath string, matchedTechs map[string]bool) {
+	// Track which techs need content validation (have content rules)
+	techsNeedingValidation := s.getTechsWithContentRules()
+
+	// Track which techs passed content validation
+	validatedTechs := make(map[string]bool)
+
+	for _, file := range files {
+		// Skip if not a regular file
+		if file.Type != "file" {
+			continue
+		}
+
+		// Extract extension from filename
+		ext := filepath.Ext(file.Name)
+		if ext == "" {
+			continue
+		}
+
+		// Check if there are content matchers for this extension
+		if !s.contentMatcher.HasContentMatchers(ext) {
+			continue
+		}
+
+		// Read file content
+		filePath := filepath.Join(currentPath, file.Name)
+		content, err := s.provider.ReadFile(filePath)
+		if err != nil {
+			continue
+		}
+
+		// Match content patterns
+		contentMatches := s.contentMatcher.MatchContent(ext, string(content))
+
+		// Mark techs that passed content validation
+		for tech, reasons := range contentMatches {
+			validatedTechs[tech] = true
+
+			// Add content matching reasons
+			for _, reason := range reasons {
+				ctx.AddTech(tech, reason)
+			}
+
+			// Create implicit component if this is a new tech detection
+			if !matchedTechs[tech] {
+				matchedTechs[tech] = true
+				s.findImplicitComponentByTech(ctx, tech, currentPath, false)
+			}
+		}
+	}
+
+	// Remove techs that were matched by extension but failed content validation
+	for tech := range techsNeedingValidation {
+		if matchedTechs[tech] && !validatedTechs[tech] {
+			// Tech was matched by extension but failed content validation - remove it
+			s.removeTechFromPayload(ctx, tech)
+			delete(matchedTechs, tech)
+		}
+	}
+}
+
+func (s *Scanner) getTechsWithContentRules() map[string]bool {
+	techsWithContent := make(map[string]bool)
+	for _, rule := range s.rules {
+		if len(rule.Content) > 0 {
+			techsWithContent[rule.Tech] = true
+		}
+	}
+	return techsWithContent
+}
+
+func (s *Scanner) removeTechFromPayload(payload *types.Payload, tech string) {
+	// Remove from techs array
+	newTechs := make([]string, 0, len(payload.Techs))
+	for _, t := range payload.Techs {
+		if t != tech {
+			newTechs = append(newTechs, t)
+		}
+	}
+	payload.Techs = newTechs
+
+	// Remove from primary tech array
+	newPrimaryTech := make([]string, 0, len(payload.Tech))
+	for _, t := range payload.Tech {
+		if t != tech {
+			newPrimaryTech = append(newPrimaryTech, t)
+		}
+	}
+	payload.Tech = newPrimaryTech
+
+	// Remove reasons related to this tech (keep only non-tech-specific reasons)
+	// Note: We can't easily identify which reasons belong to which tech,
+	// so we keep all reasons. This is acceptable since the tech itself is removed.
 }
 
 func (s *Scanner) processTechMatches(ctx *types.Payload, matches map[string][]string, matchedTechs map[string]bool, currentPath string, addEdges bool) {
@@ -431,9 +545,9 @@ func (s *Scanner) findImplicitComponentByTech(payload *types.Payload, tech strin
 // findImplicitComponent creates a child component for technologies that are not in the notAComponent set
 // This replicates the TypeScript findImplicitComponent logic
 func (s *Scanner) findImplicitComponent(payload *types.Payload, rule types.Rule, currentPath string, addEdges bool) {
-	// Check if this tech type should create a component
-	// See component_types.go for the classification logic
-	if IsNotAComponent(rule.Type) {
+	// Check if this rule should create a component
+	// Uses is_component field if set, otherwise uses type-based logic
+	if !ShouldCreateComponent(rule) {
 		return
 	}
 

@@ -16,6 +16,8 @@ The Tech Stack Analyzer automatically detects technologies, frameworks, database
 ## Key Features
 
 - **700+ Technology Rules** - Comprehensive detection across databases, frameworks, tools, cloud services
+- **Content-Based Detection** - Validates technologies through regex pattern matching in file contents for precise identification
+- **Configurable Components** - Override default component classification per rule with `is_component` field
 - **Zero Dependencies** - Single binary deployment without Node.js runtime requirement
 - **Tech-Specific Metadata** - Structured properties for Docker (base images, ports) and Terraform (providers, resource counts)
 - **Multi-Technology Components** - Detects hybrid projects with multiple primary technologies in the same directory
@@ -277,6 +279,67 @@ The scanner distinguishes between **architectural components** and **tools/libra
 - Infrastructure as Code: `iac`
 
 This classification is defined in `internal/scanner/component_types.go` and determines whether a detected technology represents an architectural decision (component) or an implementation detail (tool/library).
+
+### Content-Based Detection
+
+In addition to file names and extensions, the scanner can validate technology detection through **content pattern matching**. This enables precise identification of libraries and frameworks that share file extensions.
+
+#### How It Works
+
+1. **Extension Pre-filtering**: Content matching only runs on files with matching extensions
+2. **Pattern Validation**: If a rule has `content` patterns, ALL must be satisfied:
+   - Extension matches (pre-filter)
+   - At least one content pattern matches (validation)
+3. **First Match Wins**: Stops after the first pattern matches per technology
+4. **Efficient**: Only reads files when necessary, skips files without matching extensions
+
+#### Rule Example
+
+```yaml
+tech: mfc
+name: Microsoft Foundation Class Library
+type: ui_framework
+extensions: [.cpp, .h, .hpp]
+content:
+  - pattern: '#include\s+<afx'
+  - pattern: 'class\s+\w+\s*:\s*public\s+C(Wnd|FrameWnd|CDialog|...)'
+  - pattern: '(BEGIN_MESSAGE_MAP|END_MESSAGE_MAP|DECLARE_MESSAGE_MAP)'
+```
+
+**Behavior:**
+- `.cpp` files are checked (extension matches)
+- If `#include <afx` is found → MFC detected (first pattern matched, validation passed)
+- If no patterns match → MFC not detected (validation failed, tech removed)
+- Rules without `content` → detected by extension alone (existing behavior)
+
+#### Use Cases
+
+- **Distinguish similar technologies**: C++ STL vs plain C in `.h` files
+- **Library-specific detection**: MFC, Qt, Boost through include patterns
+- **Framework patterns**: React hooks, Vue composition API through code signatures
+- **Prevent false positives**: Only detect when actual usage is confirmed
+
+### Component Override
+
+Rules can override the default component classification using the `is_component` field:
+
+```yaml
+tech: mfc
+type: ui_framework
+is_component: true  # Override: create component despite ui_framework default
+```
+
+**Values:**
+- `true` - Always create component (override default)
+- `false` - Never create component (override default)
+- Not specified - Use type-based logic (backward compatible)
+
+**Example Use Cases:**
+- **Promote to component**: `ui_framework` with `is_component: true` creates a component
+- **Demote from component**: `db` with `is_component: false` doesn't create a component
+- **Backward compatible**: Existing rules without the field work unchanged
+
+This allows fine-grained control over which technologies appear as architectural components vs implementation details, independent of their type classification.
 
 ### Output Structure
 

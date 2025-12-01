@@ -10,10 +10,12 @@ type Rule struct {
 	Tech         string        `yaml:"tech" json:"tech"`
 	Name         string        `yaml:"name" json:"name"`
 	Type         string        `yaml:"type" json:"type"`
+	IsComponent  *bool         `yaml:"is_component,omitempty" json:"is_component,omitempty"` // nil = auto (use type-based logic)
 	DotEnv       []string      `yaml:"dotenv,omitempty" json:"dotenv,omitempty"`
 	Dependencies []Dependency  `yaml:"dependencies,omitempty" json:"dependencies,omitempty"`
 	Files        []string      `yaml:"files,omitempty" json:"files,omitempty"`
 	Extensions   []string      `yaml:"extensions,omitempty" json:"extensions,omitempty"`
+	Content      []ContentRule `yaml:"content,omitempty" json:"content,omitempty"`
 	Detect       *DetectConfig `yaml:"detect,omitempty" json:"detect,omitempty"`
 }
 
@@ -35,6 +37,11 @@ type CompiledDependency struct {
 	Tech  string
 	Name  string
 	Type  string
+}
+
+// ContentRule represents a content-based detection pattern
+type ContentRule struct {
+	Pattern string `yaml:"pattern" json:"pattern"` // Regex pattern for content matching
 }
 
 // DetectConfig represents custom detection configuration

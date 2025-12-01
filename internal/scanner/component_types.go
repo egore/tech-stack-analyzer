@@ -1,8 +1,22 @@
 package scanner
 
+import "github.com/petrarca/tech-stack-analyzer/internal/types"
+
 // ComponentTypes defines which technology types should create components vs just be listed as dependencies
 // This classification determines whether a detected technology appears in the 'tech' field (primary technologies)
 // or only in the 'techs' array (all technologies including tools/libraries)
+
+// ShouldCreateComponent determines if a rule should create a component
+// Returns true if component should be created, false otherwise
+func ShouldCreateComponent(rule types.Rule) bool {
+	// If is_component is explicitly set, use that value
+	if rule.IsComponent != nil {
+		return *rule.IsComponent
+	}
+
+	// Otherwise, use type-based logic (existing behavior)
+	return !IsNotAComponent(rule.Type)
+}
 
 // IsNotAComponent returns true if the given type should NOT create a separate component
 // These types represent tools, libraries, or utilities rather than architectural components
