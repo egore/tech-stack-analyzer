@@ -45,6 +45,7 @@ func init() {
 	outputFile := settings.OutputFile
 	aggregate := settings.Aggregate
 	prettyPrint := settings.PrettyPrint
+	verbose := settings.Verbose
 	logLevel := settings.LogLevel.String()
 	logFormat := settings.LogFormat
 
@@ -52,6 +53,7 @@ func init() {
 	scanCmd.Flags().StringVarP(&settings.OutputFile, "output", "o", outputFile, "Output file path (default: stdout)")
 	scanCmd.Flags().StringVar(&settings.Aggregate, "aggregate", aggregate, "Aggregate fields: tech,techs,languages,licenses,dependencies")
 	scanCmd.Flags().BoolVar(&settings.PrettyPrint, "pretty", prettyPrint, "Pretty print JSON output")
+	scanCmd.Flags().BoolVarP(&settings.Verbose, "verbose", "v", verbose, "Show detailed progress information")
 
 	// Exclude patterns - support multiple flags or comma-separated values
 	scanCmd.Flags().StringSliceVar(&settings.ExcludeDirs, "exclude", settings.ExcludeDirs, "Patterns to exclude (supports glob patterns, can be specified multiple times)")
@@ -124,9 +126,10 @@ func runScan(cmd *cobra.Command, args []string) {
 	logger.WithFields(logrus.Fields{
 		"path":         scannerPath,
 		"exclude_dirs": settings.ExcludeDirs,
+		"verbose":      settings.Verbose,
 	}).Info("Initializing scanner")
 
-	s, err := scanner.NewScannerWithExcludes(scannerPath, settings.ExcludeDirs)
+	s, err := scanner.NewScannerWithExcludes(scannerPath, settings.ExcludeDirs, settings.Verbose)
 	if err != nil {
 		logger.WithError(err).Fatal("Failed to create scanner")
 	}

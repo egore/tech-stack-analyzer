@@ -117,6 +117,7 @@ export STACK_ANALYZER_PRETTY=false
 # Scan behavior
 export STACK_ANALYZER_EXCLUDE_DIRS=vendor,node_modules,build
 export STACK_ANALYZER_AGGREGATE=tech,techs,languages
+export STACK_ANALYZER_VERBOSE=true         # Show detailed progress information
 
 # Logging
 export STACK_ANALYZER_LOG_LEVEL=debug      # trace, debug, info, warn, error, fatal, panic
@@ -158,6 +159,42 @@ JSON format:
 {"aggregate":"tech","level":"debug","msg":"Generating output","pretty_print":true,"time":"2025-12-01 11:24:16"}
 ```
 
+#### Verbose Mode
+
+Show detailed progress information during scanning with the `--verbose` or `-v` flag:
+
+```bash
+# Enable verbose mode
+./bin/stack-analyzer scan --verbose /path/to/project
+./bin/stack-analyzer scan -v /path/to/project
+
+# Combine with other flags
+./bin/stack-analyzer scan -v --exclude node_modules --output results.json /path
+
+# Environment variable
+STACK_ANALYZER_VERBOSE=true ./bin/stack-analyzer scan /path
+```
+
+**Verbose Output Example:**
+```
+[SCAN] Starting: /path/to/project
+[DIR]  Entering: /path/to/project
+[COMP] Detected: backend (nodejs) at /path/to/project/backend
+[DIR]  Entering: /path/to/project/backend/src
+[SKIP] Excluding: /path/to/project/node_modules (excluded)
+[COMP] Detected: frontend (nodejs) at /path/to/project/frontend
+[DIR]  Entering: /path/to/project/frontend/src
+[SCAN] Completed: 3247 files, 412 directories in 2.3s
+```
+
+**Event Types:**
+- `[SCAN]` - Scan start and completion with statistics
+- `[DIR]` - Directory traversal
+- `[COMP]` - Component detection (projects, services)
+- `[SKIP]` - Excluded directories (node_modules, .git, etc.)
+
+Verbose output is sent to **stderr**, keeping stdout clean for JSON output redirection.
+
 ### Commands
 
 #### `scan` - Analyze a project or file
@@ -174,6 +211,7 @@ stack-analyzer scan [path] [flags]
 - `--aggregate` - Aggregate fields: `tech,techs,languages,licenses,dependencies`
 - `--exclude` - Patterns to exclude (supports glob patterns like `**/__tests__/**`, `*.log`; can be specified multiple times)
 - `--pretty` - Pretty print JSON output (default: true)
+- `--verbose, -v` - Show detailed progress information (default: false)
 - `--log-level` - Log level: trace, debug, info, warn, error, fatal, panic (default: info)
 - `--log-format` - Log format: text or json (default: text)
 
@@ -187,6 +225,10 @@ stack-analyzer scan --aggregate techs,languages,dependencies /path
 # Exclude patterns (glob support)
 stack-analyzer scan /path --exclude vendor --exclude node_modules
 stack-analyzer scan /path --exclude "**/__tests__/**" --exclude "*.log"
+
+# Verbose mode
+stack-analyzer scan -v /path/to/project
+stack-analyzer scan --verbose --output results.json /path
 
 # Logging examples
 stack-analyzer scan /path --log-level debug --log-format json
@@ -720,13 +762,18 @@ tech-stack-analyzer/
 │   ├── scanner/           # CLI application entry point
 │   └── convert-rules/     # Rules conversion utilities
 ├── internal/
+│   ├── aggregator/        # Result aggregation logic
+│   ├── cmd/               # CLI command implementations
+│   ├── config/            # Configuration management (settings, types, ignore patterns)
+│   ├── metadata/          # Scan metadata (git info, timestamps, file counts)
+│   ├── progress/          # Verbose mode progress reporting
 │   ├── provider/          # File system abstraction layer
 │   ├── rules/             # Rule loading and validation
-│   │   └── core/          # Embedded technology rules (700+ rules in 32 categories)
+│   │   └── core/          # Embedded technology rules (700+ rules in 30+ categories)
 │   ├── scanner/           # Core scanning engine
-│   │   ├── components/    # Component detectors
+│   │   ├── components/    # Component detectors (nodejs, python, java, docker, etc.)
 │   │   ├── matchers/      # File and extension matchers
-│   │   └── parsers/       # Specialized file parsers
+│   │   └── parsers/       # Specialized file parsers (JSON, TOML, XML, HCL)
 │   └── types/             # Core data structures
 ├── docs/                  # Documentation
 └── Taskfile.yml           # Task automation
@@ -738,6 +785,7 @@ tech-stack-analyzer/
 - **Main orchestrator** that coordinates all detection phases
 - **Sequential processing** with efficient recursive traversal
 - **Component detection** through modular detector system
+- **Progress reporting** for verbose mode
 
 #### 2. Component Detectors (`internal/scanner/components/`)
 Each detector handles specific project types:
@@ -747,25 +795,44 @@ Each detector handles specific project types:
 - **Java/Kotlin** - Maven/Gradle detection
 - **Docker** - docker-compose.yml services
 - **Terraform** - HCL file parsing
-- **And more...**
+- **Ruby** - Gemfile detection
+- **Rust** - Cargo.toml detection
+- **PHP** - composer.json detection
+- **Deno** - deno.json detection
+- **Go** - go.mod detection
 
 #### 3. Rule System (`internal/rules/`)
 - **700+ technology rules** covering enterprise stacks
 - **YAML-based DSL** for easy extension
-- **Multi-language support** (npm, pip, cargo, etc.)
+- **Multi-language support** (npm, pip, cargo, composer, nuget, maven, etc.)
+- **Content-based validation** with regex pattern matching
 
-#### 4. Language Detection (`github.com/go-enry/go-enry/v2`)
+#### 4. Configuration System (`internal/config/`)
+- **Settings management** with environment variable support
+- **Type definitions** for component classification
+- **Ignore patterns** for directory exclusion
+- **Validation** and defaults
+
+#### 5. Progress Reporting (`internal/progress/`)
+- **Event-based architecture** for verbose mode
+- **Pluggable handlers** (SimpleHandler, TreeHandler)
+- **Stateless design** - scanner reports events, handlers display them
+- **stderr output** to keep stdout clean
+
+#### 6. Language Detection (`github.com/go-enry/go-enry/v2`)
 - **GitHub Linguist integration** for comprehensive language detection
 - **1500+ languages** supported through open-source language database
 - **Detection** by file extension and filename patterns
 - **Handles special files** like Makefile, Dockerfile, etc.
 
-#### 5. Parser System (`internal/scanner/parsers/`)
+#### 7. Parser System (`internal/scanner/parsers/`)
 Specialized parsers for complex file formats:
 - **HCL parser** for Terraform files
 - **XML parser** for .csproj files
 - **JSON parser** for package.json files
-- **TOML parser** for pyproject.toml files
+- **TOML parser** for pyproject.toml and Cargo.toml files
+- **YAML parser** for docker-compose.yml files
+- **Dotenv parser** for .env files
 
 ### Detection Pipeline
 

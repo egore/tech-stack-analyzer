@@ -39,7 +39,7 @@ func TestNewScannerWithExcludes(t *testing.T) {
 	excludeDirs := []string{"vendor", "node_modules"}
 
 	// Test creating scanner with excludes
-	scanner, err := NewScannerWithExcludes(tempDir, excludeDirs)
+	scanner, err := NewScannerWithExcludes(tempDir, excludeDirs, false)
 	require.NoError(t, err)
 	require.NotNil(t, scanner)
 
@@ -195,7 +195,7 @@ func TestScanner_Scan_WithExcludes(t *testing.T) {
 	require.NoError(t, err)
 
 	// Test that scanner can be created with excludes
-	scannerWithExcludes, err := NewScannerWithExcludes(tempDir, []string{"vendor"})
+	scannerWithExcludes, err := NewScannerWithExcludes(tempDir, []string{"vendor"}, false)
 	require.NoError(t, err)
 	require.NotNil(t, scannerWithExcludes)
 

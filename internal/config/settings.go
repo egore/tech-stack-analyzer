@@ -16,6 +16,7 @@ type Settings struct {
 	// Scan behavior
 	ExcludeDirs []string
 	Aggregate   string
+	Verbose     bool
 
 	// Logging
 	LogLevel  logrus.Level
@@ -29,6 +30,7 @@ func DefaultSettings() *Settings {
 		PrettyPrint: true,
 		ExcludeDirs: []string{},
 		Aggregate:   "",
+		Verbose:     false,
 		LogLevel:    logrus.InfoLevel,
 		LogFormat:   "text",
 	}
@@ -67,6 +69,10 @@ func LoadSettings() *Settings {
 
 	if logFormat := os.Getenv("STACK_ANALYZER_LOG_FORMAT"); logFormat != "" {
 		settings.LogFormat = logFormat
+	}
+
+	if verbose := os.Getenv("STACK_ANALYZER_VERBOSE"); verbose != "" {
+		settings.Verbose = strings.ToLower(verbose) == "true"
 	}
 
 	return settings

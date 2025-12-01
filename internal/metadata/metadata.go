@@ -54,7 +54,7 @@ func (m *ScanMetadata) SetFileCounts(fileCount, dirCount int) {
 
 // SetProperties sets custom properties from configuration
 func (m *ScanMetadata) SetProperties(properties map[string]interface{}) {
-	if properties != nil && len(properties) > 0 {
+	if len(properties) > 0 {
 		m.Properties = properties
 	}
 }

@@ -2,6 +2,7 @@ package scanner
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -9,6 +10,7 @@ import (
 	"github.com/bmatcuk/doublestar/v4"
 	"github.com/petrarca/tech-stack-analyzer/internal/config"
 	"github.com/petrarca/tech-stack-analyzer/internal/metadata"
+	"github.com/petrarca/tech-stack-analyzer/internal/progress"
 	"github.com/petrarca/tech-stack-analyzer/internal/provider"
 	"github.com/petrarca/tech-stack-analyzer/internal/rules"
 	"github.com/petrarca/tech-stack-analyzer/internal/scanner/components"
@@ -41,6 +43,7 @@ type Scanner struct {
 	licenseDetector *LicenseDetector
 	contentMatcher  *matchers.ContentMatcherRegistry
 	excludeDirs     []string
+	progress        *progress.Progress
 }
 
 // defaultIgnorePatterns holds the loaded ignore patterns from ignore.yaml
@@ -108,11 +111,12 @@ func NewScanner(path string) (*Scanner, error) {
 		licenseDetector: licenseDetector,
 		contentMatcher:  contentMatcher,
 		excludeDirs:     nil,
+		progress:        progress.New(false, nil),
 	}, nil
 }
 
 // NewScannerWithExcludes creates a new scanner with directory exclusions
-func NewScannerWithExcludes(path string, excludeDirs []string) (*Scanner, error) {
+func NewScannerWithExcludes(path string, excludeDirs []string, verbose bool) (*Scanner, error) {
 	// Create provider for the target path (like TypeScript's FSProvider)
 	provider := provider.NewFSProvider(path)
 
@@ -163,6 +167,13 @@ func NewScannerWithExcludes(path string, excludeDirs []string) (*Scanner, error)
 		return nil, fmt.Errorf("failed to build content matchers: %w", err)
 	}
 
+	// Create progress reporter with appropriate handler
+	var handler progress.Handler
+	if verbose {
+		handler = progress.NewSimpleHandler(os.Stderr)
+	}
+	prog := progress.New(verbose, handler)
+
 	return &Scanner{
 		provider:        provider,
 		rules:           loadedRules,
@@ -173,12 +184,16 @@ func NewScannerWithExcludes(path string, excludeDirs []string) (*Scanner, error)
 		licenseDetector: licenseDetector,
 		contentMatcher:  contentMatcher,
 		excludeDirs:     excludeDirs,
+		progress:        prog,
 	}, nil
 }
 
 // Scan performs analysis following the original TypeScript pattern
 func (s *Scanner) Scan() (*types.Payload, error) {
 	basePath := s.provider.GetBasePath()
+
+	// Report scan start
+	s.progress.ScanStart(basePath, s.excludeDirs)
 
 	// Load configuration from .stack-analyzer.yml if it exists
 	cfg, err := config.LoadConfig(basePath)
@@ -216,6 +231,9 @@ func (s *Scanner) Scan() (*types.Payload, error) {
 
 	// Attach metadata to root payload
 	payload.Metadata = scanMeta
+
+	// Report scan complete
+	s.progress.ScanComplete(fileCount, dirCount, time.Since(startTime))
 
 	return payload, nil
 }
@@ -266,6 +284,10 @@ func (s *Scanner) ScanFile(fileName string) (*types.Payload, error) {
 
 // recurse follows the exact TypeScript implementation pattern
 func (s *Scanner) recurse(payload *types.Payload, filePath string) error {
+	// Report entering directory
+	s.progress.EnterDirectory(filePath)
+	defer s.progress.LeaveDirectory(filePath)
+
 	// Get files in current directory (like TypeScript's provider.listDir)
 	files, err := s.provider.ListDir(filePath)
 	if err != nil {
@@ -296,6 +318,7 @@ func (s *Scanner) recurse(payload *types.Payload, filePath string) error {
 
 		// Skip ignored directories (like TypeScript's IGNORED_DIVE_PATHS)
 		if s.shouldIgnoreDirectory(file.Name) {
+			s.progress.Skipped(filepath.Join(filePath, file.Name), "excluded")
 			continue
 		}
 
@@ -433,6 +456,12 @@ func (s *Scanner) mergeVirtualPayload(target, virtual *types.Payload, currentPat
 
 func (s *Scanner) addNamedComponent(payload, component *types.Payload, currentPath string) *types.Payload {
 	payload.AddChild(component)
+
+	// Report component detection
+	if len(component.Tech) > 0 {
+		s.progress.ComponentDetected(component.Name, component.Tech[0], currentPath)
+	}
+
 	for _, tech := range component.Techs {
 		s.findImplicitComponentByTech(component, tech, currentPath, true)
 	}
