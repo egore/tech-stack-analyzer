@@ -18,7 +18,7 @@ The Tech Stack Analyzer automatically detects technologies, frameworks, database
 
 **Detection Engine:** The analyzer uses 700+ technology rules that can detect technologies through:
 - File names and extensions (`.py`, `package.json`, `Dockerfile`)
-- Package dependencies across multiple ecosystems
+- Package dependencies across multiple ecosystems  
 - Environment variables and configuration files
 - Content patterns for precise identification
 - Custom detection logic for complex file formats
@@ -29,7 +29,8 @@ The Tech Stack Analyzer automatically detects technologies, frameworks, database
 - **Kubernetes** - Deployments, services, configurations
 - **Package Files** - Exact versions, dependency relationships
 
-This structured metadata is exposed in the `properties` field of the output, enabling security scanning, license compliance, and infrastructure analysis.
+This structured metadata is exposed in the `properties` field of the output, 
+enabling security scanning, license compliance, and infrastructure analysis.
 
 See [How to Extend It](#how-to-extend-it) for complete rule documentation.
 
