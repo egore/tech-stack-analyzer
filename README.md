@@ -16,6 +16,23 @@ The Tech Stack Analyzer automatically detects technologies, frameworks, database
 - **Infrastructure** - Detects Docker, Kubernetes, Terraform, GitLab configurations
 - **DevOps Tools** - Identifies CI/CD pipelines, monitoring, and deployment tools
 
+**Detection Engine:** The analyzer uses 700+ technology rules that can detect technologies through:
+- File names and extensions (`.py`, `package.json`, `Dockerfile`)
+- Package dependencies across multiple ecosystems
+- Environment variables and configuration files
+- Content patterns for precise identification
+- Custom detection logic for complex file formats
+
+**Advanced Analysis:** For key technologies, the analyzer extracts detailed metadata:
+- **Docker** - Base images, exposed ports, multi-stage builds, stages
+- **Terraform** - Providers, resource counts by category, total resources
+- **Kubernetes** - Deployments, services, configurations
+- **Package Files** - Exact versions, dependency relationships
+
+This structured metadata is exposed in the `properties` field of the output, enabling security scanning, license compliance, and infrastructure analysis.
+
+See [How to Extend It](#how-to-extend-it) for complete rule documentation.
+
 ## Key Features
 
 - **700+ Technology Rules** - Comprehensive detection across databases, frameworks, tools, cloud services
@@ -102,6 +119,119 @@ The analyzer uses a command-based interface powered by [Cobra](https://github.co
 # List component types
 ./bin/stack-analyzer info component-types
 ```
+
+### Output Example
+
+The scanner outputs a hierarchical JSON structure showing detected technologies, components, and their relationships:
+
+**Regular Output:**
+```json
+{
+  "id": "root",
+  "name": "my-project",
+  "path": "/",
+  "tech": ["nodejs"],
+  "techs": ["nodejs", "react", "postgresql", "docker"],
+  "languages": {"JavaScript": 145, "TypeScript": 89},
+  "dependencies": [
+    ["npm", "react", "^18.2.0"],
+    ["npm", "express", "^4.18.2"]
+  ],
+  "childs": [
+    {
+      "id": "backend",
+      "name": "backend",
+      "path": "/backend",
+      "tech": ["nodejs"],
+      "techs": ["nodejs", "express", "postgresql"]
+    }
+  ],
+  "metadata": {
+    "timestamp": "2025-12-01T14:45:35Z",
+    "duration_ms": 1173,
+    "file_count": 523
+  }
+}
+```
+
+**Aggregated Output** (`--aggregate techs,languages,dependencies`):
+```json
+{
+  "techs": ["nodejs", "react", "postgresql", "docker", "express", "vite"],
+  "languages": {"JavaScript": 145, "TypeScript": 89, "CSS": 12},
+  "dependencies": [
+    ["npm", "react", "^18.2.0"],
+    ["npm", "express", "^4.18.2"],
+    ["npm", "vite", "^5.0.0"]
+  ]
+}
+```
+
+**Key Fields:**
+- `tech` - Primary technologies (creates components)
+- `techs` - All detected technologies (components + tools/libraries)
+- `childs` - Nested components (sub-projects, services)
+- `dependencies` - Package dependencies with versions
+- `metadata` - Scan execution info (timestamp, duration, git info)
+
+See [Output Structure](#output-structure) for complete field descriptions.
+
+### Project Configuration
+
+#### `.stack-analyzer.yml` Configuration File
+
+Place a `.stack-analyzer.yml` file in your project root to customize scan behavior, add metadata, and document external dependencies.
+
+```yaml
+# .stack-analyzer.yml - Tech Stack Analyzer Configuration
+
+# Custom properties added to metadata.properties in scan output
+properties:
+  product: "My Product Name"
+  team: "Platform Engineering"
+  environment: "production"
+  owner: "engineering@company.com"
+
+# Files and directories to exclude from scanning
+# Supports glob patterns (**, *, ?)
+exclude:
+  - "node_modules"
+  - "vendor"
+  - "*.log"
+  - "**/__tests__/**"
+  - "**/*.test.js"
+
+# Technologies to add to scan results (even if not auto-detected)
+techs:
+  - tech: "aws"
+    reason: "Deployed on AWS ECS"
+  - tech: "datadog"
+    reason: "Monitoring via Datadog"
+```
+
+**Configuration Options:**
+
+- **`properties`** - Custom metadata added to `metadata.properties` in output
+  - Document product context, ownership, deployment information
+  - Any key-value pairs relevant to your project
+  
+- **`exclude`** - Patterns to exclude from scanning
+  - Supports glob patterns: `**`, `*`, `?`
+  - Matches files and directories
+  - Merged with CLI `--exclude` flags
+  
+- **`techs`** - Technologies to force-add to scan results
+  - Useful for external dependencies (AWS, SaaS services)
+  - Each tech has optional `reason` field
+  - Added to root payload's `techs` array
+
+**Benefits:**
+- **Version controlled** - Configuration lives with code
+- **Team-shared** - Everyone uses same exclusions and metadata
+- **Documented** - External dependencies explicitly listed
+- **Flexible** - Custom metadata for any use case
+
+See `.stack-analyzer.yml.example` for a complete configuration template.
 
 ### Configuration & Logging
 
@@ -267,23 +397,6 @@ Displays the complete rule definition for a given technology.
 - `--help, -h` - Help for any command
 - `--version, -v` - Show version information
 
-### Detection Approach
-
-The scanner uses a **two-tier detection system**:
-
-**1. Universal Technology Detection** - Works with all technologies through pattern matching:
-- Comprehensive technology rules covering databases, frameworks, tools, cloud services
-- Package manager dependencies (npm, pip, cargo, composer, nuget, maven)
-- Configuration files, environment variables, and file patterns
-- Docker image references and file extensions
-
-**2. Specialized Component Detectors** - Deep analysis for major stacks (Python, Node.js, Java/Kotlin, .NET, Docker, Terraform, Ruby, Rust, PHP, Deno, Go):
-- Exact package versions and dependency relationships
-- Configuration analysis and project structure
-- Sub-projects, modules, and service identification
-- Dependency graph construction
-
-This ensures broad coverage while providing detailed insights for common technology stacks.
 
 ### Component Classification
 
@@ -391,85 +504,6 @@ is_component: true  # Override: create component anyway
 - **New types**: Types not in `types.yaml` default to no component creation
 
 This configuration-driven approach allows fine-grained control over which technologies appear as architectural components versus implementation details.
-
-## Project Configuration
-
-### `.stack-analyzer.yml` Configuration File
-
-Place a `.stack-analyzer.yml` file in your project root to customize scan behavior, add metadata, and document external dependencies.
-
-```yaml
-# .stack-analyzer.yml - Tech Stack Analyzer Configuration
-
-# Custom properties added to metadata.properties in scan output
-properties:
-  product: "My Product Name"
-  team: "Platform Engineering"
-  environment: "production"
-  owner: "engineering@company.com"
-
-# Files and directories to exclude from scanning
-# Supports glob patterns (**, *, ?)
-exclude:
-  - "node_modules"
-  - "vendor"
-  - "*.log"
-  - "**/__tests__/**"
-  - "**/*.test.js"
-
-# Technologies to add to scan results (even if not auto-detected)
-techs:
-  - tech: "aws"
-    reason: "Deployed on AWS ECS"
-  - tech: "datadog"
-    reason: "Monitoring via Datadog"
-```
-
-**Configuration Options:**
-
-- **`properties`** - Custom metadata added to `metadata.properties` in output
-  - Document product context, ownership, deployment information
-  - Any key-value pairs relevant to your project
-  
-- **`exclude`** - Patterns to exclude from scanning
-  - Supports glob patterns: `**`, `*`, `?`
-  - Matches files and directories
-  - Merged with CLI `--exclude` flags
-  
-- **`techs`** - Technologies to force-add to scan results
-  - Useful for external dependencies (AWS, SaaS services)
-  - Each tech has optional `reason` field
-  - Added to root payload's `techs` array
-
-**Example Output with Configuration:**
-
-```json
-{
-  "metadata": {
-    "timestamp": "2025-12-01T14:45:35Z",
-    "scan_path": "/path/to/project",
-    "properties": {
-      "product": "My Product Name",
-      "team": "Platform Engineering",
-      "environment": "production"
-    }
-  },
-  "techs": ["nodejs", "aws", "datadog"],
-  "reason": [
-    "matched file: package.json",
-    "Deployed on AWS ECS",
-    "Monitoring via Datadog"
-  ]
-}
-```
-
-**Benefits:**
-- **Version controlled** - Configuration lives with code
-- **Team-shared** - Everyone uses same exclusions and metadata
-- **Documented** - External dependencies explicitly listed
-- **Flexible** - Custom metadata for any use case
-
-See `.stack-analyzer.yml.example` for a complete configuration template.
 
 ### Output Structure
 
@@ -850,23 +884,129 @@ Specialized parsers for complex file formats:
 
 ```yaml
 # internal/rules/core/database/newtech.yaml
-tech: newtech
-name: New Technology
-type: db
-dotenv:
+tech: newtech                    # Required: Unique technology identifier
+name: New Technology             # Required: Display name
+type: db                         # Required: Technology category
+is_component: true               # Optional: Override component behavior
+dotenv:                          # Optional: Environment variable patterns
   - NEWTECH_
-dependencies:
+dependencies:                    # Optional: Package dependencies to detect
   - type: npm
-    name: newtech-driver
+    name: newtech-driver         # Can be regex: /^@newtech\/.*/ 
     example: newtech-driver
   - type: python
     name: newtech-client
     example: newtech-client
-files:
+files:                           # Optional: Specific files to match
   - newtech.conf
+  - config/newtech.yml
+extensions:                      # Optional: File extensions to match
+  - .newtech
+  - .nt
+content:                         # Optional: Content patterns for validation
+  - pattern: 'newtech\s*=\s*['"']'
+  - pattern: 'import.*newtech'
+detect:                          # Optional: Custom detection logic
+  type: package-json            # Detection types: package-json, terraform, json-schema, regex, yaml-path
+  file: package.json
+  extract: true                 # Extract dependencies from file
+```
+
+#### Complete Rule Field Reference
+
+**Required Fields:**
+- **`tech`** - Unique technology identifier (used in output)
+- **`name`** - Human-readable display name
+- **`type`** - Technology category (database, framework, language, etc.)
+
+**Optional Fields:**
+
+**`is_component`** - Override component creation behavior
+- `true` - Always create a component
+- `false` - Never create a component  
+- `null`/omitted - Use type-based default
+
+**`dotenv`** - Array of environment variable prefixes
+```yaml
+dotenv:
+  - POSTGRES_    # Matches POSTGRES_DB, POSTGRES_HOST, etc.
+  - REDIS_URL    # Matches exact env var names
+```
+
+**`dependencies`** - Package dependencies to detect
+```yaml
+dependencies:
+  - type: npm
+    name: react                  # Exact match
+    example: react
+  - type: npm
+    name: /^@types\/.*$/         # Regex pattern
+    example: '@types/node'
+  - type: python
+    name: django>=3.0            # Version pattern
+    example: django
+```
+
+**Supported dependency types:**
+- `npm`, `python`, `pip`, `cargo`, `composer`, `nuget`, `maven`, `gradle`
+- `docker`, `githubAction`, `terraform.resource`
+
+**`files`** - Specific files to match
+```yaml
+files:
+  - package.json
+  - requirements.txt
+  - Dockerfile
+  - config/*.yml                # Glob patterns supported
+```
+
+**`extensions`** - File extensions to match
+```yaml
+extensions:
+  - .py
+  - .js
+  - .ts
+  - .go
+```
+
+**`content`** - Content patterns for precise detection
+```yaml
+content:
+  - pattern: 'import\s+.*react'      # Regex in file content
+  - pattern: 'FROM\s+node:'          # Dockerfile patterns
+  - pattern: 'class.*Component'      # Class detection
+```
+
+**`detect`** - Custom detection configuration
+```yaml
+# Package.json detection
+detect:
+  type: package-json
+  file: package.json
+  extract: true                    # Extract dependencies
+
+# Terraform detection  
 detect:
   type: terraform
   file: "*.tf"
+
+# JSON Schema validation
+detect:
+  type: json-schema
+  file: openapi.json
+  schema: '{"type": "object", "properties": {"openapi": {"type": "string"}}}'
+
+# Regex matching in files
+detect:
+  type: regex
+  file: "*.conf"
+  pattern: 'server\s*{'             # Regex pattern
+
+# YAML path extraction
+detect:
+  type: yaml-path
+  file: docker-compose.yml
+  path: '$.services.*.image'       # YAML path expression
 ```
 
 #### 2. Rule Categories
