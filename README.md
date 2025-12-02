@@ -417,19 +417,19 @@ This classification is fully configurable through type definitions and per-rule 
 
 ### Content-Based Detection
 
-In addition to file names and extensions, the scanner can validate technology detection through **content pattern matching**. This enables precise identification of libraries and frameworks that share file extensions.
+In addition to file names and extensions, the scanner validates technology detection through **content pattern matching**. This enables precise identification of libraries and frameworks that share file extensions.
 
-#### How It Works
+#### Two-Gateway Detection Logic
 
-1. **Extension Pre-filtering**: Content matching only runs on files with matching extensions
-2. **Pattern Validation**: If a rule has `content` patterns, ALL must be satisfied:
-   - Extension matches (pre-filter)
-   - At least one content pattern matches (validation)
-3. **First Match Wins**: Stops after the first pattern matches per technology
-4. **Efficient**: Only reads files when necessary, skips files without matching extensions
+1. **First Gateway - File/Extension Match**: File must match by name or extension
+2. **Second Gateway - Content Validation** (if patterns defined): At least one pattern must match
+3. **Result**: Both gateways must pass for detection
 
-#### Rule Example
+**Key Principle:** Content patterns are **additive validation**, not filters. If a file matches by extension but has content patterns defined, the content must also match.
 
+#### Rule Examples
+
+**Basic Content Matching:**
 ```yaml
 tech: mfc
 name: Microsoft Foundation Class Library
@@ -437,22 +437,64 @@ type: ui_framework
 extensions: [.cpp, .h, .hpp]
 content:
   - pattern: '#include\s+<afx'
-  - pattern: 'class\s+\w+\s*:\s*public\s+C(Wnd|FrameWnd|CDialog|...)'
+  - pattern: 'class\s+\w+\s*:\s*public\s+C(Wnd|FrameWnd|CDialog)'
   - pattern: '(BEGIN_MESSAGE_MAP|END_MESSAGE_MAP|DECLARE_MESSAGE_MAP)'
 ```
 
 **Behavior:**
-- `.cpp` files are checked (extension matches)
-- If `#include <afx` is found → MFC detected (first pattern matched, validation passed)
-- If no patterns match → MFC not detected (validation failed, tech removed)
-- Rules without `content` → detected by extension alone (existing behavior)
+- `.cpp` file found → First gateway passed (extension matches)
+- Content checked → If `#include <afx` found → Second gateway passed → **MFC detected** ✅
+- Content checked → If no patterns match → Second gateway failed → **MFC not detected** ❌
+- Rules without `content` → Detected by extension alone (no second gateway)
+
+**Per-Pattern Extensions** (Advanced):
+```yaml
+tech: qt
+name: Qt Framework
+type: ui
+extensions: [.pro, .ui, .cpp, .h]
+content:
+  - pattern: 'Q_OBJECT'
+    extensions: [.cpp, .h]    # Only check C++ files
+  - pattern: 'QString'
+    extensions: [.cpp, .h]    # Only check C++ files
+```
+
+**Behavior:**
+- `.pro` file → Extension matches → No content patterns for `.pro` → **Qt detected** ✅
+- `.ui` file → Extension matches → No content patterns for `.ui` → **Qt detected** ✅
+- `.h` file → Extension matches → Content patterns defined for `.h` → Check content → If `Q_OBJECT` found → **Qt detected** ✅
+
+**File-Specific Patterns** (Advanced):
+```yaml
+tech: mytech
+name: My Technology
+type: framework
+files: [config.json]          # Rule-level file restriction
+content:
+  - pattern: '"framework":\s*"mytech"'
+```
+
+Or per-pattern:
+```yaml
+tech: mytech
+name: My Technology
+type: framework
+extensions: [.json, .yaml]
+content:
+  - pattern: '"framework":\s*"mytech"'
+    files: [config.json]      # Only check config.json
+  - pattern: 'framework:\s*mytech'
+    extensions: [.yaml]        # Only check .yaml files
+```
 
 #### Use Cases
 
-- **Distinguish similar technologies**: C++ STL vs plain C in `.h` files
-- **Library-specific detection**: MFC, Qt, Boost through include patterns
-- **Framework patterns**: React hooks, Vue composition API through code signatures
-- **Prevent false positives**: Only detect when actual usage is confirmed
+- **Distinguish similar technologies**: MFC vs Qt vs plain C++ in `.h` files
+- **Library-specific detection**: Framework-specific patterns in common file types
+- **Mixed file types**: Qt `.pro` files (no content check) + `.cpp` files (with content check)
+- **Specific file validation**: Only check `package.json`, not all `.json` files
+- **Prevent false positives**: Ensure actual usage, not just file presence
 
 ### Technology Type Configuration
 
@@ -548,6 +590,9 @@ The `metadata` field (present only in the root payload) provides information abo
     "duration_ms": 1173,
     "file_count": 523,
     "directory_count": 87,
+    "language_count": 15,
+    "tech_count": 3,
+    "techs_count": 12,
     "excluded_dirs": ["node_modules", "vendor"],
     "git": {
       "branch": "main",
@@ -568,8 +613,11 @@ The `metadata` field (present only in the root payload) provides information abo
 - **scan_path**: Absolute path to scanned directory
 - **specVersion**: Output format specification version
 - **duration_ms**: Scan duration in milliseconds
-- **file_count**: Total files scanned
-- **directory_count**: Total directories traversed
+- **file_count**: Total language-detected files scanned (sum of all language file counts)
+- **directory_count**: Total component directories (architectural components, not filesystem directories)
+- **language_count**: Number of distinct programming languages detected
+- **tech_count**: Number of primary technologies (count of `tech` array)
+- **techs_count**: Number of all detected technologies (count of `techs` array)
 - **excluded_dirs**: List of excluded patterns
 - **git**: Git repository information (if in a git repo)
   - **branch**: Current branch name

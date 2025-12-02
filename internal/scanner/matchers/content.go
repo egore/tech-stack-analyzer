@@ -14,13 +14,15 @@ type ContentMatcher struct {
 
 // ContentMatcherRegistry manages compiled content matchers
 type ContentMatcherRegistry struct {
-	matchers map[string][]*ContentMatcher // keyed by extension (e.g., ".cpp", ".h")
+	matchers     map[string][]*ContentMatcher // keyed by extension (e.g., ".cpp", ".h")
+	fileMatchers map[string][]*ContentMatcher // keyed by filename (e.g., "package.json", "pom.xml")
 }
 
 // NewContentMatcherRegistry creates a new content matcher registry
 func NewContentMatcherRegistry() *ContentMatcherRegistry {
 	return &ContentMatcherRegistry{
-		matchers: make(map[string][]*ContentMatcher),
+		matchers:     make(map[string][]*ContentMatcher),
+		fileMatchers: make(map[string][]*ContentMatcher),
 	}
 }
 
@@ -42,22 +44,38 @@ func (r *ContentMatcherRegistry) BuildFromRules(rules []types.Rule) error {
 			continue
 		}
 
-		// Compile content patterns for each extension
-		for _, ext := range rule.Extensions {
-			for _, contentRule := range rule.Content {
-				// Compile regex pattern
-				pattern, err := regexp.Compile(contentRule.Pattern)
-				if err != nil {
-					// Skip invalid patterns
-					continue
+		// Compile content patterns
+		for _, contentRule := range rule.Content {
+			// Compile regex pattern
+			pattern, err := regexp.Compile(contentRule.Pattern)
+			if err != nil {
+				// Skip invalid patterns
+				continue
+			}
+
+			matcher := &ContentMatcher{
+				Tech:    rule.Tech,
+				Pattern: pattern,
+			}
+
+			// If specific files are defined, create file-based matchers
+			if len(contentRule.Files) > 0 {
+				for _, filename := range contentRule.Files {
+					r.fileMatchers[filename] = append(r.fileMatchers[filename], matcher)
+				}
+			} else {
+				// Otherwise, create extension-based matchers
+				// Determine which extensions this pattern applies to
+				targetExtensions := contentRule.Extensions
+				if len(targetExtensions) == 0 {
+					// If no specific extensions defined, apply to all rule extensions
+					targetExtensions = rule.Extensions
 				}
 
-				matcher := &ContentMatcher{
-					Tech:    rule.Tech,
-					Pattern: pattern,
+				// Create matcher for each target extension
+				for _, ext := range targetExtensions {
+					r.matchers[ext] = append(r.matchers[ext], matcher)
 				}
-
-				r.matchers[ext] = append(r.matchers[ext], matcher)
 			}
 		}
 	}
@@ -99,4 +117,37 @@ func (r *ContentMatcherRegistry) MatchContent(extension string, content string) 
 func (r *ContentMatcherRegistry) HasContentMatchers(extension string) bool {
 	_, exists := r.matchers[extension]
 	return exists
+}
+
+// HasFileMatchers checks if there are any content matchers for the given filename
+func (r *ContentMatcherRegistry) HasFileMatchers(filename string) bool {
+	_, exists := r.fileMatchers[filename]
+	return exists
+}
+
+// MatchFileContent checks if content matches any patterns for the given filename
+// Returns map of tech -> reasons
+func (r *ContentMatcherRegistry) MatchFileContent(filename string, content string) map[string][]string {
+	results := make(map[string][]string)
+
+	matchers, exists := r.fileMatchers[filename]
+	if !exists {
+		return results
+	}
+
+	// Check patterns in order - stop after first match per tech
+	for _, matcher := range matchers {
+		// Skip if we already matched this tech
+		if _, alreadyMatched := results[matcher.Tech]; alreadyMatched {
+			continue
+		}
+
+		if matcher.Pattern.MatchString(content) {
+			results[matcher.Tech] = []string{
+				"content matched in " + filename + ": " + matcher.Pattern.String(),
+			}
+		}
+	}
+
+	return results
 }

@@ -44,7 +44,9 @@ type CompiledDependency struct {
 
 // ContentRule represents a content-based detection pattern
 type ContentRule struct {
-	Pattern string `yaml:"pattern" json:"pattern"` // Regex pattern for content matching
+	Pattern    string   `yaml:"pattern" json:"pattern"`                           // Regex pattern for content matching
+	Extensions []string `yaml:"extensions,omitempty" json:"extensions,omitempty"` // Optional: limit pattern to specific extensions (if empty, applies to all rule extensions)
+	Files      []string `yaml:"files,omitempty" json:"files,omitempty"`           // Optional: limit pattern to specific filenames (e.g., "package.json", "pom.xml")
 }
 
 // DetectConfig represents custom detection configuration

@@ -559,11 +559,9 @@ func (s *Scanner) detectByFilesAndExtensions(ctx *types.Payload, files []types.F
 }
 
 func (s *Scanner) detectByContent(ctx *types.Payload, files []types.File, currentPath string, matchedTechs map[string]bool) {
-	// Track which techs need content validation (have content rules)
-	techsNeedingValidation := s.getTechsWithContentRules()
-
-	// Track which techs passed content validation
-	validatedTechs := make(map[string]bool)
+	// Content-based detection: for extensions or filenames that have content matchers,
+	// check if the file content matches the patterns
+	// This is ADDITIVE - it can detect techs that weren't matched by extension alone
 
 	for _, file := range files {
 		// Skip if not a regular file
@@ -571,14 +569,12 @@ func (s *Scanner) detectByContent(ctx *types.Payload, files []types.File, curren
 			continue
 		}
 
-		// Extract extension from filename
+		// Check if there are file-specific or extension-based content matchers
+		hasFileMatchers := s.contentMatcher.HasFileMatchers(file.Name)
 		ext := filepath.Ext(file.Name)
-		if ext == "" {
-			continue
-		}
+		hasExtMatchers := ext != "" && s.contentMatcher.HasContentMatchers(ext)
 
-		// Check if there are content matchers for this extension
-		if !s.contentMatcher.HasContentMatchers(ext) {
+		if !hasFileMatchers && !hasExtMatchers {
 			continue
 		}
 
@@ -589,13 +585,27 @@ func (s *Scanner) detectByContent(ctx *types.Payload, files []types.File, curren
 			continue
 		}
 
-		// Match content patterns
-		contentMatches := s.contentMatcher.MatchContent(ext, string(content))
+		// Match file-specific patterns first (higher priority)
+		var contentMatches map[string][]string
+		if hasFileMatchers {
+			contentMatches = s.contentMatcher.MatchFileContent(file.Name, string(content))
+		}
 
-		// Mark techs that passed content validation
+		// Match extension-based patterns
+		if hasExtMatchers {
+			extMatches := s.contentMatcher.MatchContent(ext, string(content))
+			// Merge extension matches with file matches
+			if contentMatches == nil {
+				contentMatches = extMatches
+			} else {
+				for tech, reasons := range extMatches {
+					contentMatches[tech] = append(contentMatches[tech], reasons...)
+				}
+			}
+		}
+
+		// Add techs that matched content patterns
 		for tech, reasons := range contentMatches {
-			validatedTechs[tech] = true
-
 			// Add content matching reasons
 			for _, reason := range reasons {
 				ctx.AddTech(tech, reason)
@@ -608,49 +618,6 @@ func (s *Scanner) detectByContent(ctx *types.Payload, files []types.File, curren
 			}
 		}
 	}
-
-	// Remove techs that were matched by extension but failed content validation
-	for tech := range techsNeedingValidation {
-		if matchedTechs[tech] && !validatedTechs[tech] {
-			// Tech was matched by extension but failed content validation - remove it
-			s.removeTechFromPayload(ctx, tech)
-			delete(matchedTechs, tech)
-		}
-	}
-}
-
-func (s *Scanner) getTechsWithContentRules() map[string]bool {
-	techsWithContent := make(map[string]bool)
-	for _, rule := range s.rules {
-		if len(rule.Content) > 0 {
-			techsWithContent[rule.Tech] = true
-		}
-	}
-	return techsWithContent
-}
-
-func (s *Scanner) removeTechFromPayload(payload *types.Payload, tech string) {
-	// Remove from techs array
-	newTechs := make([]string, 0, len(payload.Techs))
-	for _, t := range payload.Techs {
-		if t != tech {
-			newTechs = append(newTechs, t)
-		}
-	}
-	payload.Techs = newTechs
-
-	// Remove from primary tech array
-	newPrimaryTech := make([]string, 0, len(payload.Tech))
-	for _, t := range payload.Tech {
-		if t != tech {
-			newPrimaryTech = append(newPrimaryTech, t)
-		}
-	}
-	payload.Tech = newPrimaryTech
-
-	// Remove reasons related to this tech (keep only non-tech-specific reasons)
-	// Note: We can't easily identify which reasons belong to which tech,
-	// so we keep all reasons. This is acceptable since the tech itself is removed.
 }
 
 func (s *Scanner) processTechMatches(ctx *types.Payload, matches map[string][]string, matchedTechs map[string]bool, currentPath string, addEdges bool) {
