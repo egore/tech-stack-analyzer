@@ -1,16 +1,23 @@
 version: '3'
 
+vars:
+  BINARY_TARGET: ./bin
+  BINARY_NAME: '{{.BINARY_TARGET}}/stack-analyzer'
+
 tasks:
   build:
     desc: Compile the stack-analyzer binary
     cmds:
-      - go build -o bin/stack-analyzer ./cmd/scanner
-    sources:
-      - '**/*.go'
-      - go.mod
-      - go.sum
-    generates:
-      - bin/stack-analyzer
+      - go build -o {{.BINARY_NAME}} ./cmd/scanner
+
+  build:all:
+    desc: Build for all supported platforms
+    deps: [check]
+    cmds:
+      - GOOS=darwin GOARCH=amd64 go build -o {{.BINARY_NAME}}-darwin-amd64 ./cmd/scanner
+      - GOOS=darwin GOARCH=arm64 go build -o {{.BINARY_NAME}}-darwin-arm64 ./cmd/scanner
+      - GOOS=linux GOARCH=amd64 go build -o {{.BINARY_NAME}}-linux-amd64 ./cmd/scanner
+      - GOOS=windows GOARCH=amd64 go build -o {{.BINARY_NAME}}-windows-amd64.exe ./cmd/scanner
 
   format:
     desc: Format Go code using gofmt
@@ -38,20 +45,43 @@ tasks:
   clean:
     desc: Clean up build artifacts and caches
     cmds:
-      - rm -rf bin/
+      - rm -rf {{.BINARY_TARGET}}/
       - go clean -cache -testcache -modcache
 
   run:
     desc: Run stack-analyzer on a directory
     cmds:
-      - ./bin/stack-analyzer {{.CLI_ARGS}}
+      - ./{{.BINARY_NAME}} {{.CLI_ARGS}}
     deps:
       - build
 
   run:help:
     desc: Show stack-analyzer help message
     cmds:
-      - ./bin/stack-analyzer --help
+      - ./{{.BINARY_NAME}} --help
+    deps:
+      - build
+
+  run:info:techs:
+    desc: List all technologies in YAML format
+    cmds:
+      - ./{{.BINARY_NAME}} info techs --format yaml
+    deps:
+      - build
+
+  run:info:component-types:
+    desc: List component types in YAML format
+    cmds:
+      - ./{{.BINARY_NAME}} info component-types --format yaml
+    deps:
+      - build
+
+  run:info:rule:
+    desc: Show rule details for a technology in JSON format
+    vars:
+      TECH: "{{.CLI_ARGS}}"
+    cmds:
+      - ./{{.BINARY_NAME}} info rule {{.TECH}} --format json
     deps:
       - build
 
