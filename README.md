@@ -180,9 +180,75 @@ The scanner outputs a hierarchical JSON structure showing detected technologies,
 - `techs` - All detected technologies (components + tools/libraries)
 - `childs` - Nested components (sub-projects, services)
 - `dependencies` - Package dependencies with versions
+- `code_stats` - Code statistics (lines, code, comments, blanks, complexity)
 - `metadata` - Scan execution info (timestamp, duration, git info)
 
 See [Output Structure](#output-structure) for complete field descriptions.
+
+### Code Statistics
+
+The scanner automatically collects code statistics using [SCC](https://github.com/boyter/scc) (Sloc, Cloc and Code). Statistics are enabled by default and can be disabled with `--no-code-stats`.
+
+```bash
+# Default: code stats enabled
+./bin/stack-analyzer scan /path/to/project
+
+# Disable code stats
+./bin/stack-analyzer scan --no-code-stats /path/to/project
+```
+
+**Output Structure:**
+```json
+{
+  "code_stats": {
+    "total": {
+      "lines": 38308,
+      "code": 31975,
+      "comments": 2008,
+      "blanks": 4325,
+      "complexity": 1920,
+      "files": 858
+    },
+    "analyzed": {
+      "total": {
+        "lines": 38308,
+        "code": 31975,
+        "comments": 2008,
+        "blanks": 4325,
+        "complexity": 1920,
+        "files": 858
+      },
+      "by_language": [
+        {"language": "Go", "lines": 21841, "code": 16679, "comments": 1963, "blanks": 3199, "complexity": 1920, "files": 93},
+        {"language": "YAML", "lines": 11385, "code": 11258, "comments": 45, "blanks": 82, "complexity": 0, "files": 754}
+      ]
+    },
+    "unanalyzed": {
+      "total": {"lines": 389, "files": 3},
+      "by_language": [
+        {"language": "Go Checksums", "lines": 253, "files": 1},
+        {"language": "Go Module", "lines": 70, "files": 1}
+      ]
+    }
+  }
+}
+```
+
+**Fields:**
+- **`total`** - Grand total for all analyzed files
+- **`analyzed`** - Files SCC can fully parse (code/comments/blanks/complexity breakdown)
+  - Sorted by lines descending
+- **`unanalyzed`** - Files SCC cannot parse (only line counts available)
+  - Includes config files like `go.mod`, `go.sum`, `.gitignore`
+  - Sorted by lines descending
+
+**Metrics:**
+- `lines` - Total lines in file
+- `code` - Lines of code (excluding comments and blanks)
+- `comments` - Comment lines
+- `blanks` - Blank lines
+- `complexity` - Cyclomatic complexity (for supported languages)
+- `files` - Number of files
 
 ### Project Configuration
 
@@ -378,6 +444,7 @@ stack-analyzer scan [path] [flags]
 - `--output, -o` - Output file path (default: stack-analysis.json). Use `-o -` or `-o /dev/stdout` for piping
 - `--aggregate` - Aggregate fields: `tech,techs,languages,licenses,dependencies,all` (use `all` for all aggregated fields)
 - `--exclude` - Patterns to exclude (supports glob patterns like `**/__tests__/**`, `*.log`; can be specified multiple times)
+- `--no-code-stats` - Disable code statistics collection (enabled by default)
 - `--pretty` - Pretty print JSON output (default: true)
 - `--verbose, -v` - Show detailed progress information on stderr (default: false)
 - `--log-level` - Log level: trace, debug, error, fatal (default: error)
@@ -604,6 +671,7 @@ The scanner outputs a hierarchical JSON structure representing the detected tech
 - **licenses**: Array of detected licenses in this component
 - **reason**: Array explaining why technologies were detected
 - **properties**: Object containing tech-specific metadata (Docker, Terraform, Kubernetes, etc.)
+- **code_stats**: Code statistics with analyzed/unanalyzed buckets (only in root payload, see [Code Statistics](#code-statistics))
 - **metadata**: Scan execution metadata (only in root payload)
 
 #### Metadata Field

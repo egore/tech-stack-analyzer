@@ -22,6 +22,7 @@ type Settings struct {
 	TraceTimings bool
 	TraceRules   bool
 	FilterRules  []string // Only use these rules (for debugging)
+	NoCodeStats  bool     // Disable code statistics (enabled by default)
 
 	// Logging
 	LogLevel  logrus.Level
@@ -41,6 +42,7 @@ func DefaultSettings() *Settings {
 		TraceTimings: false,
 		TraceRules:   false,
 		FilterRules:  []string{},
+		NoCodeStats:  false,             // Code stats enabled by default
 		LogLevel:     logrus.ErrorLevel, // Changed from InfoLevel - only errors by default
 		LogFormat:    "text",
 		LogFile:      "", // Empty = stderr

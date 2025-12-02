@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/petrarca/tech-stack-analyzer/internal/aggregator"
+	"github.com/petrarca/tech-stack-analyzer/internal/codestats"
 	"github.com/petrarca/tech-stack-analyzer/internal/config"
 	"github.com/petrarca/tech-stack-analyzer/internal/scanner"
 	"github.com/petrarca/tech-stack-analyzer/internal/types"
@@ -68,6 +69,9 @@ func init() {
 
 	// Rule filtering for debugging
 	scanCmd.Flags().StringSliceVar(&settings.FilterRules, "rules", settings.FilterRules, "Only use these rules (comma-separated tech names, e.g., c,cplusplus,nodejs - for debugging)")
+
+	// Code statistics flag (enabled by default)
+	scanCmd.Flags().BoolVar(&settings.NoCodeStats, "no-code-stats", settings.NoCodeStats, "Disable code statistics (lines of code, comments, blanks, complexity)")
 
 	// Logging flags - use defaults from environment variables
 	scanCmd.Flags().String("log-level", logLevel, "Log level: trace, debug, error, fatal")
@@ -164,9 +168,13 @@ func runScan(cmd *cobra.Command, args []string) {
 	logger.WithFields(logrus.Fields{
 		"path":         scannerPath,
 		"exclude_dirs": settings.ExcludeDirs,
+		"code_stats":   !settings.NoCodeStats,
 	}).Debug("Initializing scanner")
 
-	s, err := scanner.NewScannerWithExcludes(scannerPath, settings.ExcludeDirs, settings.Verbose, settings.Debug, settings.TraceTimings, settings.TraceRules)
+	// Create code stats analyzer (enabled by default, disabled with --no-code-stats)
+	codeStatsAnalyzer := codestats.NewAnalyzer(!settings.NoCodeStats)
+
+	s, err := scanner.NewScannerWithOptions(scannerPath, settings.ExcludeDirs, settings.Verbose, settings.Debug, settings.TraceTimings, settings.TraceRules, codeStatsAnalyzer)
 	if err != nil {
 		logger.WithError(err).Fatal("Failed to create scanner")
 	}
@@ -183,6 +191,13 @@ func runScan(cmd *cobra.Command, args []string) {
 
 	if err != nil {
 		logger.WithError(err).Fatal("Failed to scan")
+	}
+
+	// Attach code stats to payload if enabled
+	if codeStatsAnalyzer.IsEnabled() {
+		if p, ok := payload.(*types.Payload); ok {
+			p.CodeStats = codeStatsAnalyzer.GetStats()
+		}
 	}
 
 	// Generate output (aggregated or full payload)

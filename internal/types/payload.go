@@ -24,6 +24,7 @@ type Payload struct {
 	Licenses     []string               `json:"licenses"`    // Added missing field
 	Reason       []string               `json:"reason"`
 	Properties   map[string]interface{} `json:"properties,omitempty"` // Tech-specific metadata (Docker, Kubernetes, Terraform, etc.)
+	CodeStats    interface{}            `json:"code_stats,omitempty"` // Code statistics (LOC, comments, blanks, complexity)
 	Metadata     interface{}            `json:"metadata,omitempty"`   // Scan metadata (only in root payload)
 }
 

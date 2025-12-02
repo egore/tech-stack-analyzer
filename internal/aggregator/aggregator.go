@@ -14,6 +14,7 @@ type AggregateOutput struct {
 	Languages    map[string]int `json:"languages,omitempty"`    // Language file counts
 	Licenses     []string       `json:"licenses,omitempty"`     // Detected licenses
 	Dependencies [][]string     `json:"dependencies,omitempty"` // All dependencies [type, name, version]
+	CodeStats    interface{}    `json:"code_stats,omitempty"`   // Code statistics (if enabled)
 }
 
 // Aggregator handles aggregation of scan results
@@ -58,6 +59,9 @@ func (a *Aggregator) Aggregate(payload *types.Payload) *AggregateOutput {
 
 	// Include metadata from the root payload
 	output.Metadata = payload.Metadata
+
+	// Include code stats if present
+	output.CodeStats = payload.CodeStats
 
 	return output
 }

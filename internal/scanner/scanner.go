@@ -45,6 +45,17 @@ type Scanner struct {
 	contentMatcher  *matchers.ContentMatcherRegistry
 	excludeDirs     []string
 	progress        *progress.Progress
+	codeStats       CodeStatsAnalyzer
+}
+
+// CodeStatsAnalyzer interface for code statistics collection
+type CodeStatsAnalyzer interface {
+	// ProcessFile analyzes a file
+	// language is the go-enry detected language name (used for grouping)
+	// If content is provided it will be used, otherwise file is read
+	ProcessFile(filename string, language string, content []byte)
+	IsEnabled() bool
+	GetStats() interface{} // Returns the aggregated stats
 }
 
 // defaultIgnorePatterns holds the loaded ignore patterns from ignore.yaml
@@ -52,11 +63,16 @@ var defaultIgnorePatterns []string
 
 // NewScanner creates a new scanner (mirroring TypeScript's analyser function)
 func NewScanner(path string) (*Scanner, error) {
-	return NewScannerWithExcludes(path, nil, false, false, false, false)
+	return NewScannerWithOptions(path, nil, false, false, false, false, nil)
 }
 
 // NewScannerWithExcludes creates a new scanner with directory exclusions
 func NewScannerWithExcludes(path string, excludeDirs []string, verbose bool, useTreeView bool, traceTimings bool, traceRules bool) (*Scanner, error) {
+	return NewScannerWithOptions(path, excludeDirs, verbose, useTreeView, traceTimings, traceRules, nil)
+}
+
+// NewScannerWithOptions creates a new scanner with all options including code stats
+func NewScannerWithOptions(path string, excludeDirs []string, verbose bool, useTreeView bool, traceTimings bool, traceRules bool, codeStats CodeStatsAnalyzer) (*Scanner, error) {
 	// Create provider for the target path (like TypeScript's FSProvider)
 	provider := provider.NewFSProvider(path)
 
@@ -97,6 +113,7 @@ func NewScannerWithExcludes(path string, excludeDirs []string, verbose bool, use
 		contentMatcher:  components.contentMatcher,
 		excludeDirs:     excludeDirs,
 		progress:        prog,
+		codeStats:       codeStats,
 	}, nil
 }
 
@@ -387,8 +404,14 @@ func (s *Scanner) recurse(payload *types.Payload, filePath string) error {
 			if err != nil {
 				content = []byte{} // Empty content on error
 			}
-			if lang := s.langDetector.DetectLanguage(file.Name, content); lang != "" {
+			lang := s.langDetector.DetectLanguage(file.Name, content)
+			if lang != "" {
 				ctx.AddLanguage(lang)
+			}
+
+			// Collect code statistics if enabled (pass go-enry language for grouping)
+			if s.codeStats != nil {
+				s.codeStats.ProcessFile(fileFullPath, lang, content)
 			}
 			continue
 		}
