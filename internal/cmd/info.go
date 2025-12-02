@@ -183,7 +183,7 @@ func buildTechList(ruleMap map[string]*types.Rule, techKeys []string) []map[stri
 			techInfo["description"] = rule.Description
 		}
 		// Only include properties if they exist and are not empty
-		if rule.Properties != nil && len(rule.Properties) > 0 {
+		if len(rule.Properties) > 0 {
 			techInfo["properties"] = rule.Properties
 		}
 		technologies = append(technologies, techInfo)

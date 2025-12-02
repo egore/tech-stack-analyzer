@@ -52,68 +52,7 @@ var defaultIgnorePatterns []string
 
 // NewScanner creates a new scanner (mirroring TypeScript's analyser function)
 func NewScanner(path string) (*Scanner, error) {
-	// Create provider for the target path (like TypeScript's FSProvider)
-	provider := provider.NewFSProvider(path)
-
-	// Load rules (simple, not lazy loaded - like TypeScript's loadAllRules)
-	loadedRules, err := rules.LoadEmbeddedRules()
-	if err != nil {
-		return nil, fmt.Errorf("failed to load rules: %w", err)
-	}
-
-	// Load types configuration
-	typesConfig, err := config.LoadTypesConfig()
-	if err != nil {
-		return nil, fmt.Errorf("failed to load types config: %w", err)
-	}
-	SetTypesConfig(typesConfig)
-
-	// Load ignore patterns configuration (only once)
-	if len(defaultIgnorePatterns) == 0 {
-		ignoreConfig, err := config.LoadIgnoreConfig()
-		if err != nil {
-			return nil, fmt.Errorf("failed to load ignore config: %w", err)
-		}
-		defaultIgnorePatterns = ignoreConfig.GetFlatIgnoreList()
-	}
-
-	// Initialize dependency detector
-	depDetector := NewDependencyDetector(loadedRules)
-
-	// Initialize component detector
-	compDetector := NewComponentDetector(depDetector, provider, loadedRules)
-
-	// Initialize JSON schema detector
-	jsonDetector := NewJSONSchemaDetector(provider, loadedRules)
-
-	// Initialize dotenv detector
-	dotenvDetector := parsers.NewDotenvDetector(provider, loadedRules)
-
-	// Initialize license detector
-	licenseDetector := NewLicenseDetector()
-
-	// Build matchers from rules (like TypeScript's loadAllRules)
-	matchers.BuildFileMatchersFromRules(loadedRules)
-	matchers.BuildExtensionMatchersFromRules(loadedRules)
-
-	// Initialize content matcher
-	contentMatcher := matchers.NewContentMatcherRegistry()
-	if err := contentMatcher.BuildFromRules(loadedRules); err != nil {
-		return nil, fmt.Errorf("failed to build content matchers: %w", err)
-	}
-
-	return &Scanner{
-		provider:        provider,
-		rules:           loadedRules,
-		depDetector:     depDetector,
-		compDetector:    compDetector,
-		jsonDetector:    jsonDetector,
-		dotenvDetector:  dotenvDetector,
-		licenseDetector: licenseDetector,
-		contentMatcher:  contentMatcher,
-		excludeDirs:     nil,
-		progress:        progress.New(false, nil),
-	}, nil
+	return NewScannerWithExcludes(path, nil, false)
 }
 
 // NewScannerWithExcludes creates a new scanner with directory exclusions
@@ -121,51 +60,10 @@ func NewScannerWithExcludes(path string, excludeDirs []string, verbose bool) (*S
 	// Create provider for the target path (like TypeScript's FSProvider)
 	provider := provider.NewFSProvider(path)
 
-	// Load rules (simple, not lazy loaded - like TypeScript's loadAllRules)
-	loadedRules, err := rules.LoadEmbeddedRules()
+	// Initialize all scanner components
+	components, err := initializeScannerComponents(provider, path)
 	if err != nil {
-		return nil, fmt.Errorf("failed to load rules: %w", err)
-	}
-
-	// Load types configuration
-	typesConfig, err := config.LoadTypesConfig()
-	if err != nil {
-		return nil, fmt.Errorf("failed to load types config: %w", err)
-	}
-	SetTypesConfig(typesConfig)
-
-	// Load ignore patterns configuration (only once)
-	if len(defaultIgnorePatterns) == 0 {
-		ignoreConfig, err := config.LoadIgnoreConfig()
-		if err != nil {
-			return nil, fmt.Errorf("failed to load ignore config: %w", err)
-		}
-		defaultIgnorePatterns = ignoreConfig.GetFlatIgnoreList()
-	}
-
-	// Initialize dependency detector
-	depDetector := NewDependencyDetector(loadedRules)
-
-	// Initialize component detector
-	compDetector := NewComponentDetector(depDetector, provider, loadedRules)
-
-	// Initialize JSON schema detector
-	jsonDetector := NewJSONSchemaDetector(provider, loadedRules)
-
-	// Initialize dotenv detector
-	dotenvDetector := parsers.NewDotenvDetector(provider, loadedRules)
-
-	// Initialize license detector
-	licenseDetector := NewLicenseDetector()
-
-	// Build matchers from rules (like TypeScript's loadAllRules)
-	matchers.BuildFileMatchersFromRules(loadedRules)
-	matchers.BuildExtensionMatchersFromRules(loadedRules)
-
-	// Initialize content matcher
-	contentMatcher := matchers.NewContentMatcherRegistry()
-	if err := contentMatcher.BuildFromRules(loadedRules); err != nil {
-		return nil, fmt.Errorf("failed to build content matchers: %w", err)
+		return nil, err
 	}
 
 	// Create progress reporter with appropriate handler
@@ -177,6 +75,71 @@ func NewScannerWithExcludes(path string, excludeDirs []string, verbose bool) (*S
 
 	return &Scanner{
 		provider:        provider,
+		rules:           components.rules,
+		depDetector:     components.depDetector,
+		compDetector:    components.compDetector,
+		jsonDetector:    components.jsonDetector,
+		dotenvDetector:  components.dotenvDetector,
+		licenseDetector: components.licenseDetector,
+		contentMatcher:  components.contentMatcher,
+		excludeDirs:     excludeDirs,
+		progress:        prog,
+	}, nil
+}
+
+// scannerComponents holds all initialized scanner components
+type scannerComponents struct {
+	rules           []types.Rule
+	depDetector     *DependencyDetector
+	compDetector    *ComponentDetector
+	jsonDetector    *JSONSchemaDetector
+	dotenvDetector  *parsers.DotenvDetector
+	licenseDetector *LicenseDetector
+	contentMatcher  *matchers.ContentMatcherRegistry
+}
+
+// initializeScannerComponents handles common initialization logic
+func initializeScannerComponents(provider types.Provider, path string) (*scannerComponents, error) {
+	// Load rules (simple, not lazy loaded - like TypeScript's loadAllRules)
+	loadedRules, err := rules.LoadEmbeddedRules()
+	if err != nil {
+		return nil, fmt.Errorf("failed to load rules: %w", err)
+	}
+
+	// Load types configuration
+	typesConfig, err := config.LoadTypesConfig()
+	if err != nil {
+		return nil, fmt.Errorf("failed to load types config: %w", err)
+	}
+	SetTypesConfig(typesConfig)
+
+	// Load ignore patterns configuration (only once)
+	if len(defaultIgnorePatterns) == 0 {
+		ignoreConfig, err := config.LoadIgnoreConfig()
+		if err != nil {
+			return nil, fmt.Errorf("failed to load ignore config: %w", err)
+		}
+		defaultIgnorePatterns = ignoreConfig.GetFlatIgnoreList()
+	}
+
+	// Initialize all detectors
+	depDetector := NewDependencyDetector(loadedRules)
+	compDetector := NewComponentDetector(depDetector, provider, loadedRules)
+	jsonDetector := NewJSONSchemaDetector(provider, loadedRules)
+	dotenvDetector := parsers.NewDotenvDetector(provider, loadedRules)
+	licenseDetector := NewLicenseDetector()
+
+	// Build matchers from rules (like TypeScript's loadAllRules)
+	matchers.BuildFileMatchersFromRules(loadedRules)
+	matchers.BuildExtensionMatchersFromRules(loadedRules)
+
+	// Initialize content matcher
+	contentMatcher := matchers.NewContentMatcherRegistry()
+	if err := contentMatcher.BuildFromRules(loadedRules); err != nil {
+		return nil, fmt.Errorf("failed to build content matchers: %w", err)
+	}
+
+	return &scannerComponents{
 		rules:           loadedRules,
 		depDetector:     depDetector,
 		compDetector:    compDetector,
@@ -184,8 +147,6 @@ func NewScannerWithExcludes(path string, excludeDirs []string, verbose bool) (*S
 		dotenvDetector:  dotenvDetector,
 		licenseDetector: licenseDetector,
 		contentMatcher:  contentMatcher,
-		excludeDirs:     excludeDirs,
-		progress:        prog,
 	}, nil
 }
 
@@ -471,32 +432,31 @@ func (s *Scanner) addNamedComponent(payload, component *types.Payload, currentPa
 
 func (s *Scanner) detectGitHubActions(payload *types.Payload, files []types.File, currentPath string) {
 	githubActionsComponents := s.compDetector.DetectGitHubActionsComponent(files, currentPath, s.provider.GetBasePath())
-	if githubActionsComponents == nil {
-		return
-	}
-
-	if githubActionsComponents.Name == "virtual" {
-		s.mergeVirtualPayload(payload, githubActionsComponents, currentPath)
-	} else {
-		payload.AddChild(githubActionsComponents)
-	}
+	s.processDetectedComponent(payload, githubActionsComponents, currentPath)
 }
 
 func (s *Scanner) detectDotenv(ctx *types.Payload, files []types.File, currentPath string) {
 	dotenvPayload := s.dotenvDetector.DetectInDotEnv(files, currentPath, s.provider.GetBasePath())
-	if dotenvPayload != nil {
-		s.mergeVirtualPayload(ctx, dotenvPayload, currentPath)
-	}
+	s.processDetectedComponent(ctx, dotenvPayload, currentPath)
 }
 
 func (s *Scanner) detectJSONSchemas(payload, ctx *types.Payload, files []types.File, currentPath string) {
 	jsonComponents := s.jsonDetector.DetectJSONSchemaComponents(files, currentPath, s.provider.GetBasePath())
 	for _, jsonComponent := range jsonComponents {
-		if jsonComponent.Name == "virtual" {
-			s.mergeVirtualPayload(ctx, jsonComponent, currentPath)
-		} else {
-			payload.AddChild(jsonComponent)
-		}
+		s.processDetectedComponent(payload, jsonComponent, currentPath)
+	}
+}
+
+// processDetectedComponent handles the common pattern of processing detected components
+func (s *Scanner) processDetectedComponent(target *types.Payload, component *types.Payload, currentPath string) {
+	if component == nil {
+		return
+	}
+
+	if component.Name == "virtual" {
+		s.mergeVirtualPayload(target, component, currentPath)
+	} else {
+		target.AddChild(component)
 	}
 }
 
