@@ -1,0 +1,7 @@
+tech: jackson
+name: Jackson
+type: mapping
+dependencies:
+  - type: maven
+    name: /^com\.fasterxml\.jackson.*/
+    example: com.fasterxml.jackson.core:jackson-databind

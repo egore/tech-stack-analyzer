@@ -1,0 +1,5 @@
+tech: conan
+name: Conan
+type: package_manager
+files:
+  - conanfile.py

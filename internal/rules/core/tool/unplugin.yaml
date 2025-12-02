@@ -1,0 +1,13 @@
+tech: unplugin
+name: unplugin
+type: package_manager
+dependencies:
+  - type: npm
+    name: unplugin-dts
+    example: unplugin-dts
+  - type: npm
+    name: unplugin-icons
+    example: unplugin-icons
+  - type: npm
+    name: unplugin-vue-components
+    example: unplugin-vue-components
