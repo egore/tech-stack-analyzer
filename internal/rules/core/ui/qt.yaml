@@ -1,18 +1,6 @@
 tech: qt
 name: Qt Framework
 type: ui
-extensions:
-  - .pro
-  - .pri
-  - .qrc
-  - .ui
-  - .cpp
-  - .h
-  - .hpp
-  - .c
-files:
-  - CMakeLists.txt
-  - Makefile
 content:
   # Qt project files (.pro)
   - pattern: '^QT\s*[+:]='

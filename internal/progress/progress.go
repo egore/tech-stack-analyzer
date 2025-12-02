@@ -20,6 +20,12 @@ const (
 	EventFileProcessing
 	EventSkipped
 	EventProgress
+	EventScanInitializing
+	EventFileWriting
+	EventFileWritten
+	EventInfo
+	EventRuleCheck
+	EventRuleResult
 )
 
 // Event represents something that happened during scanning
@@ -33,6 +39,9 @@ type Event struct {
 	FileCount int
 	DirCount  int
 	Duration  time.Duration
+	Timestamp time.Time // For timing calculations
+	Matched   bool      // For rule matching results
+	Details   []string  // For detailed rule check information
 }
 
 // Reporter is the interface the scanner uses to report events
@@ -47,8 +56,11 @@ type Handler interface {
 
 // Progress is the centralized verbose system
 type Progress struct {
-	enabled bool
-	handler Handler
+	enabled     bool
+	handler     Handler
+	withTimings bool
+	traceRules  bool
+	dirTimings  map[string]time.Time // Track directory entry times
 }
 
 // New creates a new progress reporter
@@ -57,9 +69,22 @@ func New(enabled bool, handler Handler) *Progress {
 		handler = NewSimpleHandler(os.Stderr)
 	}
 	return &Progress{
-		enabled: enabled,
-		handler: handler,
+		enabled:     enabled,
+		handler:     handler,
+		withTimings: false,
+		traceRules:  false,
+		dirTimings:  make(map[string]time.Time),
 	}
+}
+
+// EnableTimings enables timing information in progress output
+func (p *Progress) EnableTimings() {
+	p.withTimings = true
+}
+
+// EnableRuleTracing enables detailed rule matching information
+func (p *Progress) EnableRuleTracing() {
+	p.traceRules = true
 }
 
 // Report sends an event to the handler (only if enabled)
@@ -90,16 +115,28 @@ func (p *Progress) ScanComplete(files, dirs int, duration time.Duration) {
 }
 
 func (p *Progress) EnterDirectory(path string) {
+	if p.withTimings {
+		p.dirTimings[path] = time.Now()
+	}
 	p.Report(Event{
-		Type: EventEnterDirectory,
-		Path: path,
+		Type:      EventEnterDirectory,
+		Path:      path,
+		Timestamp: time.Now(),
 	})
 }
 
 func (p *Progress) LeaveDirectory(path string) {
+	var duration time.Duration
+	if p.withTimings {
+		if startTime, ok := p.dirTimings[path]; ok {
+			duration = time.Since(startTime)
+			delete(p.dirTimings, path)
+		}
+	}
 	p.Report(Event{
-		Type: EventLeaveDirectory,
-		Path: path,
+		Type:     EventLeaveDirectory,
+		Path:     path,
+		Duration: duration,
 	})
 }
 
@@ -136,6 +173,79 @@ func (p *Progress) ProgressUpdate(files, dirs int) {
 	})
 }
 
+func (p *Progress) ScanInitializing(path string, excludeDirs []string) {
+	p.Report(Event{
+		Type: EventScanInitializing,
+		Path: path,
+		Info: strings.Join(excludeDirs, ", "),
+	})
+}
+
+func (p *Progress) FileWriting(path string) {
+	p.Report(Event{
+		Type: EventFileWriting,
+		Path: path,
+	})
+}
+
+func (p *Progress) FileWritten(path string) {
+	p.Report(Event{
+		Type: EventFileWritten,
+		Path: path,
+	})
+}
+
+func (p *Progress) Info(message string) {
+	p.Report(Event{
+		Type: EventInfo,
+		Info: message,
+	})
+}
+
+func (p *Progress) RuleCheck(tech string, details []string) {
+	if !p.traceRules {
+		return
+	}
+	p.Report(Event{
+		Type:    EventRuleCheck,
+		Tech:    tech,
+		Details: details,
+	})
+}
+
+func (p *Progress) RuleResult(tech string, matched bool, reason string) {
+	if !p.traceRules {
+		return
+	}
+	// Only report matches, skip non-matches to avoid noise
+	if !matched {
+		return
+	}
+	p.Report(Event{
+		Type:    EventRuleResult,
+		Tech:    tech,
+		Matched: matched,
+		Reason:  reason,
+	})
+}
+
+func (p *Progress) RuleResultWithPath(tech string, matched bool, reason string, path string) {
+	if !p.traceRules {
+		return
+	}
+	// Only report matches, skip non-matches to avoid noise
+	if !matched {
+		return
+	}
+	p.Report(Event{
+		Type:    EventRuleResult,
+		Tech:    tech,
+		Matched: matched,
+		Reason:  reason,
+		Path:    path,
+	})
+}
+
 // SimpleHandler outputs events as simple lines (no tree)
 type SimpleHandler struct {
 	writer io.Writer
@@ -161,8 +271,10 @@ func (h *SimpleHandler) Handle(event Event) {
 		fmt.Fprintf(h.writer, "[DIR]  Entering: %s\n", event.Path)
 
 	case EventLeaveDirectory:
-		// Simple handler doesn't show leave events
-		// (TreeHandler would use this)
+		// Show timing if duration is set
+		if event.Duration > 0 {
+			fmt.Fprintf(h.writer, "[TIME] %s: %.2fs\n", event.Path, event.Duration.Seconds())
+		}
 
 	case EventComponentDetected:
 		fmt.Fprintf(h.writer, "[COMP] Detected: %s (%s) at %s\n",
@@ -177,6 +289,38 @@ func (h *SimpleHandler) Handle(event Event) {
 	case EventProgress:
 		fmt.Fprintf(h.writer, "[PROG] Progress: %d files, %d directories\n",
 			event.FileCount, event.DirCount)
+
+	case EventScanInitializing:
+		fmt.Fprintf(h.writer, "[INIT] Initializing scanner: %s\n", event.Path)
+		if event.Info != "" {
+			fmt.Fprintf(h.writer, "[INIT] Excluding: %s\n", event.Info)
+		}
+
+	case EventFileWriting:
+		fmt.Fprintf(h.writer, "[OUT]  Writing results to: %s\n", event.Path)
+
+	case EventFileWritten:
+		fmt.Fprintf(h.writer, "[OUT]  Results written: %s\n", event.Path)
+
+	case EventInfo:
+		fmt.Fprintf(h.writer, "[INFO] %s\n", event.Info)
+
+	case EventRuleCheck:
+		fmt.Fprintf(h.writer, "[RULE] Checking: %s\n", event.Tech)
+		for _, detail := range event.Details {
+			fmt.Fprintf(h.writer, "       %s\n", detail)
+		}
+
+	case EventRuleResult:
+		if event.Matched {
+			if event.Path != "" {
+				fmt.Fprintf(h.writer, "[RULE] ✓ MATCHED: %s - %s (in %s)\n", event.Tech, event.Reason, event.Path)
+			} else {
+				fmt.Fprintf(h.writer, "[RULE] ✓ MATCHED: %s - %s\n", event.Tech, event.Reason)
+			}
+		} else {
+			fmt.Fprintf(h.writer, "[RULE] ✗ NOT MATCHED: %s - %s\n", event.Tech, event.Reason)
+		}
 	}
 }
 
@@ -218,6 +362,11 @@ func (h *TreeHandler) Handle(event Event) {
 		if h.depth < 0 {
 			h.depth = 0
 		}
+		// Show timing if duration is set
+		if event.Duration > 0 {
+			indent := strings.Repeat("│  ", h.depth)
+			fmt.Fprintf(h.writer, "%s└─ ⏱  %.2fs\n", indent, event.Duration.Seconds())
+		}
 
 	case EventComponentDetected:
 		fmt.Fprintf(h.writer, "%s%sDetected: %s (%s)\n",
@@ -234,6 +383,38 @@ func (h *TreeHandler) Handle(event Event) {
 	case EventProgress:
 		fmt.Fprintf(h.writer, "%s%sProgress: %d files, %d directories\n",
 			indent, prefix, event.FileCount, event.DirCount)
+
+	case EventScanInitializing:
+		fmt.Fprintf(h.writer, "%s%sInitializing: %s\n", indent, prefix, event.Path)
+		if event.Info != "" {
+			fmt.Fprintf(h.writer, "%s%sExcluding: %s\n", indent, prefix, event.Info)
+		}
+
+	case EventFileWriting:
+		fmt.Fprintf(h.writer, "%s%sWriting results to: %s\n", indent, prefix, event.Path)
+
+	case EventFileWritten:
+		fmt.Fprintf(h.writer, "%s%sResults written: %s\n", indent, prefix, event.Path)
+
+	case EventInfo:
+		fmt.Fprintf(h.writer, "%s%s%s\n", indent, prefix, event.Info)
+
+	case EventRuleCheck:
+		fmt.Fprintf(h.writer, "%s%sChecking rule: %s\n", indent, prefix, event.Tech)
+		for _, detail := range event.Details {
+			fmt.Fprintf(h.writer, "%s│  %s\n", indent, detail)
+		}
+
+	case EventRuleResult:
+		if event.Matched {
+			if event.Path != "" {
+				fmt.Fprintf(h.writer, "%s└─ ✓ MATCHED: %s - %s (in %s)\n", indent, event.Tech, event.Reason, event.Path)
+			} else {
+				fmt.Fprintf(h.writer, "%s└─ ✓ MATCHED: %s - %s\n", indent, event.Tech, event.Reason)
+			}
+		} else {
+			fmt.Fprintf(h.writer, "%s└─ ✗ NOT MATCHED: %s - %s\n", indent, event.Tech, event.Reason)
+		}
 	}
 }
 

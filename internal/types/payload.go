@@ -3,6 +3,7 @@ package types
 import (
 	"encoding/json"
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	"github.com/go-enry/go-enry/v2"
@@ -346,10 +347,17 @@ func (p *Payload) AddDependency(dep Dependency) {
 	p.Dependencies = append(p.Dependencies, dep)
 }
 
-// DetectLanguage detects the language from a file name using go-enry (GitHub Linguist)
-func (p *Payload) DetectLanguage(filename string) {
+// DetectLanguage detects the language from a file name using a LanguageDetector
+// This is a convenience method that delegates to the language detector
+// Deprecated: Use LanguageDetector directly for better modularity
+func (p *Payload) DetectLanguage(filename string, content []byte) {
 	// Try detection by extension first (fast path)
-	lang, _ := enry.GetLanguageByExtension(filename)
+	lang, safe := enry.GetLanguageByExtension(filename)
+
+	// If not safe (ambiguous extension), use content analysis for better accuracy
+	if !safe && lang != "" && len(content) > 0 {
+		lang = enry.GetLanguage(filepath.Base(filename), content)
+	}
 
 	// If no result from extension, try by filename (handles special files like Makefile, Dockerfile)
 	if lang == "" {

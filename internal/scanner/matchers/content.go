@@ -29,60 +29,75 @@ func NewContentMatcherRegistry() *ContentMatcherRegistry {
 // BuildFromRules compiles content patterns from rules
 func (r *ContentMatcherRegistry) BuildFromRules(rules []types.Rule) error {
 	for _, rule := range rules {
-		// Skip rules with dependencies - they don't need content validation
-		if len(rule.Dependencies) > 0 {
+		if !r.shouldProcessRule(rule) {
 			continue
 		}
 
-		// Skip rules without content patterns
-		if len(rule.Content) == 0 {
-			continue
-		}
-
-		// Skip rules without extensions - content matching requires extension context
-		if len(rule.Extensions) == 0 {
-			continue
-		}
-
-		// Compile content patterns
 		for _, contentRule := range rule.Content {
-			// Compile regex pattern
-			pattern, err := regexp.Compile(contentRule.Pattern)
-			if err != nil {
-				// Skip invalid patterns
-				continue
-			}
+			r.addContentPattern(rule.Tech, contentRule, rule.Extensions)
+		}
+	}
+	return nil
+}
 
-			matcher := &ContentMatcher{
-				Tech:    rule.Tech,
-				Pattern: pattern,
-			}
+func (r *ContentMatcherRegistry) shouldProcessRule(rule types.Rule) bool {
+	// Skip rules with dependencies - they don't need content validation
+	if len(rule.Dependencies) > 0 {
+		return false
+	}
 
-			// If specific files are defined, create file-based matchers
-			if len(contentRule.Files) > 0 {
-				for _, filename := range contentRule.Files {
-					r.fileMatchers[filename] = append(r.fileMatchers[filename], matcher)
-				}
-			} else {
-				// Otherwise, create extension-based matchers
-				// Determine which extensions this pattern applies to
-				targetExtensions := contentRule.Extensions
-				if len(targetExtensions) == 0 {
-					// If no specific extensions defined, apply to all rule extensions
-					targetExtensions = rule.Extensions
-				}
+	// Skip rules without content patterns
+	if len(rule.Content) == 0 {
+		return false
+	}
 
-				// Create matcher for each target extension
-				for _, ext := range targetExtensions {
-					r.matchers[ext] = append(r.matchers[ext], matcher)
-				}
-			}
+	// Check if any content pattern has extensions or files
+	for _, contentRule := range rule.Content {
+		if len(contentRule.Extensions) > 0 || len(contentRule.Files) > 0 {
+			return true
 		}
 	}
 
-	// Patterns are processed in the order they appear in the rule
+	// If no content patterns have extensions/files, check if rule has top-level extensions
+	// Content patterns can inherit from top-level extensions as fallback
+	if len(rule.Extensions) > 0 {
+		return true
+	}
 
-	return nil
+	// No way to determine which files to check - skip this rule
+	return false
+}
+
+func (r *ContentMatcherRegistry) addContentPattern(tech string, contentRule types.ContentRule, ruleExtensions []string) {
+	// Compile regex pattern
+	pattern, err := regexp.Compile(contentRule.Pattern)
+	if err != nil {
+		return // Skip invalid patterns
+	}
+
+	matcher := &ContentMatcher{
+		Tech:    tech,
+		Pattern: pattern,
+	}
+
+	// If specific files are defined, create file-based matchers
+	if len(contentRule.Files) > 0 {
+		for _, filename := range contentRule.Files {
+			r.fileMatchers[filename] = append(r.fileMatchers[filename], matcher)
+		}
+		return
+	}
+
+	// Otherwise, create extension-based matchers
+	targetExtensions := contentRule.Extensions
+	if len(targetExtensions) == 0 {
+		// If no specific extensions defined, apply to all rule extensions
+		targetExtensions = ruleExtensions
+	}
+
+	for _, ext := range targetExtensions {
+		r.matchers[ext] = append(r.matchers[ext], matcher)
+	}
 }
 
 // MatchContent checks if content matches any patterns for the given extension

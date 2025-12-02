@@ -152,7 +152,7 @@ func TestDetectLanguage(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			payload := &Payload{Languages: make(map[string]int)} // Initialize map
-			payload.DetectLanguage(tt.filename)
+			payload.DetectLanguage(tt.filename, []byte{})        // Empty content for extension-only test
 			if tt.expectedLang != "" {
 				assert.Contains(t, payload.Languages, tt.expectedLang)
 				assert.Equal(t, 1, payload.Languages[tt.expectedLang])

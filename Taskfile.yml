@@ -55,6 +55,13 @@ tasks:
     deps:
       - build
 
+  run:scan:
+    desc: Run stack-analyzer on a directory
+    cmds:
+      - ./{{.BINARY_NAME}} scan {{.CLI_ARGS}}
+    deps:
+      - build
+
   run:help:
     desc: Show stack-analyzer help message
     cmds:

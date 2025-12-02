@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"strings"
 
@@ -14,25 +15,35 @@ type Settings struct {
 	PrettyPrint bool
 
 	// Scan behavior
-	ExcludeDirs []string
-	Aggregate   string
-	Verbose     bool
+	ExcludeDirs  []string
+	Aggregate    string
+	Verbose      bool
+	Debug        bool
+	TraceTimings bool
+	TraceRules   bool
+	FilterRules  []string // Only use these rules (for debugging)
 
 	// Logging
 	LogLevel  logrus.Level
 	LogFormat string // "text" or "json"
+	LogFile   string // Optional: write logs to file instead of stderr
 }
 
 // DefaultSettings returns default configuration
 func DefaultSettings() *Settings {
 	return &Settings{
-		OutputFile:  "stack-analysis.json",
-		PrettyPrint: true,
-		ExcludeDirs: []string{},
-		Aggregate:   "",
-		Verbose:     false,
-		LogLevel:    logrus.InfoLevel,
-		LogFormat:   "text",
+		OutputFile:   "stack-analysis.json",
+		PrettyPrint:  true,
+		ExcludeDirs:  []string{},
+		Aggregate:    "",
+		Verbose:      false,
+		Debug:        false,
+		TraceTimings: false,
+		TraceRules:   false,
+		FilterRules:  []string{},
+		LogLevel:     logrus.ErrorLevel, // Changed from InfoLevel - only errors by default
+		LogFormat:    "text",
+		LogFile:      "", // Empty = stderr
 	}
 }
 
@@ -71,8 +82,31 @@ func LoadSettings() *Settings {
 		settings.LogFormat = logFormat
 	}
 
+	if logFile := os.Getenv("STACK_ANALYZER_LOG_FILE"); logFile != "" {
+		settings.LogFile = logFile
+	}
+
 	if verbose := os.Getenv("STACK_ANALYZER_VERBOSE"); verbose != "" {
 		settings.Verbose = strings.ToLower(verbose) == "true"
+	}
+
+	if debug := os.Getenv("STACK_ANALYZER_DEBUG"); debug != "" {
+		settings.Debug = strings.ToLower(debug) == "true"
+	}
+
+	if traceTimings := os.Getenv("STACK_ANALYZER_TRACE_TIMINGS"); traceTimings != "" {
+		settings.TraceTimings = strings.ToLower(traceTimings) == "true"
+	}
+
+	if traceRules := os.Getenv("STACK_ANALYZER_TRACE_RULES"); traceRules != "" {
+		settings.TraceRules = strings.ToLower(traceRules) == "true"
+	}
+
+	if filterRules := os.Getenv("STACK_ANALYZER_FILTER_RULES"); filterRules != "" {
+		settings.FilterRules = strings.Split(filterRules, ",")
+		for i, rule := range settings.FilterRules {
+			settings.FilterRules[i] = strings.TrimSpace(rule)
+		}
 	}
 
 	return settings
@@ -95,8 +129,20 @@ func (s *Settings) ConfigureLogger() *logrus.Logger {
 		})
 	}
 
-	// Set output to stderr by default (can be changed to file later)
-	logger.SetOutput(os.Stderr)
+	// Set output destination
+	if s.LogFile != "" {
+		file, err := os.OpenFile(s.LogFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+		if err != nil {
+			// Fallback to stderr if file can't be opened
+			fmt.Fprintf(os.Stderr, "Warning: Cannot open log file %s: %v\n", s.LogFile, err)
+			logger.SetOutput(os.Stderr)
+		} else {
+			logger.SetOutput(file)
+		}
+	} else {
+		// Default to stderr
+		logger.SetOutput(os.Stderr)
+	}
 
 	return logger
 }

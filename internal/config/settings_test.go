@@ -15,7 +15,7 @@ func TestDefaultSettings(t *testing.T) {
 	assert.True(t, settings.PrettyPrint, "PrettyPrint should be true by default")
 	assert.Empty(t, settings.ExcludeDirs, "ExcludeDirs should be empty by default")
 	assert.Equal(t, "", settings.Aggregate, "Aggregate should be empty by default")
-	assert.Equal(t, logrus.InfoLevel, settings.LogLevel, "LogLevel should be Info by default")
+	assert.Equal(t, logrus.ErrorLevel, settings.LogLevel, "LogLevel should be Error by default")
 	assert.Equal(t, "text", settings.LogFormat, "LogFormat should be text by default")
 }
 
@@ -92,7 +92,7 @@ func TestLoadSettings_InvalidLogLevel(t *testing.T) {
 	settings := LoadSettings()
 
 	// Should fall back to default for invalid log level
-	assert.Equal(t, logrus.InfoLevel, settings.LogLevel, "Should use default log level for invalid input")
+	assert.Equal(t, logrus.ErrorLevel, settings.LogLevel, "Should use default log level for invalid input")
 }
 
 func TestLoadSettings_BooleanParsing(t *testing.T) {

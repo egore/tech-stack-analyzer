@@ -47,40 +47,49 @@ func init() {
 	aggregate := settings.Aggregate
 	prettyPrint := settings.PrettyPrint
 	verbose := settings.Verbose
+	debug := settings.Debug
+	traceTimings := settings.TraceTimings
+	traceRules := settings.TraceRules
 	logLevel := settings.LogLevel.String()
 	logFormat := settings.LogFormat
+	logFile := settings.LogFile
 
 	// Set up flags with defaults from environment variables
 	scanCmd.Flags().StringVarP(&settings.OutputFile, "output", "o", outputFile, "Output file path (default: stack-analysis.json)")
 	scanCmd.Flags().StringVar(&settings.Aggregate, "aggregate", aggregate, "Aggregate fields: tech,techs,languages,licenses,dependencies,all")
 	scanCmd.Flags().BoolVar(&settings.PrettyPrint, "pretty", prettyPrint, "Pretty print JSON output")
-	scanCmd.Flags().BoolVarP(&settings.Verbose, "verbose", "v", verbose, "Show detailed progress information")
+	scanCmd.Flags().BoolVarP(&settings.Verbose, "verbose", "v", verbose, "Show progress with simple output")
+	scanCmd.Flags().BoolVarP(&settings.Debug, "debug", "d", debug, "Show progress with tree structure (cannot be used with --verbose)")
+	scanCmd.Flags().BoolVar(&settings.TraceTimings, "trace-timings", traceTimings, "Show timing information for each directory (requires --verbose or --debug)")
+	scanCmd.Flags().BoolVar(&settings.TraceRules, "trace-rules", traceRules, "Show detailed rule matching information (requires --verbose or --debug)")
 
 	// Exclude patterns - support multiple flags or comma-separated values
 	scanCmd.Flags().StringSliceVar(&settings.ExcludeDirs, "exclude", settings.ExcludeDirs, "Patterns to exclude (supports glob patterns, can be specified multiple times)")
 
+	// Rule filtering for debugging
+	scanCmd.Flags().StringSliceVar(&settings.FilterRules, "rules", settings.FilterRules, "Only use these rules (comma-separated tech names, e.g., c,cplusplus,nodejs - for debugging)")
+
 	// Logging flags - use defaults from environment variables
-	scanCmd.Flags().String("log-level", logLevel, "Log level: trace, debug, info, warn, error, fatal, panic")
+	scanCmd.Flags().String("log-level", logLevel, "Log level: trace, debug, error, fatal")
 	scanCmd.Flags().String("log-format", logFormat, "Log format: text or json")
+	scanCmd.Flags().String("log-file", logFile, "Log file path (default: stderr)")
 }
 
 func runScan(cmd *cobra.Command, args []string) {
 	// Get logging flags and configure logger
 	logLevel, _ := cmd.Flags().GetString("log-level")
 	logFormat, _ := cmd.Flags().GetString("log-format")
+	logFile, _ := cmd.Flags().GetString("log-file")
 
 	// Update settings with flag values
 	if level, err := logrus.ParseLevel(logLevel); err == nil {
 		settings.LogLevel = level
 	}
 	settings.LogFormat = logFormat
+	settings.LogFile = logFile
 
 	// Configure logger
 	logger := settings.ConfigureLogger()
-	logger.WithFields(logrus.Fields{
-		"version": "1.0.0",
-		"command": "scan",
-	}).Info("Starting Tech Stack Analyzer")
 
 	// Get path from args or use current directory
 	path := "."
@@ -113,6 +122,22 @@ func runScan(cmd *cobra.Command, args []string) {
 	// Update settings with actual flag values
 	settings.ExcludeDirs = excludeList
 
+	// Handle special case: -o - means stdout
+	if settings.OutputFile == "-" {
+		settings.OutputFile = ""
+	}
+
+	// Check for mutually exclusive flags
+	if settings.Verbose && settings.Debug {
+		logger.Fatal("Cannot use --verbose and --debug together. Choose one.")
+	}
+
+	// Auto-enable debug mode when trace flags are used without explicit output mode
+	if (settings.TraceRules || settings.TraceTimings) && !settings.Verbose && !settings.Debug {
+		settings.Debug = true
+		logger.Debug("Auto-enabled --debug mode for trace output")
+	}
+
 	// Validate settings
 	if err := settings.Validate(); err != nil {
 		logger.WithError(err).Fatal("Invalid settings")
@@ -124,13 +149,24 @@ func runScan(cmd *cobra.Command, args []string) {
 		scannerPath = filepath.Dir(absPath)
 	}
 
+	// Show scan start message (always, even without verbose)
+	if isFile {
+		fmt.Fprintf(os.Stderr, "Scanning file: %s\n", absPath)
+	} else {
+		fmt.Fprintf(os.Stderr, "Scanning: %s\n", scannerPath)
+	}
+
+	// Show filtered rules if specified
+	if len(settings.FilterRules) > 0 {
+		fmt.Fprintf(os.Stderr, "Active rules: %s\n", strings.Join(settings.FilterRules, ", "))
+	}
+
 	logger.WithFields(logrus.Fields{
 		"path":         scannerPath,
 		"exclude_dirs": settings.ExcludeDirs,
-		"verbose":      settings.Verbose,
-	}).Info("Initializing scanner")
+	}).Debug("Initializing scanner")
 
-	s, err := scanner.NewScannerWithExcludes(scannerPath, settings.ExcludeDirs, settings.Verbose)
+	s, err := scanner.NewScannerWithExcludes(scannerPath, settings.ExcludeDirs, settings.Verbose, settings.Debug, settings.TraceTimings, settings.TraceRules)
 	if err != nil {
 		logger.WithError(err).Fatal("Failed to create scanner")
 	}
@@ -138,10 +174,10 @@ func runScan(cmd *cobra.Command, args []string) {
 	// Scan project or file
 	var payload interface{}
 	if isFile {
-		logger.WithField("file", absPath).Info("Scanning file")
+		logger.WithField("file", absPath).Debug("Scanning file")
 		payload, err = s.ScanFile(filepath.Base(absPath))
 	} else {
-		logger.WithField("directory", absPath).Info("Scanning directory")
+		logger.WithField("directory", absPath).Debug("Scanning directory")
 		payload, err = s.Scan()
 	}
 
@@ -162,12 +198,12 @@ func runScan(cmd *cobra.Command, args []string) {
 
 	// Write output
 	if settings.OutputFile != "" {
-		logger.WithField("output_file", settings.OutputFile).Info("Writing results to file")
 		err = os.WriteFile(settings.OutputFile, jsonData, 0644)
 		if err != nil {
 			logger.WithError(err).Fatal("Failed to write output file")
 		}
-		logger.WithField("file", settings.OutputFile).Info("Results written successfully")
+		// Always show confirmation to user (like curl -o)
+		fmt.Fprintf(os.Stderr, "Results written to %s\n", settings.OutputFile)
 	} else {
 		logger.Debug("Outputting to stdout")
 		fmt.Println(string(jsonData))

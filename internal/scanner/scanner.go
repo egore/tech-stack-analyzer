@@ -42,6 +42,7 @@ type Scanner struct {
 	jsonDetector    *JSONSchemaDetector
 	dotenvDetector  *parsers.DotenvDetector
 	licenseDetector *LicenseDetector
+	langDetector    *LanguageDetector
 	contentMatcher  *matchers.ContentMatcherRegistry
 	excludeDirs     []string
 	progress        *progress.Progress
@@ -52,11 +53,11 @@ var defaultIgnorePatterns []string
 
 // NewScanner creates a new scanner (mirroring TypeScript's analyser function)
 func NewScanner(path string) (*Scanner, error) {
-	return NewScannerWithExcludes(path, nil, false)
+	return NewScannerWithExcludes(path, nil, false, false, false, false)
 }
 
 // NewScannerWithExcludes creates a new scanner with directory exclusions
-func NewScannerWithExcludes(path string, excludeDirs []string, verbose bool) (*Scanner, error) {
+func NewScannerWithExcludes(path string, excludeDirs []string, verbose bool, useTreeView bool, traceTimings bool, traceRules bool) (*Scanner, error) {
 	// Create provider for the target path (like TypeScript's FSProvider)
 	provider := provider.NewFSProvider(path)
 
@@ -66,12 +67,25 @@ func NewScannerWithExcludes(path string, excludeDirs []string, verbose bool) (*S
 		return nil, err
 	}
 
-	// Create progress reporter with appropriate handler
-	var handler progress.Handler
-	if verbose {
-		handler = progress.NewSimpleHandler(os.Stderr)
+	// Create progress reporter
+	var prog *progress.Progress
+	if verbose || useTreeView {
+		if useTreeView {
+			prog = progress.New(true, progress.NewTreeHandler(os.Stderr))
+		} else {
+			prog = progress.New(true, progress.NewSimpleHandler(os.Stderr))
+		}
+	} else {
+		prog = progress.New(false, progress.NewNullHandler())
 	}
-	prog := progress.New(verbose, handler)
+
+	// Enable tracing if requested
+	if traceTimings {
+		prog.EnableTimings()
+	}
+	if traceRules {
+		prog.EnableRuleTracing()
+	}
 
 	return &Scanner{
 		provider:        provider,
@@ -81,6 +95,7 @@ func NewScannerWithExcludes(path string, excludeDirs []string, verbose bool) (*S
 		jsonDetector:    components.jsonDetector,
 		dotenvDetector:  components.dotenvDetector,
 		licenseDetector: components.licenseDetector,
+		langDetector:    NewLanguageDetector(),
 		contentMatcher:  components.contentMatcher,
 		excludeDirs:     excludeDirs,
 		progress:        prog,
@@ -318,8 +333,15 @@ func (s *Scanner) ScanFile(fileName string) (*types.Payload, error) {
 	// Pass the base path (directory) as the current path for component detection
 	ctx := s.applyRules(payload, files, basePath)
 
-	// Detect language from the file name
-	ctx.DetectLanguage(fileName)
+	// Detect language from the file name with content analysis
+	filePath := filepath.Join(basePath, fileName)
+	content, err := s.provider.ReadFile(filePath)
+	if err != nil {
+		content = []byte{} // Empty content on error
+	}
+	if lang := s.langDetector.DetectLanguage(fileName, content); lang != "" {
+		ctx.AddLanguage(lang)
+	}
 
 	return payload, nil
 }
@@ -354,7 +376,15 @@ func (s *Scanner) recurse(payload *types.Payload, filePath string) error {
 
 			// Detect language from file name (like TypeScript's detectLang)
 			// Languages go into the current context (might be a component)
-			ctx.DetectLanguage(file.Name)
+			// Read content for accurate detection of ambiguous extensions
+			fileFullPath := filepath.Join(filePath, file.Name)
+			content, err := s.provider.ReadFile(fileFullPath)
+			if err != nil {
+				content = []byte{} // Empty content on error
+			}
+			if lang := s.langDetector.DetectLanguage(file.Name, content); lang != "" {
+				ctx.AddLanguage(lang)
+			}
 			continue
 		}
 
@@ -564,58 +594,70 @@ func (s *Scanner) detectByContent(ctx *types.Payload, files []types.File, curren
 	// This is ADDITIVE - it can detect techs that weren't matched by extension alone
 
 	for _, file := range files {
-		// Skip if not a regular file
 		if file.Type != "file" {
 			continue
 		}
 
-		// Check if there are file-specific or extension-based content matchers
-		hasFileMatchers := s.contentMatcher.HasFileMatchers(file.Name)
-		ext := filepath.Ext(file.Name)
-		hasExtMatchers := ext != "" && s.contentMatcher.HasContentMatchers(ext)
-
-		if !hasFileMatchers && !hasExtMatchers {
+		if !s.shouldCheckFileContent(file) {
 			continue
 		}
 
-		// Read file content
 		filePath := filepath.Join(currentPath, file.Name)
 		content, err := s.provider.ReadFile(filePath)
 		if err != nil {
 			continue
 		}
 
-		// Match file-specific patterns first (higher priority)
-		var contentMatches map[string][]string
-		if hasFileMatchers {
-			contentMatches = s.contentMatcher.MatchFileContent(file.Name, string(content))
-		}
+		contentMatches := s.matchFileContent(file, string(content))
+		s.processContentMatches(ctx, contentMatches, matchedTechs, filePath, currentPath)
+	}
+}
 
-		// Match extension-based patterns
-		if hasExtMatchers {
-			extMatches := s.contentMatcher.MatchContent(ext, string(content))
-			// Merge extension matches with file matches
-			if contentMatches == nil {
-				contentMatches = extMatches
-			} else {
-				for tech, reasons := range extMatches {
-					contentMatches[tech] = append(contentMatches[tech], reasons...)
-				}
+func (s *Scanner) shouldCheckFileContent(file types.File) bool {
+	hasFileMatchers := s.contentMatcher.HasFileMatchers(file.Name)
+	ext := filepath.Ext(file.Name)
+	hasExtMatchers := ext != "" && s.contentMatcher.HasContentMatchers(ext)
+	return hasFileMatchers || hasExtMatchers
+}
+
+func (s *Scanner) matchFileContent(file types.File, content string) map[string][]string {
+	hasFileMatchers := s.contentMatcher.HasFileMatchers(file.Name)
+	ext := filepath.Ext(file.Name)
+	hasExtMatchers := ext != "" && s.contentMatcher.HasContentMatchers(ext)
+
+	var contentMatches map[string][]string
+	if hasFileMatchers {
+		contentMatches = s.contentMatcher.MatchFileContent(file.Name, content)
+	}
+
+	if hasExtMatchers {
+		extMatches := s.contentMatcher.MatchContent(ext, content)
+		if contentMatches == nil {
+			contentMatches = extMatches
+		} else {
+			for tech, reasons := range extMatches {
+				contentMatches[tech] = append(contentMatches[tech], reasons...)
 			}
 		}
+	}
 
-		// Add techs that matched content patterns
-		for tech, reasons := range contentMatches {
-			// Add content matching reasons
-			for _, reason := range reasons {
-				ctx.AddTech(tech, reason)
-			}
+	return contentMatches
+}
 
-			// Create implicit component if this is a new tech detection
-			if !matchedTechs[tech] {
-				matchedTechs[tech] = true
-				s.findImplicitComponentByTech(ctx, tech, currentPath, false)
-			}
+func (s *Scanner) processContentMatches(ctx *types.Payload, contentMatches map[string][]string, matchedTechs map[string]bool, filePath, currentPath string) {
+	for tech, reasons := range contentMatches {
+		if !matchedTechs[tech] && len(reasons) > 0 {
+			relPath, _ := filepath.Rel(s.provider.GetBasePath(), filePath)
+			s.progress.RuleResultWithPath(tech, true, reasons[0], relPath)
+		}
+
+		for _, reason := range reasons {
+			ctx.AddTech(tech, reason)
+		}
+
+		if !matchedTechs[tech] {
+			matchedTechs[tech] = true
+			s.findImplicitComponentByTech(ctx, tech, currentPath, false)
 		}
 	}
 }
@@ -625,6 +667,15 @@ func (s *Scanner) processTechMatches(ctx *types.Payload, matches map[string][]st
 		if matchedTechs[tech] {
 			continue
 		}
+		// Report rule match for tracing
+		if len(reasons) > 0 {
+			relPath, _ := filepath.Rel(s.provider.GetBasePath(), currentPath)
+			if relPath == "" {
+				relPath = "."
+			}
+			s.progress.RuleResultWithPath(tech, true, reasons[0], relPath)
+		}
+
 		for _, reason := range reasons {
 			s.addTechWithPrimaryCheck(ctx, tech, reason, currentPath)
 		}
@@ -639,7 +690,10 @@ func (s *Scanner) detectLegacyFiles(ctx *types.Payload, files []types.File, matc
 			continue
 		}
 		if s.matchRuleFiles(rule, files) {
-			s.addTechWithPrimaryCheck(ctx, rule.Tech, fmt.Sprintf("matched file: %s", rule.Files[0]), "")
+			reason := fmt.Sprintf("matched file: %s", rule.Files[0])
+			// Report rule match for tracing
+			s.progress.RuleResult(rule.Tech, true, reason)
+			s.addTechWithPrimaryCheck(ctx, rule.Tech, reason, "")
 			matchedTechs[rule.Tech] = true
 		}
 	}

@@ -258,43 +258,73 @@ export STACK_ANALYZER_AGGREGATE=tech,techs,languages
 export STACK_ANALYZER_VERBOSE=true         # Show detailed progress information
 
 # Logging
-export STACK_ANALYZER_LOG_LEVEL=debug      # trace, debug, info, warn, error, fatal, panic
+export STACK_ANALYZER_LOG_LEVEL=debug      # trace, debug, error, fatal (default: error)
 export STACK_ANALYZER_LOG_FORMAT=json      # text or json
+export STACK_ANALYZER_LOG_FILE=debug.log   # Optional: write logs to file
 ```
 
-#### Logging
+#### Logging and Output Channels
 
-The scanner provides professional logging with multiple levels and formats:
+The scanner separates data output from progress messages following Unix philosophy:
 
+**Output Channels:**
+- **stdout** - Structured data (JSON) for piping to tools like `jq`
+- **stderr** - Human messages (progress, errors, confirmations)
+- **Log file** - Developer debugging (optional)
+
+**Piping Examples:**
 ```bash
-# Debug logging with structured fields
+# Pipe JSON to jq (use -o - for stdout)
+./bin/stack-analyzer scan -o - /path | jq '.techs'
+
+# Alternative: use /dev/stdout
+./bin/stack-analyzer scan -o /dev/stdout /path | jq '.metadata.file_count'
+
+# Show progress while piping (progress on stderr, data pipes)
+./bin/stack-analyzer scan --verbose -o - /path | jq '.languages'
+
+# Suppress stderr if needed
+./bin/stack-analyzer scan --verbose -o - /path 2>/dev/null | jq
+```
+
+**Logging Levels:**
+```bash
+# Debug logging (internal operations)
 ./bin/stack-analyzer scan /path --log-level debug
 
-# JSON logging for automated processing
-./bin/stack-analyzer scan /path --log-format json
-
-# Trace level for maximum detail
+# Trace logging (deep debugging with data inspection)
 ./bin/stack-analyzer scan /path --log-level trace
 
-# Environment variables for logging
-STACK_ANALYZER_LOG_LEVEL=debug STACK_ANALYZER_LOG_FORMAT=json \
-  ./bin/stack-analyzer scan /path
+# Write logs to file (keeps stderr clean)
+./bin/stack-analyzer scan /path --log-level debug --log-file debug.log
+
+# JSON format for automated processing
+./bin/stack-analyzer scan /path --log-level debug --log-format json
+
+# Combine verbose progress + debug logs to file
+./bin/stack-analyzer scan --verbose --log-level debug --log-file debug.log /path
 ```
+
+**Available Log Levels:**
+- `trace` - Deep debugging (rule matching, data inspection)
+- `debug` - Internal operations (component detection, file processing)
+- `error` - Non-fatal errors (default - only errors shown)
+- `fatal` - Fatal errors (exit immediately)
 
 **Log Output Examples:**
 
 Text format:
 ```
-INFO[2025-12-01 11:24:14] Starting Tech Stack Analyzer command=scan version=1.0.0
-INFO[2025-12-01 11:24:14] Initializing scanner exclude_dirs="[]" max_depth=-1 path=/path
-DEBU[2025-12-01 11:24:14] Generating output aggregate=tech pretty_print=true
+time="2025-12-02 15:30:26" level=debug msg="Initializing scanner" path=/path exclude_dirs="[]"
+time="2025-12-02 15:30:26" level=debug msg="Scanning directory" directory=/path
+time="2025-12-02 15:30:27" level=debug msg="Generating output" aggregate= pretty_print=true
 ```
 
 JSON format:
 ```json
-{"command":"scan","level":"info","msg":"Starting Tech Stack Analyzer","time":"2025-12-01 11:24:16","version":"1.0.0"}
-{"path":"/path","level":"info","msg":"Initializing scanner","time":"2025-12-01 11:24:16"}
-{"aggregate":"tech","level":"debug","msg":"Generating output","pretty_print":true,"time":"2025-12-01 11:24:16"}
+{"level":"debug","msg":"Initializing scanner","path":"/path","time":"2025-12-02 15:30:26"}
+{"directory":"/path","level":"debug","msg":"Scanning directory","time":"2025-12-02 15:30:26"}
+{"aggregate":"","level":"debug","msg":"Generating output","pretty_print":true,"time":"2025-12-02 15:30:27"}
 ```
 
 #### Verbose Mode
@@ -331,7 +361,7 @@ STACK_ANALYZER_VERBOSE=true ./bin/stack-analyzer scan /path
 - `[COMP]` - Component detection (projects, services)
 - `[SKIP]` - Excluded directories (node_modules, .git, etc.)
 
-Verbose output is sent to **stderr**, keeping it separate from the JSON output file.
+Verbose output is sent to **stderr**, keeping it separate from JSON data output. This allows piping JSON to tools while still seeing progress.
 
 ### Commands
 
@@ -345,13 +375,14 @@ stack-analyzer scan [path] [flags]
 ```
 
 **Flags:**
-- `--output, -o` - Output file path (default: stack-analysis.json)
+- `--output, -o` - Output file path (default: stack-analysis.json). Use `-o -` or `-o /dev/stdout` for piping
 - `--aggregate` - Aggregate fields: `tech,techs,languages,licenses,dependencies,all` (use `all` for all aggregated fields)
 - `--exclude` - Patterns to exclude (supports glob patterns like `**/__tests__/**`, `*.log`; can be specified multiple times)
 - `--pretty` - Pretty print JSON output (default: true)
-- `--verbose, -v` - Show detailed progress information (default: false)
-- `--log-level` - Log level: trace, debug, info, warn, error, fatal, panic (default: info)
+- `--verbose, -v` - Show detailed progress information on stderr (default: false)
+- `--log-level` - Log level: trace, debug, error, fatal (default: error)
 - `--log-format` - Log format: text or json (default: text)
+- `--log-file` - Log file path (default: stderr)
 
 **Examples:**
 ```bash
@@ -417,76 +448,74 @@ This classification is fully configurable through type definitions and per-rule 
 
 ### Content-Based Detection
 
-In addition to file names and extensions, the scanner validates technology detection through **content pattern matching**. This enables precise identification of libraries and frameworks that share file extensions.
+The scanner validates technology detection through **independent content pattern matching**. This enables precise identification of libraries and frameworks that share common file extensions.
 
-#### Two-Gateway Detection Logic
+#### Independent Detection Logic
 
-1. **First Gateway - File/Extension Match**: File must match by name or extension
-2. **Second Gateway - Content Validation** (if patterns defined): At least one pattern must match
-3. **Result**: Both gateways must pass for detection
+**Extension/File Detection:** Rules with `extensions` or `files` fields detect technologies by file presence alone.
 
-**Key Principle:** Content patterns are **additive validation**, not filters. If a file matches by extension but has content patterns defined, the content must also match.
+**Content Detection:** Rules with `content` fields detect technologies by matching patterns in file contents. Content patterns must specify which files to check via their own `extensions` or `files` restrictions.
+
+**Key Principle:** Content matching is **independent** of top-level extensions/files. Each content pattern defines its own scope where to look for matches.
 
 #### Rule Examples
 
-**Basic Content Matching:**
+**Content-Only Detection:**
 ```yaml
 tech: mfc
 name: Microsoft Foundation Class Library
 type: ui_framework
-extensions: [.cpp, .h, .hpp]
 content:
   - pattern: '#include\s+<afx'
+    extensions: [.cpp, .h, .hpp]
   - pattern: 'class\s+\w+\s*:\s*public\s+C(Wnd|FrameWnd|CDialog)'
+    extensions: [.cpp, .h, .hpp]
   - pattern: '(BEGIN_MESSAGE_MAP|END_MESSAGE_MAP|DECLARE_MESSAGE_MAP)'
+    extensions: [.cpp, .h, .hpp]
 ```
 
 **Behavior:**
-- `.cpp` file found → First gateway passed (extension matches)
-- Content checked → If `#include <afx` found → Second gateway passed → **MFC detected** ✅
-- Content checked → If no patterns match → Second gateway failed → **MFC not detected** ❌
-- Rules without `content` → Detected by extension alone (no second gateway)
+- `.cpp` file with `#include <afx` → Content pattern matches → **MFC detected** ✅
+- `.cpp` file without MFC patterns → No content matches → **MFC not detected** ❌
+- Pure C++ project → No MFC patterns → **MFC not detected** ❌ (no false positives!)
 
-**Per-Pattern Extensions** (Advanced):
+**Hybrid Detection** (Extension + Content):
 ```yaml
 tech: qt
 name: Qt Framework
 type: ui
-extensions: [.pro, .ui, .cpp, .h]
+extensions: [.pro, .ui, .qrc]  # Qt-specific files
 content:
   - pattern: 'Q_OBJECT'
-    extensions: [.cpp, .h]    # Only check C++ files
-  - pattern: 'QString'
-    extensions: [.cpp, .h]    # Only check C++ files
+    extensions: [.cpp, .h, .hpp, .c]  # Check C++ files for Qt code
+  - pattern: 'Qt[0-9]::'
+    files: [CMakeLists.txt]           # Check CMake files
+  - pattern: '<ui\s+version='
+    extensions: [.ui]                 # Check UI files
 ```
 
 **Behavior:**
-- `.pro` file → Extension matches → No content patterns for `.pro` → **Qt detected** ✅
-- `.ui` file → Extension matches → No content patterns for `.ui` → **Qt detected** ✅
-- `.h` file → Extension matches → Content patterns defined for `.h` → Check content → If `Q_OBJECT` found → **Qt detected** ✅
+- `.pro` file → Extension matches → **Qt detected** ✅ (no content check)
+- `.cpp` file with `Q_OBJECT` → Content pattern matches → **Qt detected** ✅
+- `.cpp` file without Qt patterns → No content matches → **Qt not detected** ❌
+- `CMakeLists.txt` with `Qt6::` → Content pattern matches → **Qt detected** ✅
 
-**File-Specific Patterns** (Advanced):
+**File-Specific Patterns:**
 ```yaml
-tech: mytech
-name: My Technology
-type: framework
-files: [config.json]          # Rule-level file restriction
+tech: qt
+name: Qt Framework
+type: ui
 content:
-  - pattern: '"framework":\s*"mytech"'
+  - pattern: 'Qt[0-9]::'
+    files: [CMakeLists.txt]    # Only check CMakeLists.txt
+  - pattern: 'find_package\s*\(\s*Qt[0-9]'
+    files: [CMakeLists.txt]    # Only check CMakeLists.txt
 ```
 
-Or per-pattern:
-```yaml
-tech: mytech
-name: My Technology
-type: framework
-extensions: [.json, .yaml]
-content:
-  - pattern: '"framework":\s*"mytech"'
-    files: [config.json]      # Only check config.json
-  - pattern: 'framework:\s*mytech'
-    extensions: [.yaml]        # Only check .yaml files
-```
+**Behavior:**
+- `CMakeLists.txt` with `Qt6::` → Content pattern matches → **Qt detected** ✅
+- `other_file.txt` with `Qt6::` → Wrong filename → **Qt not detected** ❌
+- `CMakeLists.txt` without Qt patterns → No content matches → **Qt not detected** ❌
 
 #### Use Cases
 
@@ -976,7 +1005,9 @@ extensions:                      # Optional: File extensions to match
   - .nt
 content:                         # Optional: Content patterns for validation
   - pattern: 'newtech\s*=\s*['"']'
+    extensions: [.conf, .yml]      # Specify where to check
   - pattern: 'import.*newtech'
+    extensions: [.js, .py]         # Check JS and Python files
 detect:                          # Optional: Custom detection logic
   type: package-json            # Detection types: package-json, terraform, json-schema, regex, yaml-path
   file: package.json
@@ -1079,13 +1110,17 @@ extensions:
   - .go
 ```
 
-**`content`** - Content patterns for precise detection
+**`content`** - Content patterns for precise detection (independent of top-level extensions/files)
 ```yaml
 content:
-  - pattern: 'import\s+.*react'      # Regex in file content
-  - pattern: 'FROM\s+node:'          # Dockerfile patterns
-  - pattern: 'class.*Component'      # Class detection
+  - pattern: 'import\s+.*react'
+    extensions: [.js, .jsx, .ts, .tsx]  # Must specify where to check
+  - pattern: 'FROM\s+node:'
+    files: [Dockerfile]                  # Or specific files
+  - pattern: 'Q_OBJECT'
+    extensions: [.cpp, .h, .hpp]         # Check C++ files for Qt
 ```
+**Note:** Content patterns must specify `extensions` or `files` to define where to check. They operate independently of top-level `extensions`/`files` fields.
 
 **`detect`** - Custom detection configuration
 ```yaml
