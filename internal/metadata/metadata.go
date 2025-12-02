@@ -11,7 +11,7 @@ import (
 type ScanMetadata struct {
 	Timestamp      string                 `json:"timestamp"`
 	ScanPath       string                 `json:"scan_path"`
-	ScannerVersion string                 `json:"scanner_version"`
+	SpecVersion    string                 `json:"specVersion"` // Output format specification version
 	DurationMs     int64                  `json:"duration_ms,omitempty"`
 	FileCount      int                    `json:"file_count,omitempty"`
 	DirectoryCount int                    `json:"directory_count,omitempty"`
@@ -33,11 +33,11 @@ func NewScanMetadata(scanPath string, version string, excludedDirs []string) *Sc
 	absPath, _ := filepath.Abs(scanPath)
 
 	return &ScanMetadata{
-		Timestamp:      time.Now().UTC().Format(time.RFC3339),
-		ScanPath:       absPath,
-		ScannerVersion: version,
-		ExcludedDirs:   excludedDirs,
-		Git:            GetGitInfo(scanPath),
+		Timestamp:    time.Now().UTC().Format(time.RFC3339),
+		ScanPath:     absPath,
+		SpecVersion:  version,
+		ExcludedDirs: excludedDirs,
+		Git:          GetGitInfo(scanPath),
 	}
 }
 

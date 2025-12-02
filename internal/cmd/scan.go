@@ -29,6 +29,7 @@ Examples:
   stack-analyzer scan /path/to/project
   stack-analyzer scan /path/to/pom.xml
   stack-analyzer scan --aggregate techs,languages /path/to/project
+  stack-analyzer scan --aggregate all /path/to/project
   stack-analyzer scan --exclude vendor,node_modules /path/to/project
   stack-analyzer scan --exclude "**/__tests__/**" --exclude "*.log" /path/to/project`,
 	Args: cobra.MaximumNArgs(1),
@@ -51,7 +52,7 @@ func init() {
 
 	// Set up flags with defaults from environment variables
 	scanCmd.Flags().StringVarP(&settings.OutputFile, "output", "o", outputFile, "Output file path (default: stdout)")
-	scanCmd.Flags().StringVar(&settings.Aggregate, "aggregate", aggregate, "Aggregate fields: tech,techs,languages,licenses,dependencies")
+	scanCmd.Flags().StringVar(&settings.Aggregate, "aggregate", aggregate, "Aggregate fields: tech,techs,languages,licenses,dependencies,all")
 	scanCmd.Flags().BoolVar(&settings.PrettyPrint, "pretty", prettyPrint, "Pretty print JSON output")
 	scanCmd.Flags().BoolVarP(&settings.Verbose, "verbose", "v", verbose, "Show detailed progress information")
 
@@ -183,11 +184,16 @@ func generateOutput(payload interface{}, aggregateFields string, prettyPrint boo
 			fields[i] = strings.TrimSpace(field)
 		}
 
+		// Handle "all" as special case - aggregate all available fields
+		if len(fields) == 1 && fields[0] == "all" {
+			fields = []string{"tech", "techs", "languages", "licenses", "dependencies"}
+		}
+
 		// Validate fields
 		validFields := map[string]bool{"tech": true, "techs": true, "languages": true, "licenses": true, "dependencies": true}
 		for _, field := range fields {
 			if !validFields[field] {
-				return nil, fmt.Errorf("invalid aggregate field: %s. Valid fields: tech, techs, languages, licenses, dependencies", field)
+				return nil, fmt.Errorf("invalid aggregate field: %s. Valid fields: tech, techs, languages, licenses, dependencies, all", field)
 			}
 		}
 

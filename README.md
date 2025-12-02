@@ -109,6 +109,7 @@ The analyzer uses a command-based interface powered by [Cobra](https://github.co
 ./bin/stack-analyzer scan --aggregate tech,techs,languages,licenses,dependencies /path/to/project
 ./bin/stack-analyzer scan --aggregate techs /path/to/project
 ./bin/stack-analyzer scan --aggregate dependencies /path/to/project
+./bin/stack-analyzer scan --aggregate all /path/to/project  # Aggregate all fields (tech, techs, languages, licenses, dependencies)
 
 # List all available technologies
 ./bin/stack-analyzer info techs
@@ -158,6 +159,13 @@ The scanner outputs a hierarchical JSON structure showing detected technologies,
 **Aggregated Output** (`--aggregate techs,languages,dependencies`):
 ```json
 {
+  "metadata": {
+    "timestamp": "2025-12-01T14:45:35Z",
+    "scan_path": "/path/to/project",
+    "specVersion": "0.1",
+    "duration_ms": 1173,
+    "file_count": 523
+  },
   "techs": ["nodejs", "react", "postgresql", "docker", "express", "vite"],
   "languages": {"JavaScript": 145, "TypeScript": 89, "CSS": 12},
   "dependencies": [
@@ -339,7 +347,7 @@ stack-analyzer scan [path] [flags]
 
 **Flags:**
 - `--output, -o` - Output file path (default: stdout)
-- `--aggregate` - Aggregate fields: `tech,techs,languages,licenses,dependencies`
+- `--aggregate` - Aggregate fields: `tech,techs,languages,licenses,dependencies,all` (use `all` for all aggregated fields)
 - `--exclude` - Patterns to exclude (supports glob patterns like `**/__tests__/**`, `*.log`; can be specified multiple times)
 - `--pretty` - Pretty print JSON output (default: true)
 - `--verbose, -v` - Show detailed progress information (default: false)
@@ -352,6 +360,7 @@ stack-analyzer scan [path] [flags]
 stack-analyzer scan .
 stack-analyzer scan /path/to/project --output results.json
 stack-analyzer scan --aggregate techs,languages,dependencies /path
+stack-analyzer scan --aggregate all /path  # Aggregate all fields with metadata
 
 # Exclude patterns (glob support)
 stack-analyzer scan /path --exclude vendor --exclude node_modules
@@ -534,7 +543,7 @@ The `metadata` field (present only in the root payload) provides information abo
   "metadata": {
     "timestamp": "2025-12-01T14:45:35Z",
     "scan_path": "/absolute/path/to/project",
-    "scanner_version": "1.0.0",
+    "specVersion": "0.1",
     "duration_ms": 1173,
     "file_count": 523,
     "directory_count": 87,
@@ -556,7 +565,7 @@ The `metadata` field (present only in the root payload) provides information abo
 **Metadata Fields:**
 - **timestamp**: ISO 8601 timestamp when scan was performed
 - **scan_path**: Absolute path to scanned directory
-- **scanner_version**: Version of the analyzer
+- **specVersion**: Output format specification version
 - **duration_ms**: Scan duration in milliseconds
 - **file_count**: Total files scanned
 - **directory_count**: Total directories traversed
@@ -680,6 +689,7 @@ Use the `--aggregate` flag to get a simplified, rolled-up view of your entire co
 
 ```bash
 ./bin/stack-analyzer scan --aggregate tech,techs,languages,licenses,dependencies /path/to/project
+./bin/stack-analyzer scan --aggregate all /path/to/project  # Aggregate all fields with metadata
 ```
 
 **Output:**
@@ -709,6 +719,7 @@ Use the `--aggregate` flag to get a simplified, rolled-up view of your entire co
 - `languages` - Programming languages with file counts
 - `licenses` - Detected licenses from LICENSE files and package manifests
 - `dependencies` - All dependencies as `[type, name, version]` arrays
+- `all` - Aggregate all available fields (tech, techs, languages, licenses, dependencies) with metadata
 
 This is useful for:
 - Quick technology stack overview

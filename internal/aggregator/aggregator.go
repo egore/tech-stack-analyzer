@@ -8,6 +8,7 @@ import (
 
 // AggregateOutput represents aggregated/rolled-up data from the scan
 type AggregateOutput struct {
+	Metadata     interface{}    `json:"metadata,omitempty"`     // Scan metadata (from root payload)
 	Tech         []string       `json:"tech,omitempty"`         // Primary/main technologies
 	Techs        []string       `json:"techs,omitempty"`        // All detected technologies
 	Languages    map[string]int `json:"languages,omitempty"`    // Language file counts
@@ -54,6 +55,9 @@ func (a *Aggregator) Aggregate(payload *types.Payload) *AggregateOutput {
 	if a.fields["dependencies"] {
 		output.Dependencies = a.collectDependencies(payload)
 	}
+
+	// Include metadata from the root payload
+	output.Metadata = payload.Metadata
 
 	return output
 }

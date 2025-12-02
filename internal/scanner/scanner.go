@@ -16,6 +16,7 @@ import (
 	"github.com/petrarca/tech-stack-analyzer/internal/scanner/components"
 	"github.com/petrarca/tech-stack-analyzer/internal/scanner/matchers"
 	"github.com/petrarca/tech-stack-analyzer/internal/scanner/parsers"
+	"github.com/petrarca/tech-stack-analyzer/internal/spec"
 
 	// Import component detectors to trigger init() registration
 	_ "github.com/petrarca/tech-stack-analyzer/internal/scanner/components/deno"
@@ -202,7 +203,7 @@ func (s *Scanner) Scan() (*types.Payload, error) {
 	}
 
 	// Create scan metadata
-	scanMeta := metadata.NewScanMetadata(basePath, "1.0.0", s.excludeDirs)
+	scanMeta := metadata.NewScanMetadata(basePath, spec.Version, s.excludeDirs)
 	startTime := time.Now()
 
 	// Create main payload like in TypeScript: new Payload({ name: 'main', folderPath: '/' })
