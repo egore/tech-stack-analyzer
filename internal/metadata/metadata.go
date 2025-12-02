@@ -15,6 +15,9 @@ type ScanMetadata struct {
 	DurationMs     int64                  `json:"duration_ms,omitempty"`
 	FileCount      int                    `json:"file_count,omitempty"`
 	DirectoryCount int                    `json:"directory_count,omitempty"`
+	LanguageCount  int                    `json:"language_count,omitempty"` // Number of distinct programming languages
+	TechCount      int                    `json:"tech_count,omitempty"`     // Number of primary technologies
+	TechsCount     int                    `json:"techs_count,omitempty"`    // Number of all detected technologies
 	ExcludedDirs   []string               `json:"excluded_dirs,omitempty"`
 	Git            *GitInfo               `json:"git,omitempty"`
 	Properties     map[string]interface{} `json:"properties,omitempty"`
@@ -50,6 +53,17 @@ func (m *ScanMetadata) SetDuration(duration time.Duration) {
 func (m *ScanMetadata) SetFileCounts(fileCount, dirCount int) {
 	m.FileCount = fileCount
 	m.DirectoryCount = dirCount
+}
+
+// SetLanguageCount sets the number of distinct programming languages
+func (m *ScanMetadata) SetLanguageCount(languageCount int) {
+	m.LanguageCount = languageCount
+}
+
+// SetTechCounts sets the primary and total technology counts
+func (m *ScanMetadata) SetTechCounts(techCount, techsCount int) {
+	m.TechCount = techCount
+	m.TechsCount = techsCount
 }
 
 // SetProperties sets custom properties from configuration

@@ -188,6 +188,12 @@ func (s *Scanner) Scan() (*types.Payload, error) {
 	fileCount, dirCount := s.countFilesAndDirs(payload)
 	scanMeta.SetFileCounts(fileCount, dirCount)
 
+	// Count languages, primary techs, and all techs
+	languageCount := s.countLanguages(payload)
+	techCount, techsCount := s.countTechs(payload)
+	scanMeta.SetLanguageCount(languageCount)
+	scanMeta.SetTechCounts(techCount, techsCount)
+
 	// Set custom properties from config
 	scanMeta.SetProperties(cfg.Properties)
 
@@ -202,8 +208,14 @@ func (s *Scanner) Scan() (*types.Payload, error) {
 
 // countFilesAndDirs recursively counts files and directories in the payload tree
 func (s *Scanner) countFilesAndDirs(payload *types.Payload) (int, int) {
-	fileCount := len(payload.Languages) // Approximate: language count as file indicator
-	dirCount := 1                       // Current directory
+	fileCount := 0
+
+	// Sum actual file counts from languages map
+	for _, count := range payload.Languages {
+		fileCount += count
+	}
+
+	dirCount := 1 // Current directory
 
 	for _, child := range payload.Childs {
 		childFiles, childDirs := s.countFilesAndDirs(child)
@@ -212,6 +224,74 @@ func (s *Scanner) countFilesAndDirs(payload *types.Payload) (int, int) {
 	}
 
 	return fileCount, dirCount
+}
+
+// countLanguages recursively counts distinct programming languages in the payload tree
+func (s *Scanner) countLanguages(payload *types.Payload) int {
+	languages := make(map[string]bool)
+
+	// Collect languages from current payload
+	for lang := range payload.Languages {
+		languages[lang] = true
+	}
+
+	// Recursively collect from child components
+	for _, child := range payload.Childs {
+		// We need to get the actual language names from the child
+		s.collectLanguages(child, languages)
+	}
+
+	return len(languages)
+}
+
+// collectLanguages helper to recursively collect language names
+func (s *Scanner) collectLanguages(payload *types.Payload, languages map[string]bool) {
+	for lang := range payload.Languages {
+		languages[lang] = true
+	}
+
+	for _, child := range payload.Childs {
+		s.collectLanguages(child, languages)
+	}
+}
+
+// countTechs returns the count of primary techs and all detected techs
+func (s *Scanner) countTechs(payload *types.Payload) (int, int) {
+	primaryTechs := make(map[string]bool)
+	allTechs := make(map[string]bool)
+
+	// Collect from current payload
+	for _, tech := range payload.Tech {
+		primaryTechs[tech] = true
+		allTechs[tech] = true
+	}
+
+	for _, tech := range payload.Techs {
+		allTechs[tech] = true
+	}
+
+	// Recursively collect from child components
+	for _, child := range payload.Childs {
+		s.collectTechs(child, primaryTechs, allTechs)
+	}
+
+	return len(primaryTechs), len(allTechs)
+}
+
+// collectTechs helper to recursively collect tech names
+func (s *Scanner) collectTechs(payload *types.Payload, primaryTechs, allTechs map[string]bool) {
+	for _, tech := range payload.Tech {
+		primaryTechs[tech] = true
+		allTechs[tech] = true
+	}
+
+	for _, tech := range payload.Techs {
+		allTechs[tech] = true
+	}
+
+	for _, child := range payload.Childs {
+		s.collectTechs(child, primaryTechs, allTechs)
+	}
 }
 
 // ScanFile performs analysis on a single file, treating it as a directory with just that file
