@@ -10,6 +10,7 @@ import (
 	"github.com/petrarca/tech-stack-analyzer/internal/config"
 	"github.com/petrarca/tech-stack-analyzer/internal/rules"
 	"github.com/petrarca/tech-stack-analyzer/internal/types"
+	"github.com/petrarca/tech-stack-analyzer/internal/util"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
@@ -52,8 +53,24 @@ func init() {
 	infoCmd.AddCommand(techsCmd)
 	infoCmd.AddCommand(ruleCmd)
 
-	// Add format flag to rule command
-	ruleCmd.Flags().StringVarP(&outputFormat, "format", "f", "yaml", "Output format: yaml or json")
+	// Add format flag to all info subcommands with separate variables and validation
+	setupFormatFlag(componentTypesCmd, "text", runComponentTypes)
+	setupFormatFlag(techsCmd, "text", runTechs)
+	setupFormatFlag(ruleCmd, "yaml", runRule)
+}
+
+// setupFormatFlag configures format flag and validation for a command
+func setupFormatFlag(cmd *cobra.Command, defaultFormat string, runFunc func(*cobra.Command, []string)) {
+	var format string
+	cmd.Flags().StringVarP(&format, "format", "f", defaultFormat, "Output format: text, yaml, or json")
+	cmd.PreRun = func(cmd *cobra.Command, args []string) {
+		format = util.NormalizeFormat(format)
+		if err := util.ValidateOutputFormat(format); err != nil {
+			log.Fatalf("Invalid format: %v", err)
+		}
+		outputFormat = format
+	}
+	cmd.Run = runFunc
 }
 
 func runComponentTypes(cmd *cobra.Command, args []string) {
@@ -80,22 +97,38 @@ func runComponentTypes(cmd *cobra.Command, args []string) {
 	sort.Strings(componentTypes)
 	sort.Strings(nonComponentTypes)
 
-	fmt.Println("=== Component Types (create components) ===")
-	for _, t := range componentTypes {
+	// Output based on format using validation utility
+	switch util.NormalizeFormat(outputFormat) {
+	case "json":
+		result := map[string]interface{}{
+			"component_types":     componentTypes,
+			"non_component_types": nonComponentTypes,
+		}
+		outputAndMarshal(result, "json")
+	case "yaml":
+		result := map[string]interface{}{
+			"component_types":     componentTypes,
+			"non_component_types": nonComponentTypes,
+		}
+		outputAndMarshal(result, "yaml")
+	default: // text format
+		printTypeList(typesConfig, componentTypes, "Component Types (create components)")
+		printTypeList(typesConfig, nonComponentTypes, "Non-Component Types (tools/libraries only)")
+	}
+}
+
+// printTypeList prints a formatted list of types with descriptions
+func printTypeList(typesConfig *types.TypesConfig, types []string, title string) {
+	fmt.Printf("=== %s ===\n", title)
+	for _, t := range types {
 		if desc, ok := typesConfig.Types[t]; ok && desc.Description != "" {
 			fmt.Printf("%s - %s\n", t, desc.Description)
 		} else {
 			fmt.Println(t)
 		}
 	}
-
-	fmt.Println("\n=== Non-Component Types (tools/libraries only) ===")
-	for _, t := range nonComponentTypes {
-		if desc, ok := typesConfig.Types[t]; ok && desc.Description != "" {
-			fmt.Printf("%s - %s\n", t, desc.Description)
-		} else {
-			fmt.Println(t)
-		}
+	if title == "Component Types (create components)" {
+		fmt.Println()
 	}
 }
 
@@ -106,24 +139,75 @@ func runTechs(cmd *cobra.Command, args []string) {
 		log.Fatalf("Failed to load rules: %v", err)
 	}
 
-	// Extract unique tech names
-	techSet := make(map[string]bool)
-	for _, rule := range allRules {
-		techSet[rule.Tech] = true
+	// Create a map of tech key to rule for quick lookup
+	ruleMap := make(map[string]*types.Rule)
+	for i := range allRules {
+		ruleMap[allRules[i].Tech] = &allRules[i]
 	}
 
-	// Sort and print
-	techs := make([]string, 0, len(techSet))
-	for tech := range techSet {
-		techs = append(techs, tech)
+	// Extract and sort tech keys
+	techKeys := make([]string, 0, len(ruleMap))
+	for tech := range ruleMap {
+		techKeys = append(techKeys, tech)
 	}
-	sort.Strings(techs)
+	sort.Strings(techKeys)
 
-	for _, tech := range techs {
-		fmt.Println(tech)
+	// Output based on format using validation utility
+	switch util.NormalizeFormat(outputFormat) {
+	case "json":
+		technologies := buildTechList(ruleMap, techKeys)
+		outputAndMarshal(map[string]interface{}{"technologies": technologies}, "json")
+	case "yaml":
+		technologies := buildTechList(ruleMap, techKeys)
+		outputAndMarshal(map[string]interface{}{"technologies": technologies}, "yaml")
+	default: // text format
+		for _, tech := range techKeys {
+			fmt.Println(tech)
+		}
+		fmt.Fprintf(cmd.OutOrStderr(), "\nTotal: %d technologies\n", len(techKeys))
+	}
+}
+
+// buildTechList creates a slice of tech info maps for JSON/YAML output
+func buildTechList(ruleMap map[string]*types.Rule, techKeys []string) []map[string]interface{} {
+	technologies := make([]map[string]interface{}, 0, len(techKeys))
+	for _, techKey := range techKeys {
+		rule := ruleMap[techKey]
+		techInfo := map[string]interface{}{
+			"name": rule.Name,
+			"tech": techKey,
+			"type": rule.Type,
+		}
+		// Only include description if it's not empty
+		if rule.Description != "" {
+			techInfo["description"] = rule.Description
+		}
+		// Only include properties if they exist and are not empty
+		if rule.Properties != nil && len(rule.Properties) > 0 {
+			techInfo["properties"] = rule.Properties
+		}
+		technologies = append(technologies, techInfo)
+	}
+	return technologies
+}
+
+// outputAndMarshal handles common marshaling and output logic
+func outputAndMarshal(data interface{}, format string) {
+	var output []byte
+	var err error
+
+	switch format {
+	case "json":
+		output, err = json.MarshalIndent(data, "", "  ")
+	case "yaml":
+		output, err = yaml.Marshal(data)
 	}
 
-	fmt.Fprintf(cmd.OutOrStderr(), "\nTotal: %d technologies\n", len(techs))
+	if err != nil {
+		log.Fatalf("Failed to marshal data: %v", err)
+	}
+
+	fmt.Println(string(output))
 }
 
 func runRule(cmd *cobra.Command, args []string) {
@@ -136,32 +220,21 @@ func runRule(cmd *cobra.Command, args []string) {
 	}
 
 	// Find the rule
-	var foundRule *types.Rule
-	for i := range allRules {
-		if allRules[i].Tech == techName {
-			foundRule = &allRules[i]
-			break
-		}
-	}
-
+	foundRule := findRuleByTech(allRules, techName)
 	if foundRule == nil {
 		log.Fatalf("Rule not found: %s", techName)
 	}
 
-	// Output based on format
-	var output []byte
-	switch outputFormat {
-	case "json":
-		output, err = json.MarshalIndent(foundRule, "", "  ")
-	case "yaml":
-		output, err = yaml.Marshal(foundRule)
-	default:
-		log.Fatalf("Invalid format: %s. Use 'yaml' or 'json'", outputFormat)
-	}
+	// Output based on format using validation utility
+	outputAndMarshal(foundRule, util.NormalizeFormat(outputFormat))
+}
 
-	if err != nil {
-		log.Fatalf("Failed to marshal rule: %v", err)
+// findRuleByTech searches for a rule by tech name
+func findRuleByTech(allRules []types.Rule, techName string) *types.Rule {
+	for i := range allRules {
+		if allRules[i].Tech == techName {
+			return &allRules[i]
+		}
 	}
-
-	fmt.Println(string(output))
+	return nil
 }

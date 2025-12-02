@@ -387,10 +387,12 @@ Shows which technology types create components (appear in `tech` field) vs those
 
 **`info techs`** - List all available technologies
 ```bash
-stack-analyzer info techs
-stack-analyzer info techs | grep postgres
+stack-analyzer info techs                    # Text format (simple list)
+stack-analyzer info techs --format json      # JSON with name, type, description, properties
+stack-analyzer info techs --format yaml      # YAML with name, type, description, properties
+stack-analyzer info techs | grep postgres    # Filter technologies
 ```
-Lists all technology names from the embedded rules.
+Lists all technology names from the embedded rules. JSON and YAML formats include detailed information (tech key, name, type, description, and custom properties).
 
 **`info rule [tech-name]`** - Show rule details
 ```bash
@@ -400,7 +402,7 @@ stack-analyzer info rule postgresql --format json
 Displays the complete rule definition for a given technology.
 
 **Flags:**
-- `--format, -f` - Output format: `yaml` or `json` (default: yaml)
+- `--format, -f` - Output format: `text`, `yaml`, or `json` (default varies by command)
 
 ### Global Flags
 
@@ -899,6 +901,15 @@ Specialized parsers for complex file formats:
 tech: newtech                    # Required: Unique technology identifier
 name: New Technology             # Required: Display name
 type: db                         # Required: Technology category
+description: Modern database solution with high performance and scalability  # Optional: Technology description
+properties:                      # Optional: Arbitrary key/value pairs for custom metadata
+  website: https://newtech.com
+  founded: 2020
+  versions:
+    - "1.0"
+    - "2.0"
+  api_version: v2
+  category: "Database"
 is_component: true               # Optional: Override component behavior
 dotenv:                          # Optional: Environment variable patterns
   - NEWTECH_
@@ -932,6 +943,31 @@ detect:                          # Optional: Custom detection logic
 - **`type`** - Technology category (database, framework, language, etc.)
 
 **Optional Fields:**
+
+**`description`** - Technology description for additional context
+```yaml
+description: AI safety and research company providing Claude AI models and APIs
+```
+- Used in JSON and YAML outputs of `info techs` command
+- Provides additional context about the technology
+- Empty string if not specified
+
+**`properties`** - Arbitrary key/value pairs for custom metadata
+```yaml
+properties:
+  website: https://www.anthropic.com
+  founded: 2021
+  models:
+    - claude-3-opus
+    - claude-3-sonnet
+    - claude-3-haiku
+  api_version: v1
+  category: "Large Language Models"
+```
+- Supports any YAML/JSON compatible data types (strings, numbers, arrays, objects)
+- Used in JSON and YAML outputs of `info techs` command
+- Perfect for storing company info, technical details, documentation links
+- Empty map `{}` if not specified (null in JSON, {} in YAML)
 
 **`is_component`** - Override component creation behavior
 - `true` - Always create a component

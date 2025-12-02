@@ -7,16 +7,18 @@ import (
 
 // Rule represents a technology detection rule
 type Rule struct {
-	Tech         string        `yaml:"tech" json:"tech"`
-	Name         string        `yaml:"name" json:"name"`
-	Type         string        `yaml:"type" json:"type"`
-	IsComponent  *bool         `yaml:"is_component,omitempty" json:"is_component,omitempty"` // nil = auto (use type-based logic)
-	DotEnv       []string      `yaml:"dotenv,omitempty" json:"dotenv,omitempty"`
-	Dependencies []Dependency  `yaml:"dependencies,omitempty" json:"dependencies,omitempty"`
-	Files        []string      `yaml:"files,omitempty" json:"files,omitempty"`
-	Extensions   []string      `yaml:"extensions,omitempty" json:"extensions,omitempty"`
-	Content      []ContentRule `yaml:"content,omitempty" json:"content,omitempty"`
-	Detect       *DetectConfig `yaml:"detect,omitempty" json:"detect,omitempty"`
+	Tech         string                 `yaml:"tech" json:"tech"`
+	Name         string                 `yaml:"name" json:"name"`
+	Type         string                 `yaml:"type" json:"type"`
+	Description  string                 `yaml:"description,omitempty" json:"description,omitempty"`
+	Properties   map[string]interface{} `yaml:"properties,omitempty" json:"properties,omitempty"`
+	IsComponent  *bool                  `yaml:"is_component,omitempty" json:"is_component,omitempty"` // nil = auto (use type-based logic)
+	DotEnv       []string               `yaml:"dotenv,omitempty" json:"dotenv,omitempty"`
+	Dependencies []Dependency           `yaml:"dependencies,omitempty" json:"dependencies,omitempty"`
+	Files        []string               `yaml:"files,omitempty" json:"files,omitempty"`
+	Extensions   []string               `yaml:"extensions,omitempty" json:"extensions,omitempty"`
+	Content      []ContentRule          `yaml:"content,omitempty" json:"content,omitempty"`
+	Detect       *DetectConfig          `yaml:"detect,omitempty" json:"detect,omitempty"`
 }
 
 // Dependency represents a dependency pattern (struct for YAML, but marshals as array for JSON)
