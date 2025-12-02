@@ -61,3 +61,6 @@ stack-analyser
 # Root level Python and JavaScript files - ad-hoc scripting
 *.py
 *.js
+
+# Default scanner output file
+/stack-analysis.json

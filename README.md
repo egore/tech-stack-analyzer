@@ -87,13 +87,13 @@ The analyzer uses a command-based interface powered by [Cobra](https://github.co
 ./bin/stack-analyzer scan --help
 ./bin/stack-analyzer info --help
 
-# Scan current directory
+# Scan current directory (creates stack-analysis.json)
 ./bin/stack-analyzer scan
 
-# Scan specific directory
+# Scan specific directory (creates stack-analysis.json in current directory)
 ./bin/stack-analyzer scan /path/to/project
 
-# Save results to file
+# Save results to custom file
 ./bin/stack-analyzer scan /path/to/project --output results.json
 
 # Exclude specific directories and files (supports glob patterns)
@@ -248,7 +248,7 @@ The scanner supports configuration through command-line flags and environment va
 #### Environment Variables
 
 ```bash
-# Output configuration
+# Output configuration (default: stack-analysis.json in current directory)
 export STACK_ANALYZER_OUTPUT=/tmp/scan-results.json
 export STACK_ANALYZER_PRETTY=false
 
@@ -331,7 +331,7 @@ STACK_ANALYZER_VERBOSE=true ./bin/stack-analyzer scan /path
 - `[COMP]` - Component detection (projects, services)
 - `[SKIP]` - Excluded directories (node_modules, .git, etc.)
 
-Verbose output is sent to **stderr**, keeping stdout clean for JSON output redirection.
+Verbose output is sent to **stderr**, keeping it separate from the JSON output file.
 
 ### Commands
 
@@ -345,7 +345,7 @@ stack-analyzer scan [path] [flags]
 ```
 
 **Flags:**
-- `--output, -o` - Output file path (default: stdout)
+- `--output, -o` - Output file path (default: stack-analysis.json)
 - `--aggregate` - Aggregate fields: `tech,techs,languages,licenses,dependencies,all` (use `all` for all aggregated fields)
 - `--exclude` - Patterns to exclude (supports glob patterns like `**/__tests__/**`, `*.log`; can be specified multiple times)
 - `--pretty` - Pretty print JSON output (default: true)
@@ -912,7 +912,7 @@ Each detector handles specific project types:
 - **Event-based architecture** for verbose mode
 - **Pluggable handlers** (SimpleHandler, TreeHandler)
 - **Stateless design** - scanner reports events, handlers display them
-- **stderr output** to keep stdout clean
+- **stderr output** to keep it separate from JSON output file
 
 #### 6. Language Detection (`github.com/go-enry/go-enry/v2`)
 - **GitHub Linguist integration** for comprehensive language detection
@@ -1225,146 +1225,16 @@ func registerNewMatcher() {
 
 > **Note**: External rules support is planned but not yet implemented. Currently, the scanner uses embedded rules only.
 
-## How to Contribute
+## Contributing
 
-We welcome contributions! Please follow these guidelines:
+We welcome contributions! For detailed guidelines on:
+- Code style and formatting
+- Pre-commit hooks setup
+- Submitting pull requests
+- Reporting issues
+- Development workflow
 
-### Getting Started
-
-1. **Fork the repository**
-2. **Create a feature branch**
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-3. **Set up development environment**
-   ```bash
-   # Install dependencies
-   go mod download
-   
-   # Install Task for automation (optional)
-   # macOS
-   brew install go-task
-   
-   # Or install directly with Go
-   go install github.com/go-task/task/v3/cmd/task@latest
-   
-   # Install pre-commit hooks (recommended)
-   task pre-commit:setup
-   task pre-commit:install
-   ```
-
-### Development Workflow
-
-```bash
-# Make your changes
-# ... (edit files)
-
-# Run quality checks
-task fct    # Format, Check, Test
-
-# Run specific tests
-go test -v ./internal/scanner/...
-
-# Run benchmarks
-go test -bench=. ./internal/scanner/...
-
-# Build to verify
-task build
-```
-
-### Pre-commit Hooks
-
-The project uses [pre-commit](https://pre-commit.com/) to automatically run quality checks before commits and pushes:
-
-**Setup:**
-```bash
-# Install pre-commit tool (one-time setup)
-task pre-commit:setup
-
-# Install git hooks (one-time per clone)
-task pre-commit:install
-```
-
-**Behavior:**
-- **On commit**: Runs `task fct` (format + check + test) on changed Go files
-- **On push**: Runs `task fct` + race detection tests for extra safety
-
-**Useful commands:**
-```bash
-# Run hooks manually on all files
-task pre-commit:run
-
-# Skip hooks for a specific commit (use sparingly)
-git commit -m "msg" --no-verify
-
-# Validate configuration
-task pre-commit:validate
-
-# Update hook versions
-task pre-commit:update
-```
-
-### Contribution Types
-
-#### 1. Bug Fixes
-- Create an issue describing the bug
-- Add tests that reproduce the issue
-- Fix the bug with failing tests passing
-- Ensure all existing tests still pass
-
-#### 2. New Technology Rules
-- Add rules in appropriate category directories
-- Follow existing rule structure and naming
-- Test against real projects using the technology
-- Update documentation if needed
-
-#### 3. New Component Detectors
-- Follow existing detector patterns
-- Add comprehensive tests
-- Update architecture documentation
-- Register in scanner initialization
-
-#### 4. Performance Improvements
-- Add benchmarks for performance measurement
-- Ensure no regression in functionality
-- Document performance gains
-
-### Code Style Guidelines
-
-- **Go Formatting**: Use `gofmt` and `goimports`
-- **Linting**: Pass `golangci-lint` with no issues
-- **Testing**: Maintain >90% test coverage
-- **Documentation**: Add comments for public functions
-- **Commit Messages**: Use conventional commit format
-  ```
-  feat: add new Oracle database detector
-  fix: resolve memory leak in file processing
-  docs: update README with installation instructions
-  ```
-
-### Submitting Changes
-
-1. **Push to your fork**
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-
-2. **Create Pull Request**
-   - Use descriptive title and description
-   - Link to relevant issues
-   - Include screenshots for UI changes
-   - Add performance benchmarks for optimizations
-
-3. **Code Review Process**
-   - Address all review feedback
-   - Ensure CI checks pass
-   - Update documentation as needed
-
-### Reporting Issues
-
-- **Bug Reports**: Use issue template with reproduction steps
-- **Feature Requests**: Describe use case and expected behavior
-- **Performance Issues**: Include benchmarks and system specs
+Please see [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## License
 

@@ -51,7 +51,7 @@ func init() {
 	logFormat := settings.LogFormat
 
 	// Set up flags with defaults from environment variables
-	scanCmd.Flags().StringVarP(&settings.OutputFile, "output", "o", outputFile, "Output file path (default: stdout)")
+	scanCmd.Flags().StringVarP(&settings.OutputFile, "output", "o", outputFile, "Output file path (default: stack-analysis.json)")
 	scanCmd.Flags().StringVar(&settings.Aggregate, "aggregate", aggregate, "Aggregate fields: tech,techs,languages,licenses,dependencies,all")
 	scanCmd.Flags().BoolVar(&settings.PrettyPrint, "pretty", prettyPrint, "Pretty print JSON output")
 	scanCmd.Flags().BoolVarP(&settings.Verbose, "verbose", "v", verbose, "Show detailed progress information")

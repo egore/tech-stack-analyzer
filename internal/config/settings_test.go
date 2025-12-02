@@ -11,7 +11,7 @@ import (
 func TestDefaultSettings(t *testing.T) {
 	settings := DefaultSettings()
 
-	assert.Equal(t, "", settings.OutputFile, "OutputFile should be empty by default")
+	assert.Equal(t, "stack-analysis.json", settings.OutputFile, "OutputFile should be stack-analysis.json by default")
 	assert.True(t, settings.PrettyPrint, "PrettyPrint should be true by default")
 	assert.Empty(t, settings.ExcludeDirs, "ExcludeDirs should be empty by default")
 	assert.Equal(t, "", settings.Aggregate, "Aggregate should be empty by default")
@@ -72,7 +72,7 @@ func TestLoadSettings_WithPartialEnvironmentVariables(t *testing.T) {
 	settings := LoadSettings()
 
 	// Should have defaults for unset variables
-	assert.Equal(t, "", settings.OutputFile)
+	assert.Equal(t, "stack-analysis.json", settings.OutputFile)
 	assert.False(t, settings.PrettyPrint) // From environment
 	assert.Empty(t, settings.ExcludeDirs)
 	assert.Equal(t, "", settings.Aggregate)

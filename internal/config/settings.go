@@ -26,7 +26,7 @@ type Settings struct {
 // DefaultSettings returns default configuration
 func DefaultSettings() *Settings {
 	return &Settings{
-		OutputFile:  "",
+		OutputFile:  "stack-analysis.json",
 		PrettyPrint: true,
 		ExcludeDirs: []string{},
 		Aggregate:   "",
