@@ -26,6 +26,3 @@ dependencies:
   - type: githubAction
     name: Azure/functions-action
     example: Azure/functions-action
-detect:
-  type: terraform
-  file: "*.tf"

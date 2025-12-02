@@ -11,6 +11,3 @@ dependencies:
   - type: ruby
     name: google-apis-forms_v1
     example: google-apis-forms_v1
-detect:
-  type: terraform
-  file: "*.tf"

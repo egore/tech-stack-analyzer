@@ -39,7 +39,6 @@ type Scanner struct {
 	rules           []types.Rule
 	depDetector     *DependencyDetector
 	compDetector    *ComponentDetector
-	jsonDetector    *JSONSchemaDetector
 	dotenvDetector  *parsers.DotenvDetector
 	licenseDetector *LicenseDetector
 	langDetector    *LanguageDetector
@@ -92,7 +91,6 @@ func NewScannerWithExcludes(path string, excludeDirs []string, verbose bool, use
 		rules:           components.rules,
 		depDetector:     components.depDetector,
 		compDetector:    components.compDetector,
-		jsonDetector:    components.jsonDetector,
 		dotenvDetector:  components.dotenvDetector,
 		licenseDetector: components.licenseDetector,
 		langDetector:    NewLanguageDetector(),
@@ -107,7 +105,6 @@ type scannerComponents struct {
 	rules           []types.Rule
 	depDetector     *DependencyDetector
 	compDetector    *ComponentDetector
-	jsonDetector    *JSONSchemaDetector
 	dotenvDetector  *parsers.DotenvDetector
 	licenseDetector *LicenseDetector
 	contentMatcher  *matchers.ContentMatcherRegistry
@@ -140,7 +137,6 @@ func initializeScannerComponents(provider types.Provider, path string) (*scanner
 	// Initialize all detectors
 	depDetector := NewDependencyDetector(loadedRules)
 	compDetector := NewComponentDetector(depDetector, provider, loadedRules)
-	jsonDetector := NewJSONSchemaDetector(provider, loadedRules)
 	dotenvDetector := parsers.NewDotenvDetector(provider, loadedRules)
 	licenseDetector := NewLicenseDetector()
 
@@ -158,7 +154,6 @@ func initializeScannerComponents(provider types.Provider, path string) (*scanner
 		rules:           loadedRules,
 		depDetector:     depDetector,
 		compDetector:    compDetector,
-		jsonDetector:    jsonDetector,
 		dotenvDetector:  dotenvDetector,
 		licenseDetector: licenseDetector,
 		contentMatcher:  contentMatcher,
@@ -434,10 +429,7 @@ func (s *Scanner) applyRules(payload *types.Payload, files []types.File, current
 	// 3. Dotenv detection
 	s.detectDotenv(ctx, files, currentPath)
 
-	// 4. JSON schema detection
-	s.detectJSONSchemas(payload, ctx, files, currentPath)
-
-	// 5. File and extension-based detection
+	// 4. File and extension-based detection (includes JSON schema via content matchers)
 	matchedTechs := s.detectByFilesAndExtensions(ctx, files, currentPath)
 
 	// 6. Legacy file-based detection
@@ -558,13 +550,6 @@ func (s *Scanner) detectGitHubActions(payload *types.Payload, files []types.File
 func (s *Scanner) detectDotenv(ctx *types.Payload, files []types.File, currentPath string) {
 	dotenvPayload := s.dotenvDetector.DetectInDotEnv(files, currentPath, s.provider.GetBasePath())
 	s.processDetectedComponent(ctx, dotenvPayload, currentPath)
-}
-
-func (s *Scanner) detectJSONSchemas(payload, ctx *types.Payload, files []types.File, currentPath string) {
-	jsonComponents := s.jsonDetector.DetectJSONSchemaComponents(files, currentPath, s.provider.GetBasePath())
-	for _, jsonComponent := range jsonComponents {
-		s.processDetectedComponent(payload, jsonComponent, currentPath)
-	}
 }
 
 // processDetectedComponent handles the common pattern of processing detected components

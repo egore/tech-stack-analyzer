@@ -49,6 +49,3 @@ dependencies:
   - type: python
     name: google-analytics-data
     example: google-analytics-data
-detect:
-  type: terraform
-  file: "*.tf"

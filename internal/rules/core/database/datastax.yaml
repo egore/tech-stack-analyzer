@@ -11,6 +11,3 @@ dependencies:
   - type: php
     name: datastax/php-driver
     example: datastax/php-driver
-detect:
-  type: terraform
-  file: "*.tf"

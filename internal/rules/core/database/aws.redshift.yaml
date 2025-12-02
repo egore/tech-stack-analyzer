@@ -20,6 +20,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_destination_redshift
     example: airbyte_destination_redshift
-detect:
-  type: terraform
-  file: "*.tf"

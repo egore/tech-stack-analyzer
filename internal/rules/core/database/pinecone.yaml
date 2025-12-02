@@ -22,6 +22,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_destination_pinecone
     example: airbyte_destination_pinecone
-detect:
-  type: terraform
-  file: "*.tf"

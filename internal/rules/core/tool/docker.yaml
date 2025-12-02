@@ -13,7 +13,3 @@ files:
   - Dockerfile
   - docker-compose.yml
   - docker-compose.yaml
-detect:
-  type: docker
-  file: Dockerfile
-  pattern: Dockerfile|docker-compose.yml|docker-compose.yaml|.dockerignore

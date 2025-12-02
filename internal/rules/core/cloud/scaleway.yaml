@@ -11,6 +11,3 @@ dependencies:
   - type: githubAction
     name: scaleway/action-scw
     example: scaleway/action-scw
-detect:
-  type: terraform
-  file: "*.tf"

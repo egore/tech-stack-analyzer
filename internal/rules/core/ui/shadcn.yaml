@@ -1,10 +1,11 @@
 tech: shadcn
 name: Shadcn
 type: ui
-detect:
-  type: json-schema
-  file: components.json
-  schema: https://ui.shadcn.com/schema.json
+content:
+  - type: json-path
+    path: $.$schema
+    value: https://ui.shadcn.com/schema.json
+    files: [components.json]
 dependencies:
   - type: npm
     name: shadcn-ui

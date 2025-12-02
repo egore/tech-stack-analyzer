@@ -10,6 +10,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_source_zoom
     example: airbyte_source_zoom
-detect:
-  type: terraform
-  file: "*.tf"

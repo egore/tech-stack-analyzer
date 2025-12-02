@@ -17,6 +17,3 @@ dependencies:
   - type: githubAction
     name: aws-actions/aws-codebuild-run-build
     example: aws-actions/aws-codebuild-run-build
-detect:
-  type: terraform
-  file: "*.tf"

@@ -19,6 +19,3 @@ dependencies:
 files:
   - railway.toml
   - railway.json
-detect:
-  type: terraform
-  file: "*.tf"

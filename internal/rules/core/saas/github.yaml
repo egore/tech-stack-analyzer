@@ -25,6 +25,3 @@ dependencies:
     example: airbyte_source_github
 files:
   - .github
-detect:
-  type: terraform
-  file: "*.tf"

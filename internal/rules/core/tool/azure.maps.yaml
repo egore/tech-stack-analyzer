@@ -19,6 +19,3 @@ dependencies:
   - type: terraform.resource
     name: azurerm_maps_account
     example: azurerm_maps_account
-detect:
-  type: terraform
-  file: "*.tf"

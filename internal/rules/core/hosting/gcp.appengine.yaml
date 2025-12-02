@@ -17,6 +17,3 @@ dependencies:
   - type: githubAction
     name: google-github-actions/deploy-appengine
     example: google-github-actions/deploy-appengine
-detect:
-  type: terraform
-  file: "*.tf"

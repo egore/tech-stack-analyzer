@@ -28,6 +28,3 @@ dependencies:
   - type: php
     name: auth0/login
     example: auth0/login
-detect:
-  type: terraform
-  file: "*.tf"

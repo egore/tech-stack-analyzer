@@ -25,7 +25,6 @@ func TestNewScanner(t *testing.T) {
 	assert.NotEmpty(t, scanner.rules)
 	assert.NotNil(t, scanner.depDetector)
 	assert.NotNil(t, scanner.compDetector)
-	assert.NotNil(t, scanner.jsonDetector)
 	assert.NotNil(t, scanner.dotenvDetector)
 	assert.NotNil(t, scanner.licenseDetector)
 }

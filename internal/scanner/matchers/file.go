@@ -35,12 +35,6 @@ func BuildFileMatchersFromRules(rules []types.Rule) {
 			continue
 		}
 
-		// Skip rules that create named components (handled by component detectors)
-		// But allow rules that create virtual components (like github-actions) to still match files
-		if rule.Detect != nil && (rule.Detect.Type == "package-json") {
-			continue
-		}
-
 		// Skip package managers - they should not be promoted to main techs
 		if rule.Type == "package_manager" {
 			continue

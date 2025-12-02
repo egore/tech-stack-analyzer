@@ -17,6 +17,3 @@ dependencies:
   - type: golang
     name: github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/sql/armsql
     example: github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/sql/armsql
-detect:
-  type: terraform
-  file: "*.tf"

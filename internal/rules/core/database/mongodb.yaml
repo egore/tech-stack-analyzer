@@ -58,6 +58,3 @@ dependencies:
   - type: python
     name: langchain-mongodb
     example: langchain-mongodb
-detect:
-  type: terraform
-  file: "*.tf"

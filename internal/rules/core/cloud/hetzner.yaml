@@ -17,6 +17,3 @@ dependencies:
   - type: ruby
     name: hetznercloud
     example: hetznercloud
-detect:
-  type: terraform
-  file: "*.tf"

@@ -28,6 +28,3 @@ dependencies:
   - type: githubAction
     name: chetan/invalidate-cloudfront-action
     example: chetan/invalidate-cloudfront-action
-detect:
-  type: terraform
-  file: "*.tf"

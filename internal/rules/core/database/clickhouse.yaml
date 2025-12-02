@@ -32,6 +32,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_destination_clickhouse
     example: airbyte_destination_clickhouse
-detect:
-  type: terraform
-  file: "*.tf"

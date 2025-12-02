@@ -28,6 +28,3 @@ dependencies:
   - type: npm
     name: "@analytics/mixpanel"
     example: "@analytics/mixpanel"
-detect:
-  type: terraform
-  file: "*.tf"

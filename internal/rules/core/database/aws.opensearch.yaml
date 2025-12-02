@@ -20,6 +20,3 @@ dependencies:
   - type: python
     name: opensearch-py
     example: opensearch-py
-detect:
-  type: terraform
-  file: "*.tf"

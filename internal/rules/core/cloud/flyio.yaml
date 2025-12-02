@@ -10,6 +10,3 @@ dependencies:
     example: superfly/flyctl-actions/setup-flyctl
 files:
   - fly.toml
-detect:
-  type: terraform
-  file: "*.tf"

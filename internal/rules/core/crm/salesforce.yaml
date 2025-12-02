@@ -10,6 +10,3 @@ dependencies:
   - type: npm
     name: jsforce
     example: jsforce
-detect:
-  type: terraform
-  file: "*.tf"

@@ -8,6 +8,3 @@ dependencies:
   - type: terraform
     name: registry.terraform.io/frontegg/frontegg
     example: registry.terraform.io/frontegg/frontegg
-detect:
-  type: terraform
-  file: "*.tf"

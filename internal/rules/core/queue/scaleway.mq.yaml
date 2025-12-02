@@ -8,6 +8,3 @@ dependencies:
   - type: terraform.resource
     name: scaleway_mnq_queue
     example: scaleway_mnq_queue
-detect:
-  type: terraform
-  file: "*.tf"

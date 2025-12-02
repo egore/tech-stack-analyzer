@@ -32,6 +32,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_destination_typesense
     example: airbyte_destination_typesense
-detect:
-  type: terraform
-  file: "*.tf"

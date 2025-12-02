@@ -34,6 +34,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_destination_qdrant
     example: airbyte_destination_qdrant
-detect:
-  type: terraform
-  file: "*.tf"

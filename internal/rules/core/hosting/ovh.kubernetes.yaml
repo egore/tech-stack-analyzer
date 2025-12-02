@@ -5,6 +5,3 @@ dependencies:
   - type: terraform.resource
     name: ovh_cloud_project_kube
     example: ovh_cloud_project_kube
-detect:
-  type: terraform
-  file: "*.tf"

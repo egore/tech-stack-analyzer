@@ -5,6 +5,3 @@ dependencies:
   - type: terraform.resource
     name: scaleway_k8s_cluster
     example: scaleway_k8s_cluster
-detect:
-  type: terraform
-  file: "*.tf"

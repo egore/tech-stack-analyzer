@@ -20,6 +20,3 @@ dependencies:
   - type: githubAction
     name: bitovi/github-actions-deploy-docker-to-ec2
     example: bitovi/github-actions-deploy-docker-to-ec2
-detect:
-  type: terraform
-  file: "*.tf"

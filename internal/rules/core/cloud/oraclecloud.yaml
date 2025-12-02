@@ -11,6 +11,3 @@ dependencies:
   - type: php
     name: oracle/oci-php-sdk
     example: oracle/oci-php-sdk
-detect:
-  type: terraform
-  file: "*.tf"

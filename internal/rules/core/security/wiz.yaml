@@ -7,6 +7,3 @@ dependencies:
   - type: terraform
     name: registry.terraform.io/AxtonGrams/wiz
     example: registry.terraform.io/AxtonGrams/wiz
-detect:
-  type: terraform
-  file: "*.tf"

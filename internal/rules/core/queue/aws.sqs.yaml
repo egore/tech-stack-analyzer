@@ -23,6 +23,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_source_amazon_sqs
     example: airbyte_source_amazon_sqs
-detect:
-  type: terraform
-  file: "*.tf"

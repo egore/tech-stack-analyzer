@@ -41,6 +41,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_source_jira
     example: airbyte_source_jira
-detect:
-  type: terraform
-  file: "*.tf"

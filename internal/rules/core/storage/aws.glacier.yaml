@@ -14,6 +14,3 @@ dependencies:
   - type: golang
     name: github.com/aws/aws-sdk-go-v2/service/glacier
     example: github.com/aws/aws-sdk-go-v2/service/glacier
-detect:
-  type: terraform
-  file: "*.tf"

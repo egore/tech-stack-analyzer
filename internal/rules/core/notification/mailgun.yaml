@@ -20,6 +20,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_source_mailgun
     example: airbyte_source_mailgun
-detect:
-  type: terraform
-  file: "*.tf"

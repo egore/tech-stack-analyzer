@@ -20,6 +20,3 @@ dependencies:
   - type: githubAction
     name: aws-actions/aws-cloudformation-github-deploy
     example: aws-actions/aws-cloudformation-github-deploy
-detect:
-  type: terraform
-  file: "*.tf"

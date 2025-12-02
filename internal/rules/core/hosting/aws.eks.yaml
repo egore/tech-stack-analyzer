@@ -20,6 +20,3 @@ dependencies:
   - type: golang
     name: github.com/aws/aws-sdk-go-v2/service/eks
     example: github.com/aws/aws-sdk-go-v2/service/eks
-detect:
-  type: terraform
-  file: "*.tf"

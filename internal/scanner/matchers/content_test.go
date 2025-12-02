@@ -29,7 +29,7 @@ func TestContentMatcherRegistry_BuildFromRules(t *testing.T) {
 			expectMatchers: true,
 		},
 		{
-			name: "skips rules with dependencies",
+			name: "processes rules with both dependencies and content",
 			rules: []types.Rule{
 				{
 					Tech:       "react",
@@ -44,7 +44,7 @@ func TestContentMatcherRegistry_BuildFromRules(t *testing.T) {
 					},
 				},
 			},
-			expectMatchers: false,
+			expectMatchers: true, // Content detection works alongside dependency detection
 		},
 		{
 			name: "skips rules without content patterns",

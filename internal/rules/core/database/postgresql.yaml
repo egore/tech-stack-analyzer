@@ -55,6 +55,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_destination_postgres
     example: airbyte_destination_postgres
-detect:
-  type: terraform
-  file: "*.tf"

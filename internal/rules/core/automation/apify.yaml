@@ -16,6 +16,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_source_apify_dataset
     example: airbyte_source_apify_dataset
-detect:
-  type: terraform
-  file: "*.tf"

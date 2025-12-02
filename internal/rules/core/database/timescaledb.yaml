@@ -11,6 +11,3 @@ dependencies:
   - type: terraform
     name: registry.terraform.io/timescale/timescale
     example: registry.terraform.io/timescale/timescale
-detect:
-  type: terraform
-  file: "*.tf"

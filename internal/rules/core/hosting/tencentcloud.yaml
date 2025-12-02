@@ -11,6 +11,3 @@ dependencies:
   - type: python
     name: tencentcloud-sdk-python
     example: tencentcloud-sdk-python
-detect:
-  type: terraform
-  file: "*.tf"

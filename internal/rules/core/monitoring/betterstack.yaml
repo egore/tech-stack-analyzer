@@ -20,6 +20,3 @@ dependencies:
   - type: terraform
     name: registry.terraform.io/BetterStackHQ/logtail
     example: registry.terraform.io/BetterStackHQ/logtail
-detect:
-  type: terraform
-  file: "*.tf"

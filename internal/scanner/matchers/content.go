@@ -1,29 +1,28 @@
 package matchers
 
 import (
-	"regexp"
-
 	"github.com/petrarca/tech-stack-analyzer/internal/types"
 )
 
-// ContentMatcher handles content-based pattern matching for technology detection
-type ContentMatcher struct {
-	Tech    string
-	Pattern *regexp.Regexp
-}
-
 // ContentMatcherRegistry manages compiled content matchers
 type ContentMatcherRegistry struct {
-	matchers     map[string][]*ContentMatcher // keyed by extension (e.g., ".cpp", ".h")
-	fileMatchers map[string][]*ContentMatcher // keyed by filename (e.g., "package.json", "pom.xml")
+	typeRegistry *ContentTypeRegistry
+	matchers     map[string][]CompiledContentMatcher // keyed by extension (e.g., ".cpp", ".h")
+	fileMatchers map[string][]CompiledContentMatcher // keyed by filename (e.g., "package.json", "pom.xml")
 }
 
 // NewContentMatcherRegistry creates a new content matcher registry
 func NewContentMatcherRegistry() *ContentMatcherRegistry {
 	return &ContentMatcherRegistry{
-		matchers:     make(map[string][]*ContentMatcher),
-		fileMatchers: make(map[string][]*ContentMatcher),
+		typeRegistry: NewContentTypeRegistry(),
+		matchers:     make(map[string][]CompiledContentMatcher),
+		fileMatchers: make(map[string][]CompiledContentMatcher),
 	}
+}
+
+// RegisterContentType adds a custom content type matcher
+func (r *ContentMatcherRegistry) RegisterContentType(matcher ContentTypeMatcher) {
+	r.typeRegistry.Register(matcher)
 }
 
 // BuildFromRules compiles content patterns from rules
@@ -41,11 +40,6 @@ func (r *ContentMatcherRegistry) BuildFromRules(rules []types.Rule) error {
 }
 
 func (r *ContentMatcherRegistry) shouldProcessRule(rule types.Rule) bool {
-	// Skip rules with dependencies - they don't need content validation
-	if len(rule.Dependencies) > 0 {
-		return false
-	}
-
 	// Skip rules without content patterns
 	if len(rule.Content) == 0 {
 		return false
@@ -69,21 +63,16 @@ func (r *ContentMatcherRegistry) shouldProcessRule(rule types.Rule) bool {
 }
 
 func (r *ContentMatcherRegistry) addContentPattern(tech string, contentRule types.ContentRule, ruleExtensions []string) {
-	// Compile regex pattern
-	pattern, err := regexp.Compile(contentRule.Pattern)
+	// Compile using the type registry (handles regex, json-path, json-schema, yaml-path, etc.)
+	compiled, err := r.typeRegistry.Compile(contentRule, tech)
 	if err != nil {
 		return // Skip invalid patterns
-	}
-
-	matcher := &ContentMatcher{
-		Tech:    tech,
-		Pattern: pattern,
 	}
 
 	// If specific files are defined, create file-based matchers
 	if len(contentRule.Files) > 0 {
 		for _, filename := range contentRule.Files {
-			r.fileMatchers[filename] = append(r.fileMatchers[filename], matcher)
+			r.fileMatchers[filename] = append(r.fileMatchers[filename], compiled)
 		}
 		return
 	}
@@ -96,7 +85,7 @@ func (r *ContentMatcherRegistry) addContentPattern(tech string, contentRule type
 	}
 
 	for _, ext := range targetExtensions {
-		r.matchers[ext] = append(r.matchers[ext], matcher)
+		r.matchers[ext] = append(r.matchers[ext], compiled)
 	}
 }
 
@@ -113,15 +102,14 @@ func (r *ContentMatcherRegistry) MatchContent(extension string, content string) 
 
 	// Check patterns in order - stop after first match per tech
 	for _, matcher := range matchers {
+		tech := matcher.Tech()
 		// Skip if we already matched this tech
-		if _, alreadyMatched := results[matcher.Tech]; alreadyMatched {
+		if _, alreadyMatched := results[tech]; alreadyMatched {
 			continue
 		}
 
-		if matcher.Pattern.MatchString(content) {
-			results[matcher.Tech] = []string{
-				"content matched: " + matcher.Pattern.String(),
-			}
+		if matched, reason := matcher.Match(content); matched {
+			results[tech] = []string{reason}
 		}
 	}
 
@@ -152,15 +140,14 @@ func (r *ContentMatcherRegistry) MatchFileContent(filename string, content strin
 
 	// Check patterns in order - stop after first match per tech
 	for _, matcher := range matchers {
+		tech := matcher.Tech()
 		// Skip if we already matched this tech
-		if _, alreadyMatched := results[matcher.Tech]; alreadyMatched {
+		if _, alreadyMatched := results[tech]; alreadyMatched {
 			continue
 		}
 
-		if matcher.Pattern.MatchString(content) {
-			results[matcher.Tech] = []string{
-				"content matched in " + filename + ": " + matcher.Pattern.String(),
-			}
+		if matched, reason := matcher.Match(content); matched {
+			results[tech] = []string{reason}
 		}
 	}
 

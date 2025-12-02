@@ -20,6 +20,3 @@ dependencies:
   - type: php
     name: atyagi/elasticache-laravel
     example: atyagi/elasticache-laravel
-detect:
-  type: terraform
-  file: "*.tf"

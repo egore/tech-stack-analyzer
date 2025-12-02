@@ -22,7 +22,3 @@ dependencies:
     example: '@types/node'
 files:
   - package.json
-detect:
-  type: package-json
-  file: package.json
-  extract: true

@@ -17,6 +17,3 @@ dependencies:
   - type: php
     name: google/cloud-logging
     example: google/cloud-logging
-detect:
-  type: terraform
-  file: "*.tf"

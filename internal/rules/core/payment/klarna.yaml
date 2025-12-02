@@ -13,6 +13,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_source_klarna
     example: airbyte_source_klarna
-detect:
-  type: terraform
-  file: "*.tf"

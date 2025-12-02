@@ -19,6 +19,3 @@ dependencies:
   - type: npm
     name: "@pulumi/okta"
     example: "@pulumi/okta"
-detect:
-  type: terraform
-  file: "*.tf"

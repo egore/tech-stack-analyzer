@@ -14,6 +14,3 @@ dependencies:
   - type: php
     name: google/cloud-datastore
     example: google/cloud-datastore
-detect:
-  type: terraform
-  file: "*.tf"

@@ -8,6 +8,3 @@ dependencies:
   - type: ruby
     name: google-cloud-dns
     example: google-cloud-dns
-detect:
-  type: terraform
-  file: "*.tf"

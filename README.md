@@ -1008,10 +1008,14 @@ content:                         # Optional: Content patterns for validation
     extensions: [.conf, .yml]      # Specify where to check
   - pattern: 'import.*newtech'
     extensions: [.js, .py]         # Check JS and Python files
-detect:                          # Optional: Custom detection logic
-  type: package-json            # Detection types: package-json, terraform, json-schema, regex, yaml-path
-  file: package.json
-  extract: true                 # Extract dependencies from file
+  - type: json-path                # JSON path matching
+    path: $.config.provider
+    value: newtech
+    files: [config.json]
+  - type: json-path                # JSON schema validation via $schema field
+    path: $.$schema
+    value: https://newtech.com/schema.json
+    files: [newtech.json]
 ```
 
 #### Complete Rule Field Reference
@@ -1111,48 +1115,60 @@ extensions:
 ```
 
 **`content`** - Content patterns for precise detection (independent of top-level extensions/files)
+
+Content patterns support multiple match types for flexible detection:
+
 ```yaml
 content:
+  # Regex pattern matching (default type)
   - pattern: 'import\s+.*react'
     extensions: [.js, .jsx, .ts, .tsx]  # Must specify where to check
   - pattern: 'FROM\s+node:'
     files: [Dockerfile]                  # Or specific files
   - pattern: 'Q_OBJECT'
     extensions: [.cpp, .h, .hpp]         # Check C++ files for Qt
-```
-**Note:** Content patterns must specify `extensions` or `files` to define where to check. They operate independently of top-level `extensions`/`files` fields.
 
-**`detect`** - Custom detection configuration
+  # JSON Path matching - check values at specific JSON paths
+  - type: json-path
+    path: $.name                         # Path to check
+    files: [package.json]                # Path exists = match
+  - type: json-path
+    path: $.dependencies.react
+    value: /^18\./                       # Optional: regex value match
+    files: [package.json]
+
+  # YAML Path matching - check values at specific YAML paths
+  - type: yaml-path
+    path: $.services.web
+    files: [docker-compose.yml]          # Path exists = match
+  - type: yaml-path
+    path: $.version
+    value: "3.8"                         # Optional: exact value match
+    files: [docker-compose.yml]
+```
+
+**Content Type Reference:**
+
+| Type | Description | Required Fields |
+|------|-------------|-----------------|
+| `regex` (default) | Regex pattern matching on file content | `pattern`, `extensions` or `files` |
+| `json-path` | Checks if JSON path exists or matches value | `path`, `files`, optional `value` |
+| `yaml-path` | Checks if YAML path exists or matches value | `path`, `files`, optional `value` |
+
+**Example: JSON Schema Validation** (using json-path):
 ```yaml
-# Package.json detection
-detect:
-  type: package-json
-  file: package.json
-  extract: true                    # Extract dependencies
-
-# Terraform detection  
-detect:
-  type: terraform
-  file: "*.tf"
-
-# JSON Schema validation
-detect:
-  type: json-schema
-  file: openapi.json
-  schema: '{"type": "object", "properties": {"openapi": {"type": "string"}}}'
-
-# Regex matching in files
-detect:
-  type: regex
-  file: "*.conf"
-  pattern: 'server\s*{'             # Regex pattern
-
-# YAML path extraction
-detect:
-  type: yaml-path
-  file: docker-compose.yml
-  path: '$.services.*.image'       # YAML path expression
+content:
+  - type: json-path
+    path: $.$schema
+    value: https://ui.shadcn.com/schema.json
+    files: [components.json]
 ```
+
+**Value Matching:**
+- Exact string: `value: "3.8"` matches exactly "3.8"
+- Regex pattern: `value: /^18\./` matches strings starting with "18."
+
+**Note:** Content patterns must specify `extensions` or `files` to define where to check. They operate independently of top-level `extensions`/`files` fields.
 
 #### 2. Rule Categories
 

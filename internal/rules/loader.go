@@ -132,15 +132,5 @@ func validateRule(rule *types.Rule) error {
 		}
 	}
 
-	// Validate detect config
-	if rule.Detect != nil {
-		if rule.Detect.Type == "" {
-			return fmt.Errorf("detect: type is required")
-		}
-		if rule.Detect.File == "" {
-			return fmt.Errorf("detect: file is required")
-		}
-	}
-
 	return nil
 }

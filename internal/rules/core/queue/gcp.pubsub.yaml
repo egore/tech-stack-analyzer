@@ -26,6 +26,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_destination_pubsub
     example: airbyte_destination_pubsub
-detect:
-  type: terraform
-  file: "*.tf"

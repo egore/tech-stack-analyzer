@@ -23,6 +23,3 @@ dependencies:
 files:
   - .vercel
   - vercel.json
-detect:
-  type: terraform
-  file: "*.tf"

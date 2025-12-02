@@ -11,6 +11,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_source_bigcommerce
     example: airbyte_source_bigcommerce
-detect:
-  type: terraform
-  file: "*.tf"

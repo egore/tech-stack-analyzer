@@ -23,6 +23,3 @@ dependencies:
   - type: python
     name: python-gitlab
     example: python-gitlab
-detect:
-  type: terraform
-  file: "*.tf"

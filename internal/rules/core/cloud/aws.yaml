@@ -32,6 +32,3 @@ dependencies:
   - type: githubAction
     name: aws-actions/configure-aws-credentials
     example: aws-actions/configure-aws-credentials
-detect:
-  type: terraform
-  file: "*.tf"

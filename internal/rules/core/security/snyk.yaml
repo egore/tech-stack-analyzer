@@ -30,6 +30,3 @@ dependencies:
     example: snyk/driftctl
 files:
   - .snyk
-detect:
-  type: terraform
-  file: "*.tf"

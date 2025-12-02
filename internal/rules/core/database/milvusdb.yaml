@@ -37,6 +37,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_destination_milvus
     example: airbyte_destination_milvus
-detect:
-  type: terraform
-  file: "*.tf"

@@ -5,6 +5,3 @@ dependencies:
   - type: githubAction
     name: cloudflare/pages-action
     example: cloudflare/pages-action
-detect:
-  type: terraform
-  file: "*.tf"

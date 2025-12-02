@@ -23,6 +23,3 @@ dependencies:
   - type: rust
     name: google-drive
     example: google-drive
-detect:
-  type: terraform
-  file: "*.tf"

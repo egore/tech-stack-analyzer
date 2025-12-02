@@ -10,6 +10,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_source_woocommerce
     example: airbyte_source_woocommerce
-detect:
-  type: terraform
-  file: "*.tf"

@@ -19,7 +19,6 @@ type Rule struct {
 	Files         []string               `yaml:"files,omitempty" json:"files,omitempty"`
 	Extensions    []string               `yaml:"extensions,omitempty" json:"extensions,omitempty"`
 	Content       []ContentRule          `yaml:"content,omitempty" json:"content,omitempty"`
-	Detect        *DetectConfig          `yaml:"detect,omitempty" json:"detect,omitempty"`
 }
 
 // Dependency represents a dependency pattern (struct for YAML, but marshals as array for JSON)
@@ -44,19 +43,20 @@ type CompiledDependency struct {
 
 // ContentRule represents a content-based detection pattern
 type ContentRule struct {
-	Pattern    string   `yaml:"pattern" json:"pattern"`                           // Regex pattern for content matching
-	Extensions []string `yaml:"extensions,omitempty" json:"extensions,omitempty"` // Optional: limit pattern to specific extensions (if empty, applies to all rule extensions)
-	Files      []string `yaml:"files,omitempty" json:"files,omitempty"`           // Optional: limit pattern to specific filenames (e.g., "package.json", "pom.xml")
+	Type       string   `yaml:"type,omitempty" json:"type,omitempty"`             // Match type: "regex" (default), "json-path", "json-schema", "yaml-path"
+	Pattern    string   `yaml:"pattern,omitempty" json:"pattern,omitempty"`       // Regex pattern (for type=regex) or expected value (for path types)
+	Path       string   `yaml:"path,omitempty" json:"path,omitempty"`             // JSON/YAML path (e.g., "$.$schema", "$.name")
+	Value      string   `yaml:"value,omitempty" json:"value,omitempty"`           // Expected value for path matching (exact match or regex if starts/ends with /)
+	Extensions []string `yaml:"extensions,omitempty" json:"extensions,omitempty"` // Optional: limit pattern to specific extensions
+	Files      []string `yaml:"files,omitempty" json:"files,omitempty"`           // Optional: limit pattern to specific filenames
 }
 
-// DetectConfig represents custom detection configuration
-type DetectConfig struct {
-	Type    string `yaml:"type" json:"type"` // json-schema, regex, yaml-path, package-json
-	File    string `yaml:"file" json:"file"`
-	Schema  string `yaml:"schema,omitempty" json:"schema,omitempty"`
-	Pattern string `yaml:"pattern,omitempty" json:"pattern,omitempty"`
-	Path    string `yaml:"path,omitempty" json:"path,omitempty"`
-	Extract bool   `yaml:"extract,omitempty" json:"extract,omitempty"`
+// GetType returns the content rule type, defaulting to "regex" if not specified
+func (c *ContentRule) GetType() string {
+	if c.Type == "" {
+		return "regex"
+	}
+	return c.Type
 }
 
 // TypeDefinition represents a technology type configuration

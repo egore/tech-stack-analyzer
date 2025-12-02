@@ -14,6 +14,3 @@ dependencies:
   - type: githubAction
     name: google-github-actions/deploy-cloudrun
     example: google-github-actions/deploy-cloudrun
-detect:
-  type: terraform
-  file: "*.tf"

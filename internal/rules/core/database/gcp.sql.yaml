@@ -8,6 +8,3 @@ dependencies:
   - type: php
     name: google/cloud-sql-admin
     example: google/cloud-sql-admin
-detect:
-  type: terraform
-  file: "*.tf"

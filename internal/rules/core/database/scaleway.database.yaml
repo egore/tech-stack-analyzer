@@ -5,6 +5,3 @@ dependencies:
   - type: terraform.resource
     name: scaleway_rdb_instance
     example: scaleway_rdb_instance
-detect:
-  type: terraform
-  file: "*.tf"

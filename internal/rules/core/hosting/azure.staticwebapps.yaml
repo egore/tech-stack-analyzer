@@ -17,6 +17,3 @@ dependencies:
   - type: githubAction
     name: Azure/appservice-build
     example: Azure/appservice-build
-detect:
-  type: terraform
-  file: "*.tf"

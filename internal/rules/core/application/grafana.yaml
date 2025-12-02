@@ -23,6 +23,3 @@ dependencies:
   - type: terraform
     name: registry.terraform.io/grafana/grafana
     example: registry.terraform.io/grafana/grafana
-detect:
-  type: terraform
-  file: "*.tf"

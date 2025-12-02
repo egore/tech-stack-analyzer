@@ -44,6 +44,3 @@ dependencies:
   - type: ruby
     name: logstash-input-kafka
     example: logstash-input-kafka
-detect:
-  type: terraform
-  file: "*.tf"

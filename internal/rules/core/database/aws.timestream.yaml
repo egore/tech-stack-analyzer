@@ -20,6 +20,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_destination_timestream
     example: airbyte_destination_timestream
-detect:
-  type: terraform
-  file: "*.tf"

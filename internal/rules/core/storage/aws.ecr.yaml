@@ -20,6 +20,3 @@ dependencies:
   - type: githubAction
     name: aws-actions/amazon-ecr-login
     example: aws-actions/amazon-ecr-login
-detect:
-  type: terraform
-  file: "*.tf"

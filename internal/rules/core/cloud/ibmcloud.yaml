@@ -5,6 +5,3 @@ dependencies:
   - type: terraform
     name: registry.terraform.io/IBM-Cloud/ibm
     example: registry.terraform.io/IBM-Cloud/ibm
-detect:
-  type: terraform
-  file: "*.tf"

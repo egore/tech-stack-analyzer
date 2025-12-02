@@ -17,6 +17,3 @@ dependencies:
   - type: golang
     name: github.com/aws/aws-sdk-go-v2/service/cloudsearch
     example: github.com/aws/aws-sdk-go-v2/service/cloudsearch
-detect:
-  type: terraform
-  file: "*.tf"

@@ -10,6 +10,3 @@ dependencies:
   - type: npm
     name: akamai-edgegrid
     example: akamai-edgegrid
-detect:
-  type: terraform
-  file: "*.tf"

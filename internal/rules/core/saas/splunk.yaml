@@ -10,6 +10,3 @@ dependencies:
   - type: terraform
     name: registry.terraform.io/splunk/splunkconfig
     example: registry.terraform.io/splunk/splunkconfig
-detect:
-  type: terraform
-  file: "*.tf"

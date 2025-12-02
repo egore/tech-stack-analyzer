@@ -8,6 +8,3 @@ dependencies:
   - type: terraform.resource
     name: scaleway_function_cron
     example: scaleway_function_cron
-detect:
-  type: terraform
-  file: "*.tf"

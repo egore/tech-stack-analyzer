@@ -14,6 +14,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_source_microsoft_onedrive
     example: airbyte_source_microsoft_onedrive
-detect:
-  type: terraform
-  file: "*.tf"

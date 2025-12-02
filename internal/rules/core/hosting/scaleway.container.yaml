@@ -8,6 +8,3 @@ dependencies:
   - type: terraform.resource
     name: scaleway_container_cron
     example: scaleway_container_cron
-detect:
-  type: terraform
-  file: "*.tf"

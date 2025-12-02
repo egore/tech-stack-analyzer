@@ -35,6 +35,3 @@ dependencies:
   - type: python
     name: google-api-python-client
     example: google-api-python-client
-detect:
-  type: terraform
-  file: "*.tf"

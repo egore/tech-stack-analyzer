@@ -19,6 +19,3 @@ dependencies:
     example: cloudflare/wrangler-action
 files:
   - wrangler.toml
-detect:
-  type: terraform
-  file: "*.tf"

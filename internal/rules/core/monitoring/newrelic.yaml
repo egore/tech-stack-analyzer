@@ -22,6 +22,3 @@ dependencies:
   - type: npm
     name: "@pulumi/newrelic"
     example: "@pulumi/newrelic"
-detect:
-  type: terraform
-  file: "*.tf"

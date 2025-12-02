@@ -85,6 +85,3 @@ files:
   - listener.ora
   - init.ora
   - spfile*.ora
-detect:
-  type: terraform
-  file: "*.tf"

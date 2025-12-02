@@ -22,6 +22,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_source_twilio
     example: airbyte_source_twilio
-detect:
-  type: terraform
-  file: "*.tf"

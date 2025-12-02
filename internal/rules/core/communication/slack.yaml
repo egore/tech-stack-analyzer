@@ -43,6 +43,3 @@ dependencies:
   - type: npm
     name: "@pulumi/slack"
     example: "@pulumi/slack"
-detect:
-  type: terraform
-  file: "*.tf"

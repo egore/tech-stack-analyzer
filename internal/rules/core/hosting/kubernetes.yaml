@@ -37,6 +37,3 @@ dependencies:
     example: kubernetes
 files:
   - kustomization.yaml
-detect:
-  type: terraform
-  file: "*.tf"

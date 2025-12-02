@@ -80,6 +80,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_destination_azure_blob_storage
     example: airbyte_destination_azure_blob_storage
-detect:
-  type: terraform
-  file: "*.tf"

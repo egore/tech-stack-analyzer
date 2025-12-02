@@ -24,6 +24,3 @@ files:
   - variables.tf
 extensions:
   - .tf
-detect:
-  type: terraform
-  file: "*.tf"

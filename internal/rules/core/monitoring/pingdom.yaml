@@ -7,6 +7,3 @@ dependencies:
   - type: terraform
     name: registry.terraform.io/russellcardullo/pingdom
     example: registry.terraform.io/russellcardullo/pingdom
-detect:
-  type: terraform
-  file: "*.tf"

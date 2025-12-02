@@ -38,6 +38,3 @@ dependencies:
   - type: githubAction
     name: appleboy/lambda-action
     example: appleboy/lambda-action
-detect:
-  type: terraform
-  file: "*.tf"

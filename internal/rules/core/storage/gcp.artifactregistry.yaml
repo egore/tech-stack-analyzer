@@ -14,6 +14,3 @@ dependencies:
   - type: ruby
     name: google-cloud-artifact_registry
     example: google-cloud-artifact_registry
-detect:
-  type: terraform
-  file: "*.tf"

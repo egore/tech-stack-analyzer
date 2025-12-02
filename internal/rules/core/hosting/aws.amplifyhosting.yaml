@@ -5,6 +5,3 @@ dependencies:
   - type: npm
     name: aws-amplify
     example: aws-amplify
-detect:
-  type: terraform
-  file: "*.tf"

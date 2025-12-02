@@ -17,6 +17,3 @@ dependencies:
   - type: golang
     name: github.com/aws/aws-sdk-go-v2/service/docdb
     example: github.com/aws/aws-sdk-go-v2/service/docdb
-detect:
-  type: terraform
-  file: "*.tf"

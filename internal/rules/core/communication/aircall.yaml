@@ -13,6 +13,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_source_aircall
     example: airbyte_source_aircall
-detect:
-  type: terraform
-  file: "*.tf"

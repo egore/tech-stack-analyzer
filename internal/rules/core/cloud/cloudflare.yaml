@@ -19,6 +19,3 @@ dependencies:
   - type: php
     name: cloudflare/sdk
     example: cloudflare/sdk
-detect:
-  type: terraform
-  file: "*.tf"

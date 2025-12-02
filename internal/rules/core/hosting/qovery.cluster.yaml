@@ -5,6 +5,3 @@ dependencies:
   - type: terraform.resource
     name: qovery_cluster
     example: qovery_cluster
-detect:
-  type: terraform
-  file: "*.tf"

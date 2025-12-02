@@ -26,6 +26,3 @@ dependencies:
   - type: python
     name: google-cloud-bigquery-datatransfer
     example: google-cloud-bigquery-datatransfer
-detect:
-  type: terraform
-  file: "*.tf"

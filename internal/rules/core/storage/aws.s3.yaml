@@ -35,6 +35,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_destination_s3
     example: airbyte_destination_s3
-detect:
-  type: terraform
-  file: "*.tf"

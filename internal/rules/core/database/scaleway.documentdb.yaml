@@ -5,6 +5,3 @@ dependencies:
   - type: terraform.resource
     name: scaleway_documentdb_instance
     example: scaleway_documentdb_instance
-detect:
-  type: terraform
-  file: "*.tf"

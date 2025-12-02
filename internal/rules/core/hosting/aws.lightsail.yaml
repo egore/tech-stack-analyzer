@@ -17,6 +17,3 @@ dependencies:
   - type: golang
     name: github.com/aws/aws-sdk-go-v2/service/lightsail
     example: github.com/aws/aws-sdk-go-v2/service/lightsail
-detect:
-  type: terraform
-  file: "*.tf"

@@ -5,6 +5,3 @@ dependencies:
   - type: terraform.resource
     name: ovh_vps
     example: ovh_vps
-detect:
-  type: terraform
-  file: "*.tf"

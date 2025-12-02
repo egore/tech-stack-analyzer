@@ -20,6 +20,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_destination_dynamodb
     example: airbyte_destination_dynamodb
-detect:
-  type: terraform
-  file: "*.tf"

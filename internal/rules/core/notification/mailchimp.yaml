@@ -28,6 +28,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_source_mailchimp
     example: airbyte_source_mailchimp
-detect:
-  type: terraform
-  file: "*.tf"

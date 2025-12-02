@@ -23,6 +23,3 @@ dependencies:
   - type: githubAction
     name: hashicorp/vault-action
     example: hashicorp/vault-action
-detect:
-  type: terraform
-  file: "*.tf"

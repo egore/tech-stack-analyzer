@@ -20,6 +20,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_destination_snowflake
     example: airbyte_destination_snowflake
-detect:
-  type: terraform
-  file: "*.tf"

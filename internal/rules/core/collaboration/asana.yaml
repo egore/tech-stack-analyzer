@@ -22,6 +22,3 @@ dependencies:
   - type: terraform.resource
     name: airbyte_source_asana
     example: airbyte_source_asana
-detect:
-  type: terraform
-  file: "*.tf"
