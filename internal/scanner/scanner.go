@@ -199,9 +199,9 @@ func (s *Scanner) Scan() (*types.Payload, error) {
 	// Set scan duration
 	scanMeta.SetDuration(time.Since(startTime))
 
-	// Count files and directories (approximate from payload)
-	fileCount, dirCount := s.countFilesAndDirs(payload)
-	scanMeta.SetFileCounts(fileCount, dirCount)
+	// Count files and components in the payload tree
+	fileCount, componentCount := s.countFilesAndComponents(payload)
+	scanMeta.SetFileCounts(fileCount, componentCount)
 
 	// Count languages, primary techs, and all techs
 	languageCount := s.countLanguages(payload)
@@ -216,13 +216,13 @@ func (s *Scanner) Scan() (*types.Payload, error) {
 	payload.Metadata = scanMeta
 
 	// Report scan complete
-	s.progress.ScanComplete(fileCount, dirCount, time.Since(startTime))
+	s.progress.ScanComplete(fileCount, componentCount, time.Since(startTime))
 
 	return payload, nil
 }
 
-// countFilesAndDirs recursively counts files and directories in the payload tree
-func (s *Scanner) countFilesAndDirs(payload *types.Payload) (int, int) {
+// countFilesAndComponents recursively counts files and components in the payload tree
+func (s *Scanner) countFilesAndComponents(payload *types.Payload) (int, int) {
 	fileCount := 0
 
 	// Sum actual file counts from languages map
@@ -230,15 +230,15 @@ func (s *Scanner) countFilesAndDirs(payload *types.Payload) (int, int) {
 		fileCount += count
 	}
 
-	dirCount := 1 // Current directory
+	componentCount := 1 // Current component (payload node)
 
 	for _, child := range payload.Childs {
-		childFiles, childDirs := s.countFilesAndDirs(child)
+		childFiles, childComponents := s.countFilesAndComponents(child)
 		fileCount += childFiles
-		dirCount += childDirs
+		componentCount += childComponents
 	}
 
-	return fileCount, dirCount
+	return fileCount, componentCount
 }
 
 // countLanguages recursively counts distinct programming languages in the payload tree
@@ -342,6 +342,16 @@ func (s *Scanner) ScanFile(fileName string) (*types.Payload, error) {
 	if lang := s.langDetector.DetectLanguage(fileName, content); lang != "" {
 		ctx.AddLanguage(lang)
 	}
+
+	// Add metadata for single file scan
+	scanMeta := metadata.NewScanMetadata(basePath, spec.Version, s.excludeDirs)
+	fileCount, componentCount := s.countFilesAndComponents(payload)
+	scanMeta.SetFileCounts(fileCount, componentCount)
+	languageCount := s.countLanguages(payload)
+	techCount, techsCount := s.countTechs(payload)
+	scanMeta.SetLanguageCount(languageCount)
+	scanMeta.SetTechCounts(techCount, techsCount)
+	payload.Metadata = scanMeta
 
 	return payload, nil
 }

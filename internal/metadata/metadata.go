@@ -14,7 +14,7 @@ type ScanMetadata struct {
 	SpecVersion    string                 `json:"specVersion"` // Output format specification version
 	DurationMs     int64                  `json:"duration_ms,omitempty"`
 	FileCount      int                    `json:"file_count,omitempty"`
-	DirectoryCount int                    `json:"directory_count,omitempty"`
+	ComponentCount int                    `json:"component_count,omitempty"`
 	LanguageCount  int                    `json:"language_count,omitempty"` // Number of distinct programming languages
 	TechCount      int                    `json:"tech_count,omitempty"`     // Number of primary technologies
 	TechsCount     int                    `json:"techs_count,omitempty"`    // Number of all detected technologies
@@ -49,10 +49,10 @@ func (m *ScanMetadata) SetDuration(duration time.Duration) {
 	m.DurationMs = duration.Milliseconds()
 }
 
-// SetFileCounts sets the file and directory counts
-func (m *ScanMetadata) SetFileCounts(fileCount, dirCount int) {
+// SetFileCounts sets the file and component counts
+func (m *ScanMetadata) SetFileCounts(fileCount, componentCount int) {
 	m.FileCount = fileCount
-	m.DirectoryCount = dirCount
+	m.ComponentCount = componentCount
 }
 
 // SetLanguageCount sets the number of distinct programming languages

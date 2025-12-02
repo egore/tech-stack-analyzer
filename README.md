@@ -618,7 +618,7 @@ The `metadata` field (present only in the root payload) provides information abo
     "specVersion": "0.1",
     "duration_ms": 1173,
     "file_count": 523,
-    "directory_count": 87,
+    "component_count": 87,
     "language_count": 15,
     "tech_count": 3,
     "techs_count": 12,
@@ -643,7 +643,7 @@ The `metadata` field (present only in the root payload) provides information abo
 - **specVersion**: Output format specification version
 - **duration_ms**: Scan duration in milliseconds
 - **file_count**: Total language-detected files scanned (sum of all language file counts)
-- **directory_count**: Total component directories (architectural components, not filesystem directories)
+- **component_count**: Total components in the payload tree (architectural components, not filesystem directories)
 - **language_count**: Number of distinct programming languages detected
 - **tech_count**: Number of primary technologies (count of `tech` array)
 - **techs_count**: Number of all detected technologies (count of `techs` array)
