@@ -20,6 +20,9 @@ dependencies:
   - type: rust
     name: libsqlite3-sys
     example: libsqlite3-sys
+  - type: rust
+    name: rusqlite
+    example: rusqlite
   - type: ruby
     name: sqlite3
     example: sqlite3

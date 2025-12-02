@@ -8,3 +8,5 @@ dependencies:
 extensions:
   - .ts
   - .tsx
+files:
+  - tsconfig.json
