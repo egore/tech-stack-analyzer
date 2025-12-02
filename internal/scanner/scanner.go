@@ -579,7 +579,7 @@ func (s *Scanner) processTechMatches(ctx *types.Payload, matches map[string][]st
 			continue
 		}
 		for _, reason := range reasons {
-			ctx.AddTech(tech, reason)
+			s.addTechWithPrimaryCheck(ctx, tech, reason, currentPath)
 		}
 		matchedTechs[tech] = true
 		s.findImplicitComponentByTech(ctx, tech, currentPath, addEdges)
@@ -592,7 +592,7 @@ func (s *Scanner) detectLegacyFiles(ctx *types.Payload, files []types.File, matc
 			continue
 		}
 		if s.matchRuleFiles(rule, files) {
-			ctx.AddTech(rule.Tech, fmt.Sprintf("matched file: %s", rule.Files[0]))
+			s.addTechWithPrimaryCheck(ctx, rule.Tech, fmt.Sprintf("matched file: %s", rule.Files[0]), "")
 			matchedTechs[rule.Tech] = true
 		}
 	}
@@ -632,7 +632,14 @@ func (s *Scanner) findImplicitComponent(payload *types.Payload, rule types.Rule,
 	// Create a new child component (like TypeScript lines 47-54)
 	// CRITICAL FIX: Use parent's path, not currentPath (like TypeScript: folderPath: pl.path)
 	component := types.NewPayload(rule.Name, payload.Path)
-	component.AddPrimaryTech(rule.Tech)
+
+	// NEW: Check is_primary_tech field to determine if we should add primary tech
+	if ShouldAddPrimaryTech(rule) {
+		component.AddPrimaryTech(rule.Tech)
+	} else {
+		component.AddTech(rule.Tech, fmt.Sprintf("matched file: %s", currentPath))
+	}
+
 	component.Reason = append(component.Reason, fmt.Sprintf("matched file: %s", currentPath))
 
 	// Add the component as a child
@@ -644,7 +651,21 @@ func (s *Scanner) findImplicitComponent(payload *types.Payload, rule types.Rule,
 	}
 }
 
-// shouldExcludeFile checks if a file should be excluded based on user patterns
+// addTechWithPrimaryCheck adds technology and checks if it should be primary tech
+func (s *Scanner) addTechWithPrimaryCheck(payload *types.Payload, tech string, reason string, currentPath string) {
+	// Always add to techs array
+	payload.AddTech(tech, reason)
+
+	// Check if this tech should be primary tech even without component
+	for _, rule := range s.rules {
+		if rule.Tech == tech && ShouldAddPrimaryTech(rule) && !ShouldCreateComponent(rule) {
+			// This rule wants to be primary tech but doesn't create components
+			// Add to root payload's primary tech array directly
+			payload.AddPrimaryTech(tech)
+			break
+		}
+	}
+}
 func (s *Scanner) shouldExcludeFile(fileName, currentPath string) bool {
 	if len(s.excludeDirs) == 0 {
 		return false

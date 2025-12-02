@@ -43,7 +43,6 @@ See [How to Extend It](#how-to-extend-it) for complete rule documentation.
 - **Glob Pattern Exclusions** - Flexible `--exclude` flag supporting `**`, `*`, `?` patterns for files and directories
 - **Content-Based Detection** - Validates technologies through regex pattern matching in file contents for precise identification
 - **Configurable Components** - Override default component classification per rule with `is_component` field
-- **Externalized Configuration** - Type definitions and ignore patterns in YAML (no code changes needed)
 - **Tech-Specific Metadata** - Structured properties for Docker (base images, ports) and Terraform (providers, resource counts)
 - **Multi-Technology Components** - Detects hybrid projects with multiple primary technologies in the same directory
 - **Professional Logging** - Structured logging with multiple levels (trace/debug/info/warn/error) and JSON/text formats
@@ -911,6 +910,7 @@ properties:                      # Optional: Arbitrary key/value pairs for custo
   api_version: v2
   category: "Database"
 is_component: true               # Optional: Override component behavior
+is_primary_tech: true           # Optional: Override primary tech promotion
 dotenv:                          # Optional: Environment variable patterns
   - NEWTECH_
 dependencies:                    # Optional: Package dependencies to detect
@@ -973,6 +973,20 @@ properties:
 - `true` - Always create a component
 - `false` - Never create a component  
 - `null`/omitted - Use type-based default
+
+**`is_primary_tech`** - Override primary technology promotion behavior
+- `true` - Always promote to primary tech array (even without component)
+- `false` - Never promote to primary tech array (even with component)
+- `null`/omitted - Use component-based logic (if component created, promote to primary)
+
+This field provides fine-grained control over the relationship between component creation and primary tech promotion:
+
+| Configuration | Component Created | Primary Tech | Use Case |
+|---------------|------------------|--------------|----------|
+| `is_component: true` (no `is_primary_tech`) | ✅ | ✅ | Default behavior (languages, databases) |
+| `is_component: true, is_primary_tech: false` | ✅ | ❌ | Build tools with organization (CMake, Make) |
+| `is_component: false, is_primary_tech: true` | ❌ | ✅ | Simple primary tech without components |
+| `is_component: false` (no `is_primary_tech`) | ❌ | ❌ | Regular detection (most tools, frameworks) |
 
 **`dotenv`** - Array of environment variable prefixes
 ```yaml

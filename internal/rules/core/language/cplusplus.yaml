@@ -1,6 +1,7 @@
 tech: cplusplus
 name: C++
 type: language
+is_component: true
 extensions:
   - .cpp
   - .c++
@@ -10,3 +11,9 @@ extensions:
   - .h++
   - .hh
   - .hpp
+files:
+  - CMakeLists.txt
+  - Makefile
+  - makefile
+  - configure.ac
+  - Makefile.am

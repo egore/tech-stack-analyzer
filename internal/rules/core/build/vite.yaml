@@ -1,0 +1,7 @@
+tech: vite
+name: Vite
+type: builder
+dependencies:
+  - type: npm
+    name: vite
+    example: vite

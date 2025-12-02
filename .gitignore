@@ -20,7 +20,6 @@ vendor/
 # Build output
 bin/
 dist/
-build/
 
 # IDE and editor files
 .vscode/

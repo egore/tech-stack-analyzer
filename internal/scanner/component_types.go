@@ -32,3 +32,15 @@ func ShouldCreateComponent(rule types.Rule) bool {
 	// This ensures all types must be explicitly defined in _types.yaml
 	return false
 }
+
+// ShouldAddPrimaryTech determines if a rule should add primary tech when component is created
+// Returns true if primary tech should be added, false otherwise
+func ShouldAddPrimaryTech(rule types.Rule) bool {
+	// Priority 1: If is_primary_tech is explicitly set in rule, use that value
+	if rule.IsPrimaryTech != nil {
+		return *rule.IsPrimaryTech
+	}
+
+	// Priority 2: Use current logic - if component is created, add primary tech
+	return ShouldCreateComponent(rule)
+}

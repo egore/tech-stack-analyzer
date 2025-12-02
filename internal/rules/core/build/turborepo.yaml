@@ -1,0 +1,9 @@
+tech: turborepo
+name: Turborepo
+type: builder
+dependencies:
+  - type: npm
+    name: turbo
+    example: turbo
+files:
+  - turbo.json

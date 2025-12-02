@@ -1,0 +1,12 @@
+tech: rspack
+name: Rspack
+type: builder
+dependencies:
+  - type: npm
+    name: rspack
+    example: rspack
+  - type: npm
+    name: "@rspack/core"
+    example: "@rspack/core"
+files:
+  - rspack.config.js
