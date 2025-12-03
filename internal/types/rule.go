@@ -59,15 +59,15 @@ func (c *ContentRule) GetType() string {
 	return c.Type
 }
 
-// TypeDefinition represents a technology type configuration
-type TypeDefinition struct {
+// CategoryDefinition represents a technology category configuration
+type CategoryDefinition struct {
 	IsComponent bool   `yaml:"is_component" json:"is_component"`
 	Description string `yaml:"description,omitempty" json:"description,omitempty"`
 }
 
-// TypesConfig represents the _types.yaml configuration file
-type TypesConfig struct {
-	Types map[string]TypeDefinition `yaml:"types" json:"types"`
+// CategoriesConfig represents the categories.yaml configuration file
+type CategoriesConfig struct {
+	Categories map[string]CategoryDefinition `yaml:"categories" json:"categories"`
 }
 
 // Compile compiles a dependency pattern to regex for performance

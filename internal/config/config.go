@@ -85,8 +85,8 @@ func (c *ScanConfig) MergeExcludes(cliExcludes []string) []string {
 }
 
 // LoadCategoriesConfig loads the categories configuration from categories.yaml
-func LoadCategoriesConfig() (*types.TypesConfig, error) {
-	var config types.TypesConfig
+func LoadCategoriesConfig() (*types.CategoriesConfig, error) {
+	var config types.CategoriesConfig
 	if err := yaml.Unmarshal(categoriesConfigData, &config); err != nil {
 		return nil, fmt.Errorf("failed to parse categories.yaml: %w", err)
 	}

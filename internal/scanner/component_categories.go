@@ -6,10 +6,10 @@ import "github.com/petrarca/tech-stack-analyzer/internal/types"
 // This classification determines whether a detected technology appears in the 'tech' field (primary technologies)
 // or only in the 'techs' array (all technologies including tools/libraries)
 
-var categoriesConfig *types.TypesConfig
+var categoriesConfig *types.CategoriesConfig
 
 // SetCategoriesConfig sets the global categories configuration
-func SetCategoriesConfig(config *types.TypesConfig) {
+func SetCategoriesConfig(config *types.CategoriesConfig) {
 	categoriesConfig = config
 }
 
@@ -21,15 +21,15 @@ func ShouldCreateComponent(rule types.Rule) bool {
 		return *rule.IsComponent
 	}
 
-	// Priority 2: Check categories configuration from _categories.yaml
+	// Priority 2: Check categories configuration from categories.yaml
 	if categoriesConfig != nil {
-		if typeDef, exists := categoriesConfig.Types[rule.Type]; exists {
+		if typeDef, exists := categoriesConfig.Categories[rule.Type]; exists {
 			return typeDef.IsComponent
 		}
 	}
 
-	// Default: If type not found in _categories.yaml or config not loaded, default to false
-	// This ensures all types must be explicitly defined in _categories.yaml
+	// Default: If type not found in categories.yaml or config not loaded, default to false
+	// This ensures all types must be explicitly defined in categories.yaml
 	return false
 }
 

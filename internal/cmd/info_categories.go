@@ -88,7 +88,7 @@ func runTypes(cmd *cobra.Command, args []string) {
 	// If --components flag is used, show component categories only
 	if showComponents {
 		var componentCategories, nonComponentCategories []string
-		for typeName, typeDef := range categoriesConfig.Types {
+		for typeName, typeDef := range categoriesConfig.Categories {
 			if typeDef.IsComponent {
 				componentCategories = append(componentCategories, typeName)
 			} else {
@@ -109,7 +109,7 @@ func runTypes(cmd *cobra.Command, args []string) {
 
 	// Otherwise show all categories with descriptions
 	var categories []CategoryInfo
-	for typeName, typeDef := range categoriesConfig.Types {
+	for typeName, typeDef := range categoriesConfig.Categories {
 		categories = append(categories, CategoryInfo{
 			Name:        typeName,
 			IsComponent: typeDef.IsComponent,

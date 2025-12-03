@@ -1,8 +1,8 @@
-# Technology Type Definitions
-# Determines default component behavior for each technology type
+# Technology Category Definitions
+# Determines default component behavior for each technology category
 # Individual rules can override with is_component field
 
-types:
+categories:
   # Infrastructure & Data - CREATE components
   database:
     is_component: true
