@@ -3,6 +3,7 @@ package dotnet
 import (
 	"path/filepath"
 	"regexp"
+	"strings"
 
 	"github.com/petrarca/tech-stack-analyzer/internal/scanner/components"
 	"github.com/petrarca/tech-stack-analyzer/internal/scanner/parsers"
@@ -18,10 +19,10 @@ func (d *Detector) Name() string {
 func (d *Detector) Detect(files []types.File, currentPath, basePath string, provider types.Provider, depDetector components.DependencyDetector) []*types.Payload {
 	var results []*types.Payload
 
-	// Check for .csproj files
-	csprojRegex := regexp.MustCompile(`\.csproj$`)
+	// Check for .NET project files (C#, VB.NET, F#)
+	dotnetRegex := regexp.MustCompile(`\.(csproj|vbproj|fsproj)$`)
 	for _, file := range files {
-		if csprojRegex.MatchString(file.Name) {
+		if dotnetRegex.MatchString(file.Name) {
 			payload := d.detectDotNetProject(file, currentPath, basePath, provider, depDetector)
 			if payload != nil {
 				results = append(results, payload)
@@ -38,7 +39,7 @@ func (d *Detector) detectDotNetProject(file types.File, currentPath, basePath st
 		return nil
 	}
 
-	// Parse .csproj file using parser
+	// Parse .NET project file using parser
 	dotnetParser := parsers.NewDotNetParser()
 	project := dotnetParser.ParseCsproj(string(content), filepath.Join(currentPath, file.Name))
 
@@ -56,14 +57,27 @@ func (d *Detector) detectDotNetProject(file types.File, currentPath, basePath st
 
 	payload := types.NewPayloadWithPath(project.Name, relativeFilePath)
 
-	// Set tech to dotnet
-	payload.AddPrimaryTech("dotnet")
+	// Determine language based on file extension
+	var languageTech string
+	switch {
+	case strings.HasSuffix(file.Name, ".csproj"):
+		languageTech = "dotnet"
+	case strings.HasSuffix(file.Name, ".vbproj"):
+		languageTech = "vbnet"
+	case strings.HasSuffix(file.Name, ".fsproj"):
+		languageTech = "fsharp"
+	default:
+		languageTech = "dotnet" // fallback
+	}
+
+	// Set primary tech based on language
+	payload.AddPrimaryTech(languageTech)
 
 	// Add framework info to techs
 	if project.Framework != "" {
-		payload.AddTech("dotnet", "framework: "+project.Framework)
+		payload.AddTech(languageTech, "framework: "+project.Framework)
 	} else {
-		payload.AddTech("dotnet", "matched file: "+file.Name)
+		payload.AddTech(languageTech, "matched file: "+file.Name)
 	}
 
 	// Create dependencies list
