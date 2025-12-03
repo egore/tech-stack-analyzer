@@ -205,16 +205,19 @@ The scanner automatically collects code statistics using [SCC](https://github.co
 {
   "code_stats": {
     "total": { "lines": 39212, "code": 32834, "comments": 2027, "blanks": 4351, "complexity": 1960, "files": 858 },
-    "metrics": {
-      "comment_ratio": 0.12,
-      "code_density": 0.76,
-      "avg_file_size": 236.81,
-      "complexity_per_kloc": 116.49,
-      "avg_complexity": 21.08,
-      "top_languages": [{"language": "Go", "pct": 1}]
-    },
     "by_type": {
-      "programming": { "total": { "lines": 22023, "code": 16826, ... }, "languages": ["Go"] },
+      "programming": { 
+        "total": { "lines": 22023, "code": 16826, ... }, 
+        "metrics": {
+          "comment_ratio": 0.12,
+          "code_density": 0.76,
+          "avg_file_size": 236.81,
+          "complexity_per_kloc": 116.49,
+          "avg_complexity": 21.08,
+          "top_languages": [{"language": "Go", "pct": 1}]
+        },
+        "languages": ["Go"] 
+      },
       "data": { "total": { "lines": 12575, ... }, "languages": ["YAML", "JSON", "Go Checksums"] },
       "prose": { "total": { "lines": 5003, ... }, "languages": ["Markdown", "Text"] }
     },
@@ -235,9 +238,8 @@ The scanner automatically collects code statistics using [SCC](https://github.co
 
 **Fields:**
 - **`total`** - Grand total for all analyzed files
-- **`metrics`** - Derived metrics (programming languages only)
 - **`by_type`** - Stats grouped by [GitHub Linguist](https://github.com/github-linguist/linguist) language type:
-  - `programming` - Go, C++, Java, Python, etc.
+  - `programming` - Go, C++, Java, Python, etc. (includes metrics)
   - `data` - JSON, YAML, CSV, XML, etc.
   - `markup` - HTML, SVG
   - `prose` - Markdown, Text
@@ -255,17 +257,23 @@ The scanner automatically collects code statistics using [SCC](https://github.co
 **Derived Metrics** (programming languages only):
 ```json
 {
-  "metrics": {
-    "comment_ratio": 0.14,
-    "code_density": 0.77,
-    "avg_file_size": 400.6,
-    "complexity_per_kloc": 165.08,
-    "avg_complexity": 51.16,
-    "top_languages": [
-      {"language": "C++", "pct": 0.90},
-      {"language": "C", "pct": 0.05},
-      {"language": "C#", "pct": 0.02}
-    ]
+  "by_type": {
+    "programming": {
+      "total": { "lines": 6849401, "code": 5298522, ... },
+      "metrics": {
+        "comment_ratio": 0.14,
+        "code_density": 0.77,
+        "avg_file_size": 400.6,
+        "complexity_per_kloc": 165.08,
+        "avg_complexity": 51.16,
+        "top_languages": [
+          {"language": "C++", "pct": 0.90},
+          {"language": "C", "pct": 0.05},
+          {"language": "C#", "pct": 0.02}
+        ]
+      },
+      "languages": ["C++", "C", "C#"]
+    }
   }
 }
 ```

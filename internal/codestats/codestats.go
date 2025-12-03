@@ -79,8 +79,9 @@ type Metrics struct {
 
 // TypeBucket holds stats for a language type (programming, data, markup, prose)
 type TypeBucket struct {
-	Total     Stats    `json:"total"`     // Aggregated stats for this type
-	Languages []string `json:"languages"` // Languages in this type (sorted by lines desc)
+	Total     Stats    `json:"total"`             // Aggregated stats for this type
+	Metrics   *Metrics `json:"metrics,omitempty"` // Derived metrics (programming languages only)
+	Languages []string `json:"languages"`         // Languages in this type (sorted by lines desc)
 }
 
 // ByType holds stats grouped by GitHub Linguist language type
@@ -94,8 +95,7 @@ type ByType struct {
 // CodeStats holds aggregated code statistics
 type CodeStats struct {
 	Total      Stats            `json:"total"`      // Grand total (analyzed only)
-	Metrics    Metrics          `json:"metrics"`    // Derived metrics (programming languages only)
-	ByType     ByType           `json:"by_type"`    // Stats grouped by language type
+	ByType     ByType           `json:"by_type"`    // Stats grouped by language type (metrics in programming section)
 	Analyzed   AnalyzedBucket   `json:"analyzed"`   // SCC-recognized languages
 	Unanalyzed UnanalyzedBucket `json:"unanalyzed"` // Files SCC can't parse
 }
@@ -177,7 +177,7 @@ func (a *sccAnalyzer) buildUnanalyzedSlice() []OtherLanguageStats {
 }
 
 // buildByType creates the ByType structure from language stats
-func (a *sccAnalyzer) buildByType(analyzed []LanguageStats, unanalyzed []OtherLanguageStats) ByType {
+func (a *sccAnalyzer) buildByType(analyzed []LanguageStats, unanalyzed []OtherLanguageStats, metrics Metrics) ByType {
 	typeLanguages := make(map[string][]string)
 
 	// Collect languages by type (analyzed)
@@ -199,6 +199,12 @@ func (a *sccAnalyzer) buildByType(analyzed []LanguageStats, unanalyzed []OtherLa
 	for typeName, langs := range typeLanguages {
 		if stats, ok := a.byType[typeName]; ok {
 			bucket := &TypeBucket{Total: *stats, Languages: langs}
+
+			// Only add metrics for programming type (since they're calculated from programming languages only)
+			if typeName == "programming" && stats.Code > 0 {
+				bucket.Metrics = &metrics
+			}
+
 			switch typeName {
 			case "programming":
 				byType.Programming = bucket
@@ -274,11 +280,11 @@ func (a *sccAnalyzer) GetStats() interface{} {
 
 	analyzed := a.buildAnalyzedSlice()
 	unanalyzed := a.buildUnanalyzedSlice()
+	metrics := a.calculateMetrics(analyzed)
 
 	return &CodeStats{
 		Total:      a.total,
-		Metrics:    a.calculateMetrics(analyzed),
-		ByType:     a.buildByType(analyzed, unanalyzed),
+		ByType:     a.buildByType(analyzed, unanalyzed, metrics),
 		Analyzed:   AnalyzedBucket{Total: a.total, ByLanguage: analyzed},
 		Unanalyzed: UnanalyzedBucket{Total: a.otherTotal, ByLanguage: unanalyzed},
 	}
