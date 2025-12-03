@@ -28,7 +28,7 @@ func init() {
 type TechInfo struct {
 	Name        string                 `json:"name"`
 	Tech        string                 `json:"tech"`
-	Type        string                 `json:"type"`
+	Category    string                 `json:"category"`
 	Description string                 `json:"description,omitempty"`
 	Properties  map[string]interface{} `json:"properties,omitempty"`
 }
@@ -44,7 +44,7 @@ func (r *TechsResult) ToJSON() interface{} {
 
 func (r *TechsResult) ToText(w io.Writer) {
 	for _, tech := range r.Technologies {
-		fmt.Fprintf(w, "%s (%s)\n", tech.Tech, tech.Type)
+		fmt.Fprintf(w, "%s (%s)\n", tech.Tech, tech.Category)
 	}
 	fmt.Fprintf(w, "\nTotal: %d technologies\n", len(r.Technologies))
 }
@@ -70,9 +70,9 @@ func runTechs(cmd *cobra.Command, args []string) {
 	for _, techKey := range techKeys {
 		rule := ruleMap[techKey]
 		info := TechInfo{
-			Name: rule.Name,
-			Tech: techKey,
-			Type: rule.Type,
+			Name:     rule.Name,
+			Tech:     techKey,
+			Category: rule.Type,
 		}
 		if rule.Description != "" {
 			info.Description = rule.Description
