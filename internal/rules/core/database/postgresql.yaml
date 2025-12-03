@@ -61,3 +61,10 @@ dependencies:
   - type: maven
     name: org.postgresql:postgresql
     example: org.postgresql:postgresql
+  - type: python
+    name: pgvector
+    example: pgvector
+  - type: docker
+    name: pgvector/pgvector
+    example: pgvector/pgvector
+
