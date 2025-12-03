@@ -1,6 +1,6 @@
 tech: picocli
 name: picocli
-type: logger
+type: tool
 dependencies:
   - type: maven
     name: info.picocli:picocli
