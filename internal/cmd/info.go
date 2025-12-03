@@ -12,9 +12,8 @@ var infoCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(infoCmd)
-	infoCmd.AddCommand(componentTypesCmd)
 	infoCmd.AddCommand(techsCmd)
 	infoCmd.AddCommand(ruleCmd)
 	infoCmd.AddCommand(languagesCmd)
-	infoCmd.AddCommand(typesCmd)
+	infoCmd.AddCommand(categoriesCmd)
 }

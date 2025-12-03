@@ -137,11 +137,11 @@ func initializeScannerComponents(provider types.Provider, path string) (*scanner
 	}
 
 	// Load types configuration
-	typesConfig, err := config.LoadTypesConfig()
+	categoriesConfig, err := config.LoadCategoriesConfig()
 	if err != nil {
-		return nil, fmt.Errorf("failed to load types config: %w", err)
+		return nil, fmt.Errorf("failed to load categories config: %w", err)
 	}
-	SetTypesConfig(typesConfig)
+	SetCategoriesConfig(categoriesConfig)
 
 	// Load ignore patterns configuration (only once)
 	if len(defaultIgnorePatterns) == 0 {

@@ -10,8 +10,8 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-//go:embed types.yaml
-var typesConfigData []byte
+//go:embed categories.yaml
+var categoriesConfigData []byte
 
 //go:embed ignore.yaml
 var ignoreConfigData []byte
@@ -84,11 +84,11 @@ func (c *ScanConfig) MergeExcludes(cliExcludes []string) []string {
 	return result
 }
 
-// LoadTypesConfig loads the types configuration from types.yaml
-func LoadTypesConfig() (*types.TypesConfig, error) {
+// LoadCategoriesConfig loads the categories configuration from categories.yaml
+func LoadCategoriesConfig() (*types.TypesConfig, error) {
 	var config types.TypesConfig
-	if err := yaml.Unmarshal(typesConfigData, &config); err != nil {
-		return nil, fmt.Errorf("failed to parse types.yaml: %w", err)
+	if err := yaml.Unmarshal(categoriesConfigData, &config); err != nil {
+		return nil, fmt.Errorf("failed to parse categories.yaml: %w", err)
 	}
 
 	return &config, nil
