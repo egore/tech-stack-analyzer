@@ -1,0 +1,13 @@
+tech: msaccess
+name: Microsoft Access
+type: database
+extensions:
+  - .mdb
+  - .accdb
+dependencies:
+  - type: nuget
+    name: /^System\.Data\.OleDb/
+  - type: python
+    name: pyodbc
+  - type: python
+    name: access-parser
