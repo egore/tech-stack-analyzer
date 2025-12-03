@@ -130,6 +130,106 @@ func TestParsePomXML(t *testing.T) {
 			content:      "",
 			expectedDeps: []types.Dependency{},
 		},
+		{
+			name: "pom.xml with properties and variable substitution",
+			content: `<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.example</groupId>
+	<artifactId>my-app</artifactId>
+	<version>1.0.0</version>
+	
+	<properties>
+		<spring.version>2.7.0</spring.version>
+		<quinoa.version>1.2.3</quinoa.version>
+		<junit.version>5.8.2</junit.version>
+	</properties>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.quarkiverse.quinoa</groupId>
+			<artifactId>quarkus-quinoa</artifactId>
+			<version>${quinoa.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>${junit.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>4.6.1</version>
+		</dependency>
+	</dependencies>
+</project>`,
+			expectedDeps: []types.Dependency{
+				{Type: "maven", Name: "org.springframework.boot:spring-boot-starter-web", Example: "2.7.0"},
+				{Type: "maven", Name: "io.quarkiverse.quinoa:quarkus-quinoa", Example: "1.2.3"},
+				{Type: "maven", Name: "org.junit.jupiter:junit-jupiter", Example: "5.8.2"},
+				{Type: "maven", Name: "org.mockito:mockito-core", Example: "4.6.1"},
+			},
+		},
+		{
+			name: "pom.xml with undefined property reference",
+			content: `<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.example</groupId>
+	<artifactId>my-app</artifactId>
+	<version>1.0.0</version>
+	
+	<properties>
+		<spring.version>2.7.0</spring.version>
+	</properties>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.quarkiverse.quinoa</groupId>
+			<artifactId>quarkus-quinoa</artifactId>
+			<version>${undefined.version}</version>
+		</dependency>
+	</dependencies>
+</project>`,
+			expectedDeps: []types.Dependency{
+				{Type: "maven", Name: "org.springframework.boot:spring-boot-starter-web", Example: "2.7.0"},
+				{Type: "maven", Name: "io.quarkiverse.quinoa:quarkus-quinoa", Example: "${undefined.version}"},
+			},
+		},
+		{
+			name: "pom.xml with empty properties section",
+			content: `<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.example</groupId>
+	<artifactId>my-app</artifactId>
+	<version>1.0.0</version>
+	
+	<properties>
+	</properties>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+	</dependencies>
+</project>`,
+			expectedDeps: []types.Dependency{
+				{Type: "maven", Name: "org.springframework.boot:spring-boot-starter-web", Example: "${spring.version}"},
+			},
+		},
 	}
 
 	for _, tt := range tests {
