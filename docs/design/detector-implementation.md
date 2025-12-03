@@ -6,7 +6,7 @@ This document serves as the comprehensive design specification for component det
 ## Architecture Summary
 The component detector system follows a modular architecture where each detector is responsible for identifying specific project types, parsing their configuration files, and extracting dependency information. All detectors implement a common interface and are automatically registered through Go's init() system.
 
-## Completed Detectors (11/11)
+## Completed Detectors (13/13)
 
 ### Phase 1: Core Languages (High Priority)
 1. **Node.js** - Completed (Real Components - package.json detection with npm/yarn package extraction)
@@ -27,11 +27,12 @@ The component detector system follows a modular architecture where each detector
 ### Phase 4: Enhanced Ecosystem Support
 11. **.NET** - Completed (Unified detector for modern .NET and .NET Framework with NuGet package extraction)
 12. **Oracle Database** - Completed (Comprehensive rule covering all major Oracle drivers and configurations)
+13. **Delphi** - Completed (Component detector for .dproj files with VCL/FMX framework detection and package extraction)
 
 ### Phase 5: Extension-Based Detection (No Component Detectors Needed)
-13. **Zig** - Completed (Handled by extension matcher - .zig files)
-14. **C/C++** - Completed (Handled by extension matchers - .c/.cpp/.h/.hpp files)
-15. **Other Languages** - Completed (Comprehensive extension-based language detection)
+14. **Zig** - Completed (Handled by extension matcher - .zig files)
+15. **C/C++** - Completed (Handled by extension matchers - .c/.cpp/.h/.hpp files)
+16. **Other Languages** - Completed (Comprehensive extension-based language detection including AWK, XSLT, Groovy)
 
 ---
 
@@ -472,7 +473,69 @@ resource "aws_instance" "example" {
 
 ---
 
-## 11. Java/Kotlin Detector
+## 11. Delphi Detector
+
+### Files to Detect
+- `*.dproj` (project file - creates named payload)
+- `*.dpr` (program source - optional)
+- `*.dpk` (package source - optional)
+
+### Implementation Requirements
+
+#### *.dproj Project Detection
+- **File**: Any `*.dproj` file (modern Delphi project format, XML-based)
+- **Parsing Logic**:
+  - Parse XML format using regex (simpler than full XML parsing)
+  - Extract `<FrameworkType>` element (VCL or FMX)
+  - Extract `<DCC_UsePackage>` element for runtime packages
+  - Extract project name from filename
+- **Framework Detection**:
+  - **VCL**: Visual Component Library (Windows desktop)
+  - **FMX**: FireMonkey (cross-platform: Windows, macOS, iOS, Android)
+  - Store framework as additional tech in component
+- **Dependencies**:
+  - Store as: `delphi` type with package name
+  - Packages are semicolon-separated in DCC_UsePackage
+  - Skip variables like `$(DCC_UsePackage)`
+  - Deduplicate packages across multiple DCC_UsePackage elements
+- **Output**: Real Component (named payload)
+- **Component Tech**: `"delphi"` with framework as additional tech (`"vcl"` or `"fmx"`)
+
+### .dproj Structure Example
+```xml
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{B5EBA39A-276F-40EA-8594-AED10F883351}</ProjectGuid>
+        <MainSource>MyApp.dpr</MainSource>
+        <FrameworkType>VCL</FrameworkType>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <DCC_UsePackage>vcl;rtl;dbrtl;vcldb;FireDAC;$(DCC_UsePackage)</DCC_UsePackage>
+    </PropertyGroup>
+</Project>
+```
+
+### Key Elements
+- **FrameworkType**: VCL, FMX, or None
+- **DCC_UsePackage**: Semicolon-separated list of runtime packages
+- **MainSource**: Reference to .dpr file
+
+### Common Delphi Packages
+- **Built-in**: rtl, vcl, vcldb, fmx, FireDAC, dbrtl, inet, xmlrtl
+- **DevExpress**: dx*, cx* prefixes (e.g., dxCoreRS28, cxGridRS28)
+- **TMS**: TMS* prefix
+- **FastReport**: frx*, fs* prefixes
+- **FlexCel**: FlexCel_* prefix
+- **JVCL/JCL**: Jv*, Jcl* prefixes
+- **Indy**: Indy* prefix
+
+### TypeScript Reference
+- None (not implemented in TypeScript)
+- This is an **enhancement** for Delphi/Pascal ecosystem support
+
+---
+
+## 12. Java/Kotlin Detector
 
 ### Files to Detect
 - `pom.xml` (Maven - component - creates named payload)
@@ -553,7 +616,7 @@ dependencies {
 
 ---
 
-## 12. Zig Detector
+## 13. Zig Detector
 
 ### Files to Detect
 - `.zig` extension files (via extension matcher, not component detector)
@@ -605,11 +668,12 @@ register({
 ### Phase 4: Additional Enhancements
 11. **.NET** - Completed (Unified detector for modern .NET and .NET Framework with NuGet package extraction)
 12. **Oracle Database** - Completed (Comprehensive rule covering all major Oracle drivers and configurations)
+13. **Delphi** - Completed (Component detector for .dproj files with VCL/FMX framework and package extraction)
 
 ### Phase 5: No Implementation Needed
-13. **Zig** - Already handled by extension matcher
+14. **Zig** - Already handled by extension matcher
 
-**Total to implement: 12 detectors** (9 from TypeScript + 3 enhancements)
+**Total implemented: 13 detectors** (9 from TypeScript + 4 enhancements)
 
 ---
 
@@ -706,6 +770,7 @@ Test with real project examples:
 - Docker: A project with docker-compose.yml
 - Terraform: A project with .tf files
 - Zig: A project with build.zig
+- Delphi: A project with .dproj files (VCL or FMX)
 
 ---
 

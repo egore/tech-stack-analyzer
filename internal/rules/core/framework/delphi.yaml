@@ -1,0 +1,11 @@
+tech: delphi
+name: Delphi
+type: framework
+files:
+  - "*.dproj"
+  - "*.dpr"
+  - "*.dpk"
+extensions:
+  - .dproj
+  - .dpr
+  - .dpk
