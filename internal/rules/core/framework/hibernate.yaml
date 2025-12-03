@@ -1,0 +1,10 @@
+tech: hibernate
+name: Hibernate
+type: framework
+dependencies:
+  - type: maven
+    name: io.quarkus:quarkus-hibernate-orm-panache
+    example: io.quarkus:quarkus-hibernate-orm-panache
+  - type: maven
+    name: org.hibernate.orm:hibernate-core
+    example: org.hibernate.orm:hibernate-core

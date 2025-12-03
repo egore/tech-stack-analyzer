@@ -26,5 +26,5 @@ dependencies:
     name: meilisearch-rails
     example: meilisearch-rails
   - type: php
-    name: meilisearch/meilisearch-php 
-    example: meilisearch/meilisearch-php 
+    name: meilisearch/meilisearch-php
+    example: meilisearch/meilisearch-php

@@ -17,11 +17,11 @@ dependencies:
   - type: python
     name: pytest-playwright
     example: pytest-playwright
-  - type: dotnet
+  - type: nuget
     name: Microsoft.Playwright.NUnit
     example: Microsoft.Playwright.NUnit
-  - type: java
-    name: "/com.microsoft.playwright.*/"
-    example: example
+  - type: maven
+    name: /^com\.microsoft\.playwright:.*$/
+    example: com.microsoft.playwright:playwright
 files:
   - playwright.config.ts

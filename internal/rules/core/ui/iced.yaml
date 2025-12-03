@@ -1,0 +1,7 @@
+tech: iced
+name: Iced
+type: ui
+dependencies:
+  - type: rust
+    name: iced
+    example: iced
