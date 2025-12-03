@@ -16,7 +16,7 @@ The Tech Stack Analyzer automatically detects technologies, frameworks, database
 - **Infrastructure** - Detects Docker, Kubernetes, Terraform, GitLab configurations
 - **DevOps Tools** - Identifies CI/CD pipelines, monitoring, and deployment tools
 
-**Detection Engine:** The analyzer uses 700+ technology rules that can detect technologies through:
+**Detection Engine:** The analyzer uses 800+ technology rules that can detect technologies through:
 - File names and extensions (`.py`, `package.json`, `Dockerfile`)
 - Package dependencies across multiple ecosystems  
 - Environment variables and configuration files
@@ -36,7 +36,7 @@ See [How to Extend It](#how-to-extend-it) for complete rule documentation.
 
 ## Key Features
 
-- **700+ Technology Rules** - Comprehensive detection across 48 technology categories (databases, frameworks, APIs, tools, cloud services)
+- **800+ Technology Rules** - Comprehensive detection across 48 technology categories (databases, frameworks, APIs, tools, cloud services)
 - **Zero Dependencies** - Single binary deployment without Node.js runtime requirement
 - **Project Configuration** - `.stack-analyzer.yml` for custom metadata, exclusions, and external dependencies
 - **Scan Metadata** - Automatic tracking of scan execution (timestamp, duration, git info, file counts)
@@ -998,7 +998,7 @@ tech-stack-analyzer/
 │   ├── progress/          # Verbose mode progress reporting
 │   ├── provider/          # File system abstraction layer
 │   ├── rules/             # Rule loading and validation
-│   │   └── core/          # Embedded technology rules (700+ rules in 30+ categories)
+│   │   └── core/          # Embedded technology rules (800+ rules in 48 categories)
 │   ├── scanner/           # Core scanning engine
 │   │   ├── components/    # Component detectors (nodejs, python, java, docker, etc.)
 │   │   ├── matchers/      # File and extension matchers
@@ -1031,7 +1031,7 @@ Each detector handles specific project types:
 - **Go** - go.mod detection
 
 #### 3. Rule System (`internal/rules/`)
-- **700+ technology rules** covering enterprise stacks
+- **800+ technology rules** covering enterprise stacks
 - **YAML-based DSL** for easy extension
 - **Multi-language support** (npm, pip, cargo, composer, nuget, maven, etc.)
 - **Content-based validation** with regex pattern matching
@@ -1418,7 +1418,7 @@ This Go implementation provides practical improvements focused on deployment sim
 - **Extended Technology Support**: Added Java/Kotlin and .NET component detectors alongside existing Node.js, Python, Docker, Terraform, Ruby, Rust, PHP, Deno, and Go support
 - **Enhanced Database Coverage**: Improved detection for Oracle, MongoDB, Redis, and other enterprise databases
 - **Modular Architecture**: Clean component detector system for easier maintenance and extension
-- **Comprehensive Rules**: 700+ technology rules across 30+ categories covering modern enterprise stacks
+- **Comprehensive Rules**: 800+ technology rules across 48 categories covering modern enterprise stacks
 
 ### Contributors
 Thank you to all contributors who help improve this project.
