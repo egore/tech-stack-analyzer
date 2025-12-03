@@ -179,3 +179,7 @@ types:
   appserver:
     is_component: true
     description: "Application servers (JBoss, Tomcat, WebLogic, etc.)"
+  
+  healthcare:
+    is_component: false
+    description: "Healthcare standards and systems (FHIR, HL7, DICOM, etc.)"
