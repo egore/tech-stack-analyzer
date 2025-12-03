@@ -1,0 +1,5 @@
+tech: svn
+name: Subversion
+type: vcs
+files:
+  - .svnignore

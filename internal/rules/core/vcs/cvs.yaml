@@ -1,0 +1,5 @@
+tech: cvs
+name: CVS
+type: vcs
+files:
+  - .cvsignore

@@ -108,6 +108,10 @@ types:
     is_component: false
     description: "CI/CD tools (GitHub Actions, Jenkins, etc.)"
   
+  vcs:
+    is_component: false
+    description: "Version control systems (Git, SVN, Mercurial, etc.)"
+  
   language:
     is_component: false
     description: "Programming languages (Python, JavaScript, etc.)"
