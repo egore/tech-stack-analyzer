@@ -1,4 +1,4 @@
-tech: sveltejs
+tech: svelte
 name: Svelte
 type: ui_framework
 dependencies:
