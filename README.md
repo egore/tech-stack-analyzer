@@ -202,7 +202,7 @@ The scanner automatically collects code statistics using [SCC](https://github.co
 {
   "code_stats": {
     "total": { "lines": 39212, "code": 32834, "comments": 2027, "blanks": 4351, "complexity": 1960, "files": 858 },
-    "kpis": {
+    "metrics": {
       "comment_ratio": 0.12,
       "code_density": 0.76,
       "avg_file_size": 236.81,
@@ -232,7 +232,7 @@ The scanner automatically collects code statistics using [SCC](https://github.co
 
 **Fields:**
 - **`total`** - Grand total for all analyzed files
-- **`kpis`** - Derived metrics (programming languages only)
+- **`metrics`** - Derived metrics (programming languages only)
 - **`by_type`** - Stats grouped by [GitHub Linguist](https://github.com/github-linguist/linguist) language type:
   - `programming` - Go, C++, Java, Python, etc.
   - `data` - JSON, YAML, CSV, XML, etc.
@@ -241,7 +241,7 @@ The scanner automatically collects code statistics using [SCC](https://github.co
 - **`analyzed`** - Files SCC can fully parse (code/comments/blanks/complexity breakdown)
 - **`unanalyzed`** - Files SCC cannot parse (only line counts)
 
-**Metrics:**
+**Stats Fields:**
 - `lines` - Total lines in file
 - `code` - Lines of code (excluding comments and blanks)
 - `comments` - Comment lines
@@ -249,10 +249,10 @@ The scanner automatically collects code statistics using [SCC](https://github.co
 - `complexity` - Cyclomatic complexity (for supported languages)
 - `files` - Number of files
 
-**KPIs** (derived metrics from programming languages only):
+**Derived Metrics** (programming languages only):
 ```json
 {
-  "kpis": {
+  "metrics": {
     "comment_ratio": 0.14,
     "code_density": 0.77,
     "avg_file_size": 400.6,

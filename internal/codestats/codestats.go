@@ -76,14 +76,14 @@ type UnanalyzedBucket struct {
 	ByLanguage []OtherLanguageStats `json:"by_language"` // Sorted by lines descending
 }
 
-// TopLanguage represents a top programming language in KPIs
+// TopLanguage represents a top programming language in Metrics
 type TopLanguage struct {
 	Language string  `json:"language"`
 	Pct      float64 `json:"pct"`
 }
 
-// KPIs holds derived code metrics (programming languages only)
-type KPIs struct {
+// Metrics holds derived code metrics (programming languages only)
+type Metrics struct {
 	CommentRatio      float64       `json:"comment_ratio"`       // comments / code (documentation level)
 	CodeDensity       float64       `json:"code_density"`        // code / lines (actual code vs whitespace/comments)
 	AvgFileSize       float64       `json:"avg_file_size"`       // lines / files
@@ -109,7 +109,7 @@ type ByType struct {
 // CodeStats holds aggregated code statistics
 type CodeStats struct {
 	Total      Stats            `json:"total"`      // Grand total (analyzed only)
-	KPIs       KPIs             `json:"kpis"`       // Derived metrics (programming languages only)
+	Metrics    Metrics          `json:"metrics"`    // Derived metrics (programming languages only)
 	ByType     ByType           `json:"by_type"`    // Stats grouped by language type
 	Analyzed   AnalyzedBucket   `json:"analyzed"`   // SCC-recognized languages
 	Unanalyzed UnanalyzedBucket `json:"unanalyzed"` // Files SCC can't parse
@@ -229,9 +229,9 @@ func (a *sccAnalyzer) buildByType(analyzed []LanguageStats, unanalyzed []OtherLa
 	return byType
 }
 
-// calculateKPIs computes KPIs from programming language stats
-func (a *sccAnalyzer) calculateKPIs(analyzed []LanguageStats) KPIs {
-	kpis := KPIs{}
+// calculateMetrics computes Metrics from programming language stats
+func (a *sccAnalyzer) calculateMetrics(analyzed []LanguageStats) Metrics {
+	kpis := Metrics{}
 	progStats := a.byType["programming"]
 	if progStats == nil {
 		return kpis
@@ -261,7 +261,7 @@ func (a *sccAnalyzer) calculateKPIs(analyzed []LanguageStats) KPIs {
 }
 
 // setTopLanguages sets top programming languages (max 5, ≥1% threshold)
-func (a *sccAnalyzer) setTopLanguages(kpis *KPIs, progLangs []LanguageStats, totalLines int64) {
+func (a *sccAnalyzer) setTopLanguages(kpis *Metrics, progLangs []LanguageStats, totalLines int64) {
 	if totalLines == 0 || len(progLangs) == 0 {
 		return
 	}
@@ -292,7 +292,7 @@ func (a *sccAnalyzer) GetStats() interface{} {
 
 	return &CodeStats{
 		Total:      a.total,
-		KPIs:       a.calculateKPIs(analyzed),
+		Metrics:    a.calculateMetrics(analyzed),
 		ByType:     a.buildByType(analyzed, unanalyzed),
 		Analyzed:   AnalyzedBucket{Total: a.total, ByLanguage: analyzed},
 		Unanalyzed: UnanalyzedBucket{Total: a.otherTotal, ByLanguage: unanalyzed},
