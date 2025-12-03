@@ -1,6 +1,5 @@
 tech: gcp
 name: GCP
-type: cloud
 dotenv:
   - GOOGLE_CLOUD_CREDENTIALS
   - GOOGLE_CLOUD_PROJECT

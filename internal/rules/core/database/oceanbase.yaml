@@ -1,6 +1,5 @@
 tech: oceanbase
 name: Oceanbase
-type: database
 dependencies:
   - type: docker
     name: oceanbase/oceanbase-ce

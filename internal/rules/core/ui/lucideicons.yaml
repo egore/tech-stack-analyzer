@@ -1,6 +1,5 @@
 tech: lucideicons
 name: Lucide Icons
-type: iconset
 dependencies:
   - type: npm
     name: lucide-react

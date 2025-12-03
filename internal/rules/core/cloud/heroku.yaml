@@ -1,6 +1,5 @@
 tech: heroku
 name: Heroku
-type: cloud
 dependencies:
   - type: terraform
     name: registry.terraform.io/heroku/heroku

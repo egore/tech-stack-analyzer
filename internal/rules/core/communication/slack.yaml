@@ -1,6 +1,5 @@
 tech: slack
 name: Slack
-type: communication
 dotenv:
   - SLACK_
 dependencies:

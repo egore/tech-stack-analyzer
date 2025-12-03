@@ -1,6 +1,5 @@
 tech: openstack
 name: OpenStack
-type: cloud
 files:
   - clouds.yaml
   - openrc

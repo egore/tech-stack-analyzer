@@ -1,6 +1,5 @@
 tech: objectivec
 name: Objective-C
-type: language
 extensions:
   - .m
   - .mm

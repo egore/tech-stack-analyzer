@@ -1,6 +1,5 @@
 tech: vercel
 name: Vercel
-type: cloud
 dependencies:
   - type: npm
     name: vercel

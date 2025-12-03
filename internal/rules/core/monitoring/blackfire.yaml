@@ -1,6 +1,5 @@
 tech: blackfire
 name: Blackfire
-type: monitoring
 dotenv:
   - BLACKFIRE_
 dependencies:

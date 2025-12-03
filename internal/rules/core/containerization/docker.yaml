@@ -1,6 +1,5 @@
 tech: docker
 name: Docker
-type: tool
 dependencies:
   - type: githubAction
     name: docker/login-action

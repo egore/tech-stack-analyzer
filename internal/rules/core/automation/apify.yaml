@@ -1,6 +1,5 @@
 tech: apify
 name: Apify
-type: automation
 dotenv:
   - APIFY_
 dependencies:

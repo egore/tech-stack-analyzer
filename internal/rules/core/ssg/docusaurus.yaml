@@ -1,6 +1,5 @@
 tech: docusaurus
 name: Docusaurus
-type: ssg
 dependencies:
   - type: npm
     name: "@docusaurus/core"

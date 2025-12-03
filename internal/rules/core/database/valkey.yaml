@@ -1,6 +1,5 @@
 tech: valkey
 name: Valkey
-type: database
 dotenv:
   - VALKEY_
 dependencies:

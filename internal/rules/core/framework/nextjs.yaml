@@ -1,6 +1,5 @@
 tech: nextjs
 name: Next.js
-type: framework
 dependencies:
   - type: npm
     name: next

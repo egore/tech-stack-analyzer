@@ -1,6 +1,5 @@
 tech: splunk
 name: Splunk
-type: saas
 dotenv:
   - SPLUNK_
 dependencies:

@@ -44,7 +44,7 @@ func (r *TechsResult) ToJSON() interface{} {
 
 func (r *TechsResult) ToText(w io.Writer) {
 	for _, tech := range r.Technologies {
-		fmt.Fprintln(w, tech.Tech)
+		fmt.Fprintf(w, "%-30s %s\n", tech.Tech, tech.Type)
 	}
 	fmt.Fprintf(w, "\nTotal: %d technologies\n", len(r.Technologies))
 }

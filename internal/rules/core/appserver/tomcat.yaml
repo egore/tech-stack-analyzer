@@ -1,6 +1,5 @@
 tech: tomcat
 name: Apache Tomcat
-type: appserver
 files:
   - context.xml
   - server.xml

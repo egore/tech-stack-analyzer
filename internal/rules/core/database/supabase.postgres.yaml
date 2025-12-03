@@ -1,6 +1,5 @@
 tech: supabase.postgres
 name: Supabase Postgres
-type: database
 dependencies:
   - type: npm
     name: "@supabase/postgrest-js"

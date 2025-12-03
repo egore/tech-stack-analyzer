@@ -1,6 +1,5 @@
 tech: datadome
 name: DataDome
-type: security
 dependencies:
   - type: npm
     name: "@datadome/fraud-sdk-node"

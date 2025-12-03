@@ -1,6 +1,5 @@
 tech: azure.storage
 name: Azure Storage
-type: storage
 dependencies:
   - type: npm
     name: "@azure/storage-blob"

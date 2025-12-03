@@ -1,6 +1,5 @@
 tech: adobe.experiencemanager
 name: Adobe Experience Manager
-type: cms
 dotenv:
   - AEM_
 dependencies:

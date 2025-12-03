@@ -1,6 +1,5 @@
 tech: phpstan
 name: PHPStan
-type: linter
 dependencies:
   - type: php
     name: phpstan/phpstan

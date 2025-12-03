@@ -1,6 +1,5 @@
 tech: plausible
 name: Plausible
-type: analytics
 dotenv:
   - PLAUSIBLE_
 dependencies:

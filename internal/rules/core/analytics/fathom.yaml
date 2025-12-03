@@ -1,6 +1,5 @@
 tech: fathom
 name: Fathom
-type: analytics
 dotenv:
   - FATHOM_
 dependencies:

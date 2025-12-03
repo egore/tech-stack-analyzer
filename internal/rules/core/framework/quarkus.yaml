@@ -1,6 +1,5 @@
 tech: quarkus
 name: Quarkus
-type: framework
 dependencies:
   - type: maven
     name: /^io\.quarkus:.*/

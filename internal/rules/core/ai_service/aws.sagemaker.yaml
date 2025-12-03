@@ -1,6 +1,5 @@
 tech: aws.sagemaker
 name: AWS SageMaker
-type: ai
 dependencies:
   - type: npm
     name: "@aws-sdk/client-sagemaker"

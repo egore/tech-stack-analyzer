@@ -1,6 +1,5 @@
 tech: k6
 name: Grafana K6
-type: test
 dependencies:
   - type: npm
     name: k6

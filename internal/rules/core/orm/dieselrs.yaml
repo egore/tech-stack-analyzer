@@ -1,6 +1,5 @@
 tech: dieselrs
 name: Diesel
-type: orm
 dependencies:
   - type: rust
     name: diesel

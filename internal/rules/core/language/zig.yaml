@@ -1,6 +1,5 @@
 tech: zig
 name: Zig
-type: language
 dependencies:
   - type: githubAction
     name: goto-bus-stop/setup-zig

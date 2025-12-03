@@ -1,6 +1,5 @@
 tech: tensorflow
 name: Tensorflow
-type: tool
 dependencies:
   - type: docker
     name: tensorflow/tensorflow

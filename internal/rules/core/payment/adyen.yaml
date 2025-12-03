@@ -1,6 +1,5 @@
 tech: adyen
 name: Adyen
-type: payment
 dotenv:
   - ADYEN_
 dependencies:

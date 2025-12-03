@@ -1,6 +1,5 @@
 tech: twitter
 name: X
-type: communication
 dotenv:
   - TWITTER_
 dependencies:

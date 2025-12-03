@@ -1,6 +1,5 @@
 tech: aws.sqs
 name: AWS SQS
-type: queue
 dependencies:
   - type: npm
     name: "@aws-cdk/aws-sqs"

@@ -1,6 +1,5 @@
 tech: azure.functions
 name: Azure Functions
-type: hosting
 dependencies:
   - type: npm
     name: "@azure/functions"

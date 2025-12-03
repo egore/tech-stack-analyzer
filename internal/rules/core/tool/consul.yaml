@@ -1,6 +1,5 @@
 tech: consul
 name: Consul
-type: app
 dependencies:
   - type: docker
     name: consul

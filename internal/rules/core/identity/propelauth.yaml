@@ -1,6 +1,5 @@
 tech: propelauth
 name: PropelAuth
-type: auth
 dependencies:
   - type: python
     name: propelauth_fastapi

@@ -1,6 +1,5 @@
 tech: bugsnag
 name: Bugsnag
-type: monitoring
 dotenv:
   - BUGSNAG_
 dependencies:

@@ -1,6 +1,5 @@
 tech: gcp.dialogflow
 name: Cloud Dialogflow
-type: ai
 dependencies:
   - type: npm
     name: "@google-cloud/dialogflow"

@@ -1,6 +1,5 @@
 tech: contentful
 name: Contentful
-type: cms
 dotenv:
   - CONTENTFUL_
 dependencies:

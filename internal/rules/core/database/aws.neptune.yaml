@@ -1,6 +1,5 @@
 tech: aws.neptune
 name: AWS Neptune
-type: database
 dependencies:
   - type: npm
     name: "@aws-cdk/aws-neptune"

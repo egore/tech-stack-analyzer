@@ -1,6 +1,5 @@
 tech: aws.documentdb
 name: AWS Document DB
-type: database
 dependencies:
   - type: npm
     name: "@aws-sdk/client-docdb"

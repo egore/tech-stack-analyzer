@@ -1,6 +1,5 @@
 tech: gcp.appengine
 name: Google App Engine
-type: hosting
 dependencies:
   - type: npm
     name: "@google-cloud/appengine-admin"

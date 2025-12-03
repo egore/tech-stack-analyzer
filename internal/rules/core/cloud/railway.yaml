@@ -1,6 +1,5 @@
 tech: railway
 name: Railway
-type: cloud
 dotenv:
   - RAILWAY_
 dependencies:

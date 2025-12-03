@@ -1,6 +1,5 @@
 tech: graphql
 name: GraphQL
-type: framework
 dependencies:
   - type: maven
     name: io.smallrye:smallrye-graphql-client

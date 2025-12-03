@@ -1,6 +1,5 @@
 tech: gcp.pubsub
 name: PubSub
-type: queue
 dependencies:
   - type: npm
     name: "@google-cloud/pubsub"

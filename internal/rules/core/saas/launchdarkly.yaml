@@ -1,6 +1,5 @@
 tech: launchdarkly
 name: LaunchDarkly
-type: saas
 dotenv:
   - LAUNCHDARKLY_
   - LAUNCH_DARKLY_

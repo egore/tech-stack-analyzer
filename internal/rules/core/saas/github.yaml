@@ -1,6 +1,5 @@
 tech: github
 name: GitHub
-type: saas
 dependencies:
   - type: npm
     name: octokit

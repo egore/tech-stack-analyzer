@@ -1,6 +1,5 @@
 tech: stripe
 name: Stripe
-type: payment
 dotenv:
   - STRIPE_
 dependencies:

@@ -1,6 +1,5 @@
 tech: prisma
 name: Prisma
-type: orm
 dependencies:
   - type: npm
     name: prisma

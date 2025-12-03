@@ -1,6 +1,5 @@
 tech: kysely
 name: Kysely
-type: orm
 dependencies:
   - type: npm
     name: kysely

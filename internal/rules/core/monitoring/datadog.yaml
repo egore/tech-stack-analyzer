@@ -1,6 +1,5 @@
 tech: datadog
 name: Datadog
-type: monitoring
 dotenv:
   - DD_
 dependencies:

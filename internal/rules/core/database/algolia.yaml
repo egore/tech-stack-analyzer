@@ -1,6 +1,5 @@
 tech: algolia
 name: Algolia
-type: database
 dotenv:
   - ALGOLIA_
 dependencies:

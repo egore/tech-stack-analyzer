@@ -1,6 +1,5 @@
 tech: ktor
 name: Ktor
-type: framework
 dependencies:
   - type: maven
     name: /^io\.ktor:ktor-/

@@ -1,6 +1,5 @@
 tech: log4j
 name: Log4j
-type: logging
 dependencies:
   - type: maven
     name: /^org\.apache\.logging\.log4j:.*/

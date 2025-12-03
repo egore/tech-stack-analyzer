@@ -1,6 +1,5 @@
 tech: nats
 name: Nats
-type: queue
 dependencies:
   - type: docker
     name: nats

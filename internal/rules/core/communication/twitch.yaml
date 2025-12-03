@@ -1,6 +1,5 @@
 tech: twitch
 name: Twitch
-type: communication
 dotenv:
   - TWITCH_
 dependencies:

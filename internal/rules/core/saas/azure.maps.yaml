@@ -1,6 +1,5 @@
 tech: azure.maps
 name: Bing Maps
-type: maps
 dotenv:
   - AZURE_MAPS_
 dependencies:

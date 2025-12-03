@@ -12,9 +12,21 @@ types:
     is_component: true
     description: "Storage services (S3, Cloudinary, etc.)"
   
-  queue:
+  messaging:
     is_component: true
-    description: "Message queues (RabbitMQ, Kafka, etc.)"
+    description: "Message brokers and queues (Kafka, RabbitMQ, SQS, etc.)"
+  
+  containerization:
+    is_component: true
+    description: "Container tools (Docker, Podman, containerd)"
+  
+  orchestration:
+    is_component: true
+    description: "Container orchestration (Kubernetes, Docker Swarm, Nomad)"
+  
+  package_manager:
+    is_component: false
+    description: "Package managers (npm, pip, cargo, maven)"
   
   # Hosting & Cloud - CREATE components
   hosting:
@@ -42,9 +54,9 @@ types:
     is_component: true
     description: "Analytics platforms (Google Analytics, Mixpanel, etc.)"
   
-  auth:
+  identity:
     is_component: true
-    description: "Authentication services (Auth0, Clerk, etc.)"
+    description: "Identity & access management (Auth0, Okta, Keycloak, etc.)"
   
   payment:
     is_component: true
@@ -63,10 +75,6 @@ types:
     description: "Collaboration platforms"
   
   # Applications & Tools - CREATE components
-  app:
-    is_component: true
-    description: "Applications (Nginx, Redis, etc.)"
-  
   etl:
     is_component: true
     description: "ETL tools"
@@ -78,10 +86,6 @@ types:
   security:
     is_component: true
     description: "Security services"
-  
-  maps:
-    is_component: true
-    description: "Map services (Google Maps, Mapbox, etc.)"
   
   crm:
     is_component: true
@@ -95,18 +99,18 @@ types:
     is_component: true
     description: "Static site generators (when used as main tech)"
   
-  ai:
+  ai_service:
     is_component: true
-    description: "AI services (OpenAI, Anthropic, etc.)"
-  
-  agentic:
-    is_component: false
-    description: "Agentic AI frameworks (PydanticAI, LangChain, CrewAI, etc.)"
+    description: "AI cloud services and APIs (OpenAI, Anthropic, AWS Bedrock, etc.)"
   
   # Development Tools - DO NOT create components
-  ci:
+  ai:
     is_component: false
-    description: "CI/CD tools (GitHub Actions, Jenkins, etc.)"
+    description: "AI libraries and frameworks (LangChain, PyTorch, PydanticAI, etc.)"
+
+  cicd:
+    is_component: false
+    description: "CI/CD tools (GitHub Actions, Jenkins, CircleCI, etc.)"
   
   vcs:
     is_component: false
@@ -132,14 +136,6 @@ types:
     is_component: false
     description: "Validation libraries"
   
-  builder:
-    is_component: false
-    description: "Build tools (Webpack, Vite, etc.)"
-  
-  linter:
-    is_component: false
-    description: "Code linters (ESLint, Pylint, etc.)"
-  
   test:
     is_component: false
     description: "Testing frameworks (Jest, Pytest, etc.)"
@@ -148,25 +144,13 @@ types:
     is_component: false
     description: "Object-relational mappers (SQLAlchemy, Prisma, etc.)"
   
-  package_manager:
-    is_component: false
-    description: "Package managers (npm, pip, cargo, etc.)"
-  
   ui:
     is_component: false
-    description: "UI component libraries"
-  
-  ui_framework:
-    is_component: false
-    description: "UI frameworks (MFC, Qt, etc.)"
+    description: "UI components and frameworks (MUI, shadcn, Qt, MFC)"
   
   iac:
     is_component: false
     description: "Infrastructure as Code tools (Terraform, Pulumi, etc.)"
-  
-  iconset:
-    is_component: false
-    description: "Icon libraries (Lucide, Font Awesome, etc.)"
   
   build:
     is_component: false
@@ -183,3 +167,7 @@ types:
   healthcare:
     is_component: false
     description: "Healthcare standards and systems (FHIR, HL7, DICOM, etc.)"
+  
+  platform:
+    is_component: false
+    description: "Low-code platforms, operating systems (Uniface, Windows, Linux)"

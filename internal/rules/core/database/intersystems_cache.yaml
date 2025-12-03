@@ -1,6 +1,5 @@
 tech: intersystems_cache
 name: InterSystems Cache
-type: database
 files:
   - package.xml
 content:

@@ -1,6 +1,5 @@
 tech: msix
 name: MSIX
-type: build
 files:
   - appxmanifest.xml
   - appxblockmap.xml

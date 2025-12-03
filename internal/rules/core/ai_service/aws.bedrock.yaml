@@ -1,6 +1,5 @@
 tech: aws.bedrock
 name: AWS Bedrock
-type: ai
 dependencies:
   - type: npm
     name: "@aws-sdk/client-bedrock"

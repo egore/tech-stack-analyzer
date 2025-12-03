@@ -1,6 +1,5 @@
 tech: cmake
 name: CMake
-type: builder
 files:
   - CMakeLists.txt
 extensions:

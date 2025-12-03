@@ -1,6 +1,5 @@
 tech: aws.apigateway
 name: AWS Api Gateway
-type: hosting
 dependencies:
   - type: npm
     name: "@aws-cdk/aws-apigateway"

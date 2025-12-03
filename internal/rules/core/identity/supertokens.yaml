@@ -1,6 +1,5 @@
 tech: supertokens
 name: SuperTokens
-type: auth
 dependencies:
   - type: npm
     name: supertokens-web-js

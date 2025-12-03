@@ -1,6 +1,5 @@
 tech: nextcloud
 name: Nextcloud
-type: cloud
 dependencies:
   - type: docker
     name: nextcloud/all-in-one

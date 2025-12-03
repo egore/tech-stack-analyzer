@@ -1,6 +1,5 @@
 tech: mixpanel
 name: Mixpanel
-type: analytics
 dotenv:
   - MIXPANEL_
 dependencies:

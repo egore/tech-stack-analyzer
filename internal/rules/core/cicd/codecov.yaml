@@ -1,6 +1,5 @@
 tech: codecov
 name: Codecov
-type: ci
 dependencies:
   - type: githubAction
     name: codecov/codecov-action

@@ -1,6 +1,5 @@
 tech: google.meet
 name: Google Meet
-type: collaboration
 dependencies:
   - type: npm
     name: "@google-apps/meet"

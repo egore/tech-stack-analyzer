@@ -1,6 +1,5 @@
 tech: xai
 name: X AI
-type: ai
 dotenv:
   - XAI_
 dependencies:

@@ -1,6 +1,5 @@
 tech: browerbase
 name: Browserbase
-type: automation
 dependencies:
   - type: php
     name: "@browserbasehq/sdk"

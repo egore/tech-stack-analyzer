@@ -1,6 +1,5 @@
 tech: withorb
 name: Orb
-type: saas
 dependencies:
   - type: python
     name: orb-billing

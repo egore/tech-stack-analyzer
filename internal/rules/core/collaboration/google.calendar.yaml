@@ -1,6 +1,5 @@
 tech: google.calendar
 name: Google Calendar
-type: collaboration
 dependencies:
   - type: npm
     name: "@googleapis/calendar"

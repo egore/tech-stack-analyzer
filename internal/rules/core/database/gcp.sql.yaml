@@ -1,6 +1,5 @@
 tech: gcp.sql
 name: Cloud SQL
-type: database
 dependencies:
   - type: npm
     name: "@google-cloud/cloud-sql-connector"

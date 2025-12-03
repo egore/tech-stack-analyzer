@@ -1,6 +1,5 @@
 tech: gcp.logging
 name: Cloud Logging
-type: monitoring
 dependencies:
   - type: npm
     name: "@google-cloud/logging"

@@ -1,6 +1,5 @@
 tech: aws.sns
 name: AWS Notification Service
-type: notification
 dependencies:
   - type: npm
     name: "@aws-cdk/aws-sns"

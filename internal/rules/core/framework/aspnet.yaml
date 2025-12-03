@@ -1,6 +1,5 @@
 tech: aspnet
 name: ASP.NET
-type: language
 extensions:
   - .asax
   - .ascx

@@ -1,6 +1,5 @@
 tech: auth0
 name: Auth0
-type: auth
 dotenv:
   - AUTH0_
 dependencies:

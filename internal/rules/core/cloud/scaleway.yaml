@@ -1,6 +1,5 @@
 tech: scaleway
 name: Scaleway
-type: cloud
 dependencies:
   - type: npm
     name: "@scaleway/sdk"

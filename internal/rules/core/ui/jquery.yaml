@@ -1,6 +1,5 @@
 tech: jquery
 name: jQuery
-type: ui
 dependencies:
   - type: npm
     name: jquery

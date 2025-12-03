@@ -1,6 +1,5 @@
 tech: posthog
 name: PostHog
-type: analytics
 dotenv:
   - POSTHOG_
 dependencies:

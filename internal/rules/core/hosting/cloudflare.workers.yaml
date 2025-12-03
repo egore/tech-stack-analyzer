@@ -1,6 +1,5 @@
 tech: cloudflare.workers
 name: Cloudflare Workers
-type: hosting
 dependencies:
   - type: npm
     name: wrangler

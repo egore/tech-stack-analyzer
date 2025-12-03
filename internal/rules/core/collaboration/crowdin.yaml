@@ -1,6 +1,5 @@
 tech: crowdin
 name: Crowdin
-type: collaboration
 dependencies:
   - type: php
     name: crowdin/crowdin-api-client

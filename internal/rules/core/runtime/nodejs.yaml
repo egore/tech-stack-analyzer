@@ -1,6 +1,5 @@
 tech: nodejs
 name: NodeJS
-type: runtime
 dependencies:
   - type: docker
     name: node

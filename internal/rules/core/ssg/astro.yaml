@@ -1,6 +1,5 @@
 tech: astro
 name: Astro
-type: ssg
 dependencies:
   - type: npm
     name: astro

@@ -1,6 +1,5 @@
 tech: aws.ebs
 name: AWS Block Storage
-type: storage
 dependencies:
   - type: npm
     name: "@aws-cdk/aws-ebs"

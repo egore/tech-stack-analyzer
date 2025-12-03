@@ -1,6 +1,5 @@
 tech: bootstrapicons
 name: Bootstrap Icons
-type: iconset
 dependencies:
   - type: npm
     name: bootstrap-icons

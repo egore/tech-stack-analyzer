@@ -1,6 +1,5 @@
 tech: azure.openai
 name: Azure Openai
-type: ai
 dependencies:
   - type: npm
     name: "@ai-sdk/azure"

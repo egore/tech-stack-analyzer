@@ -1,6 +1,5 @@
 tech: fastify
 name: Fastify
-type: tool
 dependencies:
   - type: npm
     name: fastify

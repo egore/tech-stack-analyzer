@@ -1,6 +1,5 @@
 tech: azure.sql
 name: Azure SQL
-type: database
 dependencies:
   - type: githubAction
     name: azure/sql-action

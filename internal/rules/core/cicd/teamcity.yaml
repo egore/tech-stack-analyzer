@@ -1,6 +1,5 @@
 tech: teamcity
 name: TeamCity
-type: ci
 content:
   # TeamCity configuration files (not Qt headers)
   - type: regex

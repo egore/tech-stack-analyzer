@@ -1,6 +1,5 @@
 tech: entityframework
 name: Entity Framework
-type: orm
 dependencies:
   # Entity Framework Core (modern)
   - type: nuget

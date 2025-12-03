@@ -1,6 +1,5 @@
 tech: apachetika
 name: Tika
-type: app
 dependencies:
   - type: docker
     name: apache/tika

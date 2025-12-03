@@ -1,6 +1,5 @@
 tech: vale
 name: Vale
-type: linter
 dependencies:
   - type: docker
     name: jdkato/vale

@@ -1,6 +1,5 @@
 tech: slatedocs
 name: Slate
-type: ssg
 dependencies:
   - type: docker
     name: slatedocs/slate

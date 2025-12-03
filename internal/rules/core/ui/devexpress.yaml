@@ -1,6 +1,5 @@
 tech: devexpress
 name: DevExpress
-type: ui
 dependencies:
   # .NET / NuGet
   - type: nuget

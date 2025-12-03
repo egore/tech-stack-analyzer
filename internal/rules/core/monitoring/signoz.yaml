@@ -1,6 +1,5 @@
 tech: signoz
 name: Signoz
-type: monitoring
 dotenv:
   - SIGNOZ_
 dependencies:

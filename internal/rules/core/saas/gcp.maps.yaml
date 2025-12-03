@@ -1,6 +1,5 @@
 tech: gcp.maps
 name: Google Maps
-type: maps
 dotenv:
   - GOOGLE_MAPS_
 dependencies:

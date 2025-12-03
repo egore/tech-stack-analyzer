@@ -1,6 +1,5 @@
 tech: vitepress
 name: VitePress
-type: ssg
 dependencies:
   - type: npm
     name: vitepress

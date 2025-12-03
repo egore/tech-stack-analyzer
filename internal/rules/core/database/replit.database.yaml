@@ -1,6 +1,5 @@
 tech: replit.database
 name: Replit Database
-type: database
 dependencies:
   - type: npm
     name: "@replit/database"

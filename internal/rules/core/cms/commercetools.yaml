@@ -1,6 +1,5 @@
 tech: commercetools
 name: Commercetools
-type: cms
 dependencies:
   - type: npm
     name: "@commercetools/platform-sdk"

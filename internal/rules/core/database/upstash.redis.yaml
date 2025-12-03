@@ -1,6 +1,5 @@
 tech: upstash.redis
 name: Upstash Redis
-type: database
 dotenv:
   - UPSTASH_REDIS_
 dependencies:

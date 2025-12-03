@@ -1,6 +1,5 @@
 tech: digitalocean
 name: DigitalOcean
-type: hosting
 dependencies:
   - type: terraform
     name: registry.terraform.io/digitalocean/digitalocean

@@ -1,6 +1,5 @@
 tech: arktype
 name: ArkType
-type: validation
 dependencies:
   - type: npm
     name: arktype

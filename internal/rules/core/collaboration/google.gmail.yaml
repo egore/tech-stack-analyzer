@@ -1,6 +1,5 @@
 tech: google.gmail
 name: Gmail
-type: collaboration
 dependencies:
   - type: npm
     name: "@googleapis/gmail"

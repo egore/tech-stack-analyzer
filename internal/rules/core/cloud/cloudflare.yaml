@@ -1,6 +1,5 @@
 tech: cloudflare
 name: Cloudflare
-type: cloud
 dotenv:
   - CLOUDFLARE_
 dependencies:

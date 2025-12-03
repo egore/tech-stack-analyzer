@@ -1,6 +1,5 @@
 tech: tauri
 name: Tauri
-type: framework
 dependencies:
   - type: rust
     name: tauri

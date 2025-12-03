@@ -1,6 +1,5 @@
 tech: storybook
 name: Storybook
-type: test
 dependencies:
   - type: npm
     name: storybook

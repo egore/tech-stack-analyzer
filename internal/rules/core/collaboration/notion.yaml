@@ -1,6 +1,5 @@
 tech: notion
 name: Notion
-type: collaboration
 dotenv:
   - NOTION_
 dependencies:

@@ -16,4 +16,5 @@ func init() {
 	infoCmd.AddCommand(techsCmd)
 	infoCmd.AddCommand(ruleCmd)
 	infoCmd.AddCommand(languagesCmd)
+	infoCmd.AddCommand(typesCmd)
 }

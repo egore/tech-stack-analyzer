@@ -1,6 +1,5 @@
 tech: postgresql
 name: Postgres
-type: database
 dotenv:
   - POSTGRES_
 dependencies:

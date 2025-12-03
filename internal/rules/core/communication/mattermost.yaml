@@ -1,6 +1,5 @@
 tech: mattermost
 name: Mattermost
-type: communication
 dependencies:
   - type: npm
     name: mattermost-client

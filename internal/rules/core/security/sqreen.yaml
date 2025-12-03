@@ -1,6 +1,5 @@
 tech: sqreen
 name: Sqreen
-type: security
 dotenv:
   - SQREEN_
 dependencies:

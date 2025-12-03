@@ -1,6 +1,5 @@
 tech: storyblok
 name: Storyblok
-type: cms
 dependencies:
   - type: npm
     name: storyblok

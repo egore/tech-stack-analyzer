@@ -1,6 +1,5 @@
 tech: rollbar
 name: Rollbar
-type: monitoring
 dotenv:
   - ROOLBAR_
 dependencies:

@@ -1,5 +1,4 @@
 tech: github.actions
 name: Github Actions
-type: ci
 files:
   - .github/workflows

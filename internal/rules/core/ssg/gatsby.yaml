@@ -1,6 +1,5 @@
 tech: gatsby
 name: Gatsby
-type: ssg
 dependencies:
   - type: npm
     name: gatsby

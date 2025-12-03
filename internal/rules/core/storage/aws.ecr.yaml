@@ -1,6 +1,5 @@
 tech: aws.ecr
 name: AWS Container Registry
-type: storage
 dependencies:
   - type: npm
     name: "@aws-cdk/aws-ecr"

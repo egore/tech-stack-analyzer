@@ -1,6 +1,5 @@
 tech: atlassian.trello
 name: Atlassian Trello
-type: collaboration
 dependencies:
   - type: npm
     name: trello

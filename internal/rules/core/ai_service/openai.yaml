@@ -1,6 +1,5 @@
 tech: openai
 name: Openai
-type: ai
 dotenv:
   - OPENAI_
 dependencies:

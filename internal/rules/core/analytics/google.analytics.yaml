@@ -1,6 +1,5 @@
 tech: google.analytics
 name: Google Analytics
-type: analytics
 dotenv:
   - GOOGLE_ANALYTICS
 dependencies:

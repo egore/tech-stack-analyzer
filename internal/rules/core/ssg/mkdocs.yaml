@@ -1,6 +1,5 @@
 tech: mkdocs
 name: MkDocs
-type: ssg
 dependencies:
   - type: python
     name: mkdocs

@@ -1,6 +1,5 @@
 tech: expodev
 name: Expo.dev
-type: hosting
 dependencies:
   - type: githubAction
     name: expo/expo-github-action

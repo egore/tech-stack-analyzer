@@ -1,6 +1,5 @@
 tech: depotdev
 name: Depot.dev
-type: ci
 dependencies:
   - type: githubAction
     name: depot/setup-action

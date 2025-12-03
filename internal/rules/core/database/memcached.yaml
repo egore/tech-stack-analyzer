@@ -1,6 +1,5 @@
 tech: memcached
 name: Memcached
-type: database
 dotenv:
   - MEMCACHED_
 dependencies:

@@ -1,6 +1,5 @@
 tech: firecrawl
 name: Firecrawl
-type: automation
 dotenv:
   - FIRECRAWL_
 dependencies:

@@ -1,6 +1,5 @@
 tech: workos
 name: WorkOS
-type: auth
 dotenv:
   - WORKOS_
 dependencies:

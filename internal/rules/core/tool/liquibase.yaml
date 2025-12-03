@@ -1,6 +1,5 @@
 tech: liquibase
 name: Liquibase
-type: tool
 dependencies:
   - type: docker
     name: liquibase/liquibase

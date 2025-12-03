@@ -1,6 +1,5 @@
 tech: phpunit
 name: PHPUnit
-type: test
 dependencies:
   - type: php
     name: phpunit/phpunit

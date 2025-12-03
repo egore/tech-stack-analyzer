@@ -1,6 +1,5 @@
 tech: intercom
 name: Intercom
-type: communication
 dotenv:
   - INTERCOM_
 dependencies:

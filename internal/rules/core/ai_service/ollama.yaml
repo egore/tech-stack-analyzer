@@ -1,6 +1,5 @@
 tech: ollama
 name: Ollama
-type: ai
 dotenv:
   - OLLAMA_
 dependencies:

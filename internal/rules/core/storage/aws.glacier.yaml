@@ -1,6 +1,5 @@
 tech: aws.glacier
 name: AWS Glacier
-type: storage
 dependencies:
   - type: npm
     name: "@aws-sdk/client-glacier"

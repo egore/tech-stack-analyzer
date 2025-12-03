@@ -1,6 +1,5 @@
 tech: aws.kinesis
 name: AWS Kinesis
-type: queue
 dependencies:
   - type: npm
     name: "@aws-sdk/client-kinesis"

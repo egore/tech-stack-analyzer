@@ -1,6 +1,5 @@
 tech: calendly
 name: Calendly
-type: collaboration
 dotenv:
   - CALENDLY_
 dependencies:

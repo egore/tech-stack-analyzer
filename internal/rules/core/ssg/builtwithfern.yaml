@@ -1,5 +1,4 @@
 tech: builtwithfern
 name: Fern
-type: ssg
 files:
   - fern.config.json

@@ -1,6 +1,5 @@
 tech: extjs
 name: Ext JS
-type: framework
 dependencies:
   - type: npm
     name: extjs

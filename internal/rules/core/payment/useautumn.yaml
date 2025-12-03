@@ -1,6 +1,5 @@
 tech: useautumn
 name: Use Autumn
-type: payment
 dotenv:
   - AUTUMN_
 dependencies:

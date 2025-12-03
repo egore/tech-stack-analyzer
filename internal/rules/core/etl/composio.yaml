@@ -1,6 +1,5 @@
 tech: composio
 name: Composio
-type: etl
 dotenv:
   - COMPOSIO_
 dependencies:

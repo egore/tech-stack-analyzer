@@ -1,6 +1,5 @@
 tech: matomo
 name: Matomo
-type: analytics
 dotenv:
   - MATOMO
 dependencies:

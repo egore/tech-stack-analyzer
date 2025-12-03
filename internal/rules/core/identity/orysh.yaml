@@ -1,6 +1,5 @@
 tech: orysh
 name: Ory
-type: auth
 dependencies:
   - type: golang
     name: github.com/ory/client-go

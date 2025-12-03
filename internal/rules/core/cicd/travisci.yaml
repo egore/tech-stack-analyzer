@@ -1,6 +1,5 @@
 tech: travisci
 name: TravisCI
-type: ci
 dependencies:
   - type: ruby
     name: travis

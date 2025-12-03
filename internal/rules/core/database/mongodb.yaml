@@ -1,6 +1,5 @@
 tech: mongodb
 name: MongoDB
-type: database
 dotenv:
   - MONGODB_
 dependencies:

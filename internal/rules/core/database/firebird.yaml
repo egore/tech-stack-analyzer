@@ -1,6 +1,5 @@
 tech: firebird
 name: Firebird
-type: database
 dependencies:
   - type: maven
     name: /^org\.firebirdsql:/

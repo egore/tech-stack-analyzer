@@ -1,6 +1,5 @@
 tech: pirschanalytics
 name: Pirsch Analytics
-type: analytics
 dependencies:
   - type: npm
     name: pirsch-sdk

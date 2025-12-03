@@ -1,6 +1,5 @@
 tech: springboot
 name: Spring Boot
-type: framework
 dependencies:
   - type: maven
     name: /^org\.springframework\.boot:.*/

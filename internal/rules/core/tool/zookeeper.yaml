@@ -1,6 +1,5 @@
 tech: zookeeper
 name: Zookeeper
-type: app
 dependencies:
   - type: rust
     name: zookeeper

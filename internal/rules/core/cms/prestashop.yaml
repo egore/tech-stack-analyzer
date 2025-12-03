@@ -1,6 +1,5 @@
 tech: prestashop
 name: Prestashop
-type: cms
 dependencies:
   - type: php
     name: prestashop/ps_facetedsearch

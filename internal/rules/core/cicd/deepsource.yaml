@@ -1,6 +1,5 @@
 tech: deepsource
 name: Deepsource
-type: ci
 dependencies:
   - type: githubAction
     name: deepsourcelabs/test-coverage-action

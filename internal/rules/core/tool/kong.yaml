@@ -1,6 +1,5 @@
 tech: kong
 name: Kong
-type: app
 dependencies:
   - type: docker
     name: kong

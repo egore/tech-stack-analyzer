@@ -1,6 +1,5 @@
 tech: wordpress
 name: Wordpress
-type: cms
 dotenv:
   - WP_
 dependencies:

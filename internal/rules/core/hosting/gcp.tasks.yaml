@@ -1,6 +1,5 @@
 tech: gcp.tasks
 name: Cloud Tasks
-type: hosting
 dependencies:
   - type: npm
     name: "@google-cloud/tasks"

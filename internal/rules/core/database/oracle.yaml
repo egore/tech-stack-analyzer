@@ -1,6 +1,5 @@
 tech: oracle
 name: Oracle Database
-type: database
 dotenv:
   - ORACLE_
   - ORACLE_SID

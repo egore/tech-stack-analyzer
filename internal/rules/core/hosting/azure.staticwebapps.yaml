@@ -1,6 +1,5 @@
 tech: azure.staticwebapps
 name: Azure Static Web Apps
-type: hosting
 dependencies:
   - type: npm
     name: "@azure/static-web-apps-cli"

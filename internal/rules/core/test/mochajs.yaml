@@ -1,6 +1,5 @@
 tech: mochajs
 name: Mocha
-type: test
 dependencies:
   - type: npm
     name: mocha

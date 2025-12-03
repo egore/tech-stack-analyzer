@@ -1,6 +1,5 @@
 tech: netlify
 name: Netlify
-type: cloud
 dependencies:
   - type: npm
     name: netlify

@@ -1,6 +1,5 @@
 tech: drupal
 name: Drupal
-type: cms
 dependencies:
   - type: docker
     name: drupal

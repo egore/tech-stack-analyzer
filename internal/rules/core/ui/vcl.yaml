@@ -1,6 +1,5 @@
 tech: vcl
 name: VCL
-type: ui
 dependencies:
   - type: delphi
     name: vcl

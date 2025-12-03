@@ -1,6 +1,5 @@
 tech: electron
 name: Electron
-type: runtime
 dependencies:
   - type: npm
     name: electron

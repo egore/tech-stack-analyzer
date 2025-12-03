@@ -1,6 +1,5 @@
 tech: inngest
 name: Inngest
-type: automation
 dotenv:
   - INNGEST_
 dependencies:

@@ -1,6 +1,5 @@
 tech: microsoft.onedrive
 name: OneDrive
-type: collaboration
 dependencies:
   - type: rust
     name: onedrive-api

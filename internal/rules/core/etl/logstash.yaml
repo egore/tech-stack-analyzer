@@ -1,6 +1,5 @@
 tech: logstash
 name: Logstash
-type: etl
 dependencies:
   - type: docker
     name: logstash

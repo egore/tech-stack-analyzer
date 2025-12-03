@@ -1,6 +1,5 @@
 tech: polarsh
 name: Polar
-type: payment
 dotenv:
   - POLARSH_
 dependencies:

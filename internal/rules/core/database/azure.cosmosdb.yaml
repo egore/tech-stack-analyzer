@@ -1,6 +1,5 @@
 tech: azure.cosmosdb
 name: Azure Cosmos DB
-type: database
 dependencies:
   - type: ruby
     name: azure_mgmt_cosmosdb

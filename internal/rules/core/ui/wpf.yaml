@@ -1,6 +1,5 @@
 tech: wpf
 name: Windows Presentation Foundation
-type: ui
 dependencies:
   # NuGet packages
   - type: nuget

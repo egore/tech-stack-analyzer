@@ -1,6 +1,5 @@
 tech: supabase.storage
 name: Supabase Storage
-type: storage
 dependencies:
   - type: npm
     name: "@supabase/storage-js"

@@ -1,6 +1,0 @@
-tech: cmake
-name: CMake
-type: build
-files:
-  - CMakeLists.txt
-  - CMakeSettings.json

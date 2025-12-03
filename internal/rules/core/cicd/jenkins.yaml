@@ -1,6 +1,5 @@
 tech: jenkins
 name: Jenkins
-type: ci
 dependencies:
   - type: ruby
     name: jenkins_api_client

@@ -1,6 +1,5 @@
 tech: remixrun
 name: Remix
-type: framework
 dependencies:
   - type: npm
     name: "@remix-run/node"

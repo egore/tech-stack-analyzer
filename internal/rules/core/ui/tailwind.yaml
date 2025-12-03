@@ -1,6 +1,5 @@
 tech: tailwind
 name: Tailwind
-type: ui
 dependencies:
   - type: npm
     name: tailwindcss

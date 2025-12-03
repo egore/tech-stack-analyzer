@@ -1,6 +1,5 @@
 tech: clicksend
 name: ClickSend
-type: notification
 dotenv:
   - CLICKSEND_
 dependencies:

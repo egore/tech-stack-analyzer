@@ -1,6 +1,5 @@
 tech: coffeescript
 name: CoffeeScript
-type: language
 extensions:
   - .coffee
   - ._coffee

@@ -1,6 +1,5 @@
 tech: hyperdx
 name: HyperDX
-type: monitoring
 dependencies:
   - type: npm
     name: "@hyperdx/browser"

@@ -1,6 +1,5 @@
 tech: aws.glue
 name: AWS Glue
-type: etl
 dependencies:
   - type: npm
     name: "@aws-sdk/client-glue"

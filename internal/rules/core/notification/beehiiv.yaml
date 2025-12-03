@@ -1,6 +1,5 @@
 tech: beehiiv
 name: Beehiiv
-type: notification
 dotenv:
   - BEEHIIV_
 dependencies:

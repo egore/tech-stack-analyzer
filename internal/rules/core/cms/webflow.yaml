@@ -1,6 +1,5 @@
 tech: webflow
 name: Webflow
-type: cms
 dotenv:
   - WEBFLOW_
 dependencies:

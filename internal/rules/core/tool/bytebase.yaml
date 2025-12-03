@@ -1,6 +1,5 @@
 tech: bytebase
 name: Bytebase
-type: tool
 dependencies:
   - type: docker
     name: bytebase/bytebase

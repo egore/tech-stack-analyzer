@@ -1,6 +1,5 @@
 tech: kentico
 name: Kentico
-type: cms
 dependencies:
   - type: npm
     name: "@kentico/xperience-admin-components"

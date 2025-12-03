@@ -1,6 +1,5 @@
 tech: helm
 name: Helm
-type: iac
 dependencies:
   - type: terraform
     name: registry.terraform.io/hashicorp/helm

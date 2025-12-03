@@ -1,6 +1,5 @@
 tech: lighthouse
 name: Lighthouse
-type: test
 dependencies:
   - type: npm
     name: lighthouse

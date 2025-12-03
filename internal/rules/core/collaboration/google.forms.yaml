@@ -1,6 +1,5 @@
 tech: google.forms
 name: Google Forms
-type: collaboration
 dependencies:
   - type: npm
     name: "@googleapis/forms"

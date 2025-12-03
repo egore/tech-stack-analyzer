@@ -1,6 +1,5 @@
 tech: aws.ses
 name: AWS Simple Email Service
-type: notification
 dependencies:
   - type: npm
     name: "@aws-cdk/aws-ses"

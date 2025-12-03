@@ -1,6 +1,5 @@
 tech: biomejs
 name: Biome JS
-type: linter
 dependencies:
   - type: npm
     name: "@biomejs/biome"

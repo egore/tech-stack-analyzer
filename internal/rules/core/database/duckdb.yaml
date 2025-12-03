@@ -1,6 +1,5 @@
 tech: duckdb
 name: DuckDB
-type: database
 dependencies:
   - type: npm
     name: duckdb

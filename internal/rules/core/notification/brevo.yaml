@@ -1,6 +1,5 @@
 tech: brevo
 name: Brevo
-type: notification
 dotenv:
   - BREVO_
 dependencies:

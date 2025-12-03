@@ -1,6 +1,5 @@
 tech: php
 name: PHP
-type: language
 dependencies:
   - type: docker
     name: php

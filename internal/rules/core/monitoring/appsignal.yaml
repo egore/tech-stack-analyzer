@@ -1,6 +1,5 @@
 tech: appsignal
 name: AppSignal
-type: monitoring
 dependencies:
   - type: npm
     name: appsignal

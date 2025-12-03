@@ -1,6 +1,5 @@
 tech: fontawesome
 name: Font Awesome
-type: iconset
 dependencies:
   - type: npm
     name: "@fortawesome/react-fontawesome"

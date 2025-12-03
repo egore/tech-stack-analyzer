@@ -1,6 +1,5 @@
 tech: prettier
 name: Prettier
-type: linter
 dependencies:
   - type: npm
     name: prettier

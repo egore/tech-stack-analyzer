@@ -1,6 +1,5 @@
 tech: neo4j
 name: Neo4j
-type: database
 dependencies:
   - type: npm
     name: neo4j-driver

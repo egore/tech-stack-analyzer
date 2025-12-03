@@ -1,6 +1,5 @@
 tech: haskell
 name: Haskell
-type: language
 content:
   # Haskell module declarations
   - type: regex

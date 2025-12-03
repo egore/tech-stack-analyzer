@@ -1,6 +1,5 @@
 tech: postgrest
 name: Postgrest
-type: app
 dependencies:
   - type: docker
     name: postgrest/postgrest

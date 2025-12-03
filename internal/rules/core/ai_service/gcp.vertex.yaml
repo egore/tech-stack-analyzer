@@ -1,6 +1,5 @@
 tech: gcp.vertex
 name: Vertex AI
-type: ai
 dotenv:
   - VERTEX_AI
 dependencies:

@@ -1,6 +1,5 @@
 tech: gcp.gcs
 name: Cloud Storage
-type: storage
 dependencies:
   - type: npm
     name: "@google-cloud/storage"

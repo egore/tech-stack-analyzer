@@ -1,6 +1,5 @@
 tech: droneci
 name: DroneCI
-type: ci
 dependencies:
   - type: docker
     name: drone/drone

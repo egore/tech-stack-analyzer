@@ -1,6 +1,5 @@
 tech: veriff
 name: Veriff
-type: saas
 dependencies:
   - type: npm
     name: "@veriff/js-sdk"

@@ -1,6 +1,5 @@
 tech: atlassian.jira
 name: Jira
-type: collaboration
 dependencies:
   - type: githubAction
     name: atlassian/gajira-todo

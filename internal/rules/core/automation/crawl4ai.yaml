@@ -1,6 +1,5 @@
 tech: crawl4ai
 name: Crawl4AI
-type: automation
 dotenv:
   - CRAWL4AI_
 dependencies:

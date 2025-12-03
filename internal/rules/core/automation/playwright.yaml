@@ -1,6 +1,5 @@
 tech: playwright
 name: Playwright
-type: automation
 dependencies:
   - type: npm
     name: playwright

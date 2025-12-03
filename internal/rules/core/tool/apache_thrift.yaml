@@ -1,6 +1,5 @@
 tech: apache_thrift
 name: Apache Thrift
-type: tool
 dependencies:
   - type: docker
     name: apache/thrift

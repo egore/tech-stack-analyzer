@@ -1,6 +1,5 @@
 tech: google.sheets
 name: Google Sheets
-type: collaboration
 dependencies:
   - type: npm
     name: "@googleapis/sheets"

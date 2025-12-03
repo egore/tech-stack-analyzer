@@ -1,6 +1,5 @@
 tech: atlassian.opsgenie
 name: Atlassian OpsGenie
-type: collaboration
 dependencies:
   - type: npm
     name: opsgenie-sdk

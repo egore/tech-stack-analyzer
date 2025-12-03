@@ -1,6 +1,5 @@
 tech: jqueryui
 name: jQuery UI
-type: ui
 dependencies:
   - type: npm
     name: jquery-ui

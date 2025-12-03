@@ -1,6 +1,5 @@
 tech: expojs
 name: ExpoJS
-type: ui_framework
 dependencies:
   - type: npm
     name: expo

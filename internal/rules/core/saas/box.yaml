@@ -1,6 +1,5 @@
 tech: box
 name: Box
-type: saas
 dependencies:
   - type: npm
     name: box-node-sdk

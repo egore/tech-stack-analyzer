@@ -1,6 +1,5 @@
 tech: pingdom
 name: Pingdom
-type: monitoring
 dotenv:
   - PINGDOM_
 dependencies:

@@ -1,6 +1,5 @@
 tech: typesense
 name: Typesense
-type: database
 dependencies:
   - type: npm
     name: typesense

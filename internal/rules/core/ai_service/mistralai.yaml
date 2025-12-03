@@ -1,6 +1,5 @@
 tech: mistralai
 name: Mistral AI
-type: ai
 dotenv:
   - MISTRAL
 dependencies:

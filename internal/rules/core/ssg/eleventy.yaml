@@ -1,6 +1,5 @@
 tech: eleventy
 name: Eleventy
-type: ssg
 dependencies:
   - type: npm
     name: "@11ty/eleventy"

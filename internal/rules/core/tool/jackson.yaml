@@ -1,6 +1,5 @@
 tech: jackson
 name: Jackson
-type: tool
 dependencies:
   - type: maven
     name: /^com\.fasterxml\.jackson.*/

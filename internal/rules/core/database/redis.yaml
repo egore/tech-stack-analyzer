@@ -1,6 +1,5 @@
 tech: redis
 name: Redis
-type: database
 dotenv:
   - REDIS_
 dependencies:

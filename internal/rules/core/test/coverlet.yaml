@@ -1,6 +1,5 @@
 tech: coverlet
 name: Coverlet
-type: test
 dependencies:
   - type: nuget
     name: /^coverlet\..*/

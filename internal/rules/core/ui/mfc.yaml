@@ -1,6 +1,5 @@
 tech: mfc
 name: Microsoft Foundation Class Library
-type: ui_framework
 content:
   - pattern: '#include\s+<afx'
     extensions: [.cpp, .h, .hpp]

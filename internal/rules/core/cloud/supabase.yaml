@@ -1,6 +1,5 @@
 tech: supabase
 name: Supabase
-type: cloud
 dotenv:
   - SUPABASE_
 dependencies:

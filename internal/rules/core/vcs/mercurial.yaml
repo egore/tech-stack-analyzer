@@ -1,6 +1,5 @@
 tech: mercurial
 name: Mercurial
-type: vcs
 files:
   - .hgignore
   - .hgtags

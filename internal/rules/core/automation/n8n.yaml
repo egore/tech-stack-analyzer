@@ -1,6 +1,5 @@
 tech: n8n
 name: n8n
-type: automation
 dotenv:
   - N8N_
 dependencies:

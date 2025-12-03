@@ -1,6 +1,5 @@
 tech: equinix
 name: Equinix
-type: cloud
 dependencies:
   - type: terraform
     name: registry.terraform.io/equinix/equinix

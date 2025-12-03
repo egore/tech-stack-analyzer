@@ -1,6 +1,5 @@
 tech: haproxy
 name: HAProxy
-type: app
 dependencies:
   - type: docker
     name: haproxy

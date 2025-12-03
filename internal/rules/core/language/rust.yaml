@@ -1,6 +1,5 @@
 tech: rust
 name: Rust
-type: language
 dependencies:
   - type: docker
     name: rust

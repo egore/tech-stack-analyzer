@@ -1,6 +1,5 @@
 tech: miro
 name: Miro
-type: collaboration
 dotenv:
   - MIRO_
 dependencies:

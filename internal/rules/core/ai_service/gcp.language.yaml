@@ -1,6 +1,5 @@
 tech: gcp.language
 name: Cloud Language
-type: ai
 dependencies:
   - type: npm
     name: "@google-cloud/language"

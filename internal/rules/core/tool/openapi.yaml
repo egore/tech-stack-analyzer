@@ -1,6 +1,5 @@
 tech: openapi
 name: OpenAPI
-type: tool
 dependencies:
   - type: npm
     name: openapi-types

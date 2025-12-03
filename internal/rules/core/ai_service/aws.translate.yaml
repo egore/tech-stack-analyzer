@@ -1,6 +1,5 @@
 tech: aws.translate
 name: AWS Translate
-type: ai
 dependencies:
   - type: npm
     name: "@aws-sdk/client-translate"

@@ -1,5 +1,4 @@
 tech: instagram
 name: Instagram
-type: communication
 dotenv:
   - INSTAGRAM_

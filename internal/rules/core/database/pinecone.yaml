@@ -1,6 +1,5 @@
 tech: pinecone
 name: Pinecone
-type: database
 dotenv:
   - PINECONE_
 dependencies:

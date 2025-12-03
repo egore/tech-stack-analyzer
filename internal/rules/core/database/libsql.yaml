@@ -1,6 +1,5 @@
 tech: libsql
 name: libSQL
-type: database
 dependencies:
   - type: npm
     name: "@libsql/client"

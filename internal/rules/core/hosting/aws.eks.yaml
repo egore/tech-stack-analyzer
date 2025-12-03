@@ -1,6 +1,5 @@
 tech: aws.eks
 name: AWS Kubernetes
-type: hosting
 dependencies:
   - type: npm
     name: "@aws-cdk/aws-eks"

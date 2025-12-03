@@ -1,6 +1,5 @@
 tech: questdb
 name: QuestDB
-type: database
 dependencies:
   - type: docker
     name: questdb/questdb

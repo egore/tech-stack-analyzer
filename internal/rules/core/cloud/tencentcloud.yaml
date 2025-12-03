@@ -1,6 +1,5 @@
 tech: tencentcloud
 name: Tencent Cloud
-type: hosting
 dependencies:
   - type: terraform
     name: registry.terraform.io/tencentcloudstack/tencentcloud

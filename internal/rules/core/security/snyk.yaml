@@ -1,6 +1,5 @@
 tech: snyk
 name: Snyk
-type: security
 dotenv:
   - SNYK_
 dependencies:

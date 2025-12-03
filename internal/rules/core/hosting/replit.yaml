@@ -1,6 +1,5 @@
 tech: replit
 name: Replit
-type: hosting
 files:
   - .replit
   - replit.nix

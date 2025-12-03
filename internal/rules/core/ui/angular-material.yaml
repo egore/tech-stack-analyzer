@@ -1,6 +1,5 @@
 tech: angular-material
 name: Angular Material
-type: ui
 dependencies:
   - type: npm
     name: "@angular/material"

@@ -1,6 +1,5 @@
 tech: wikipedia
 name: Wikipedia
-type: communication
 dotenv:
   - WIKIPEDIA_
 dependencies:

@@ -1,6 +1,5 @@
 tech: hugo
 name: Hugo
-type: ssg
 dependencies:
   - type: docker
     name: betterweb/hugo

@@ -1,6 +1,5 @@
 tech: cache_objectscript
 name: Cache ObjectScript
-type: language
 content:
   # Cache/IRIS package.xml files (only if they contain Cache/IRIS content)
   - type: regex

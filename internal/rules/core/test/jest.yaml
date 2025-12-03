@@ -1,6 +1,5 @@
 tech: jest
 name: Jest
-type: test
 dependencies:
   - type: npm
     name: jest

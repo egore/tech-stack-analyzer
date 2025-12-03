@@ -1,6 +1,5 @@
 tech: typescript
 name: Typescript
-type: language
 dependencies:
   - type: npm
     name: typescript

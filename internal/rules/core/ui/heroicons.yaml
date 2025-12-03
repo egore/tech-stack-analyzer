@@ -1,6 +1,5 @@
 tech: heroicons
 name: Heroicons
-type: iconset
 dependencies:
   - type: npm
     name: "@heroicons/react"

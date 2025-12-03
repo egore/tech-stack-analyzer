@@ -1,6 +1,5 @@
 tech: convexdb
 name: Convex
-type: database
 dotenv:
   - CONVEX_
 dependencies:

@@ -1,3 +1,2 @@
 tech: gcp.containerregistry
 name: Cloud Container Registry
-type: storage

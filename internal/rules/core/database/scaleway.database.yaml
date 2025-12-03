@@ -1,6 +1,5 @@
 tech: scaleway.database
 name: Scaleway Database
-type: database
 dependencies:
   - type: terraform.resource
     name: scaleway_rdb_instance

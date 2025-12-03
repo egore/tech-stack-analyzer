@@ -1,6 +1,5 @@
 tech: groovy
 name: Groovy
-type: language
 extensions:
   - .groovy
   - .gvy

@@ -1,6 +1,5 @@
 tech: fusionauth
 name: Fusionauth
-type: auth
 dependencies:
   - type: golang
     name: github.com/FusionAuth/go-client/pkg/fusionauth

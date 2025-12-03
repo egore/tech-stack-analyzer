@@ -1,6 +1,5 @@
 tech: qovery.database
 name: Qovery Database
-type: database
 dependencies:
   - type: terraform.resource
     name: qovery_database

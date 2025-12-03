@@ -1,6 +1,5 @@
 tech: tablericons
 name: Tabler
-type: iconset
 dependencies:
   - type: npm
     name: "@tabler/icons-react"

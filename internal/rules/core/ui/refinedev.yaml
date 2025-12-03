@@ -1,6 +1,5 @@
 tech: refinedev
 name: Refine
-type: ui
 dependencies:
   - type: npm
     name: "@refinedev/core"

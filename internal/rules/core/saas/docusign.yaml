@@ -1,6 +1,5 @@
 tech: docusign
 name: Docusign
-type: saas
 dotenv:
   - DOCUSIGN_
 dependencies:

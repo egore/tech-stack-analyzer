@@ -1,6 +1,5 @@
 tech: express
 name: Express
-type: tool
 dependencies:
   - type: npm
     name: express

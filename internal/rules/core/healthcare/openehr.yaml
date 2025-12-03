@@ -1,6 +1,5 @@
 tech: openehr
 name: OpenEHR
-type: healthcare
 content:
   # OpenEHR archetype identifiers
   - type: regex

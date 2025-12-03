@@ -1,6 +1,5 @@
 tech: zipkin
 name: Zipkin
-type: monitoring
 dependencies:
   - type: docker
     name: openzipkin/zipkin

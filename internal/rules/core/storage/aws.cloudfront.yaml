@@ -1,6 +1,5 @@
 tech: aws.cloudfront
 name: AWS CloudFront
-type: storage
 dotenv:
   - CLOUDFRONT_
 dependencies:

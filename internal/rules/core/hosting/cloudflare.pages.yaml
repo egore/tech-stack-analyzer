@@ -1,6 +1,5 @@
 tech: cloudflare.pages
 name: Cloudflare Pages
-type: hosting
 dependencies:
   - type: githubAction
     name: cloudflare/pages-action

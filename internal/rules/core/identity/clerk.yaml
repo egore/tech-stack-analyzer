@@ -1,6 +1,5 @@
 tech: clerk
 name: Clerk
-type: auth
 dotenv:
   - CLERK_
 dependencies:

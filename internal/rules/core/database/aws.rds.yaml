@@ -1,6 +1,5 @@
 tech: aws.rds
 name: AWS RDS
-type: database
 dependencies:
   - type: npm
     name: "@aws-cdk/aws-rds"

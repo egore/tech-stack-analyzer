@@ -1,6 +1,5 @@
 tech: flyio
 name: Flyio
-type: cloud
 dependencies:
   - type: terraform
     name: registry.terraform.io/fly-apps/fly

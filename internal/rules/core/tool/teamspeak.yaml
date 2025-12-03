@@ -1,6 +1,5 @@
 tech: teamspeak
 name: Teamspeak
-type: app
 dependencies:
   - type: docker
     name: teamspeak

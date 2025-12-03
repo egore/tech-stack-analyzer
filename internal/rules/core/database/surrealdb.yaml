@@ -1,6 +1,5 @@
 tech: surrealdb
 name: SurrealDB
-type: database
 dependencies:
   - type: docker
     name: surrealdb/surrealdb

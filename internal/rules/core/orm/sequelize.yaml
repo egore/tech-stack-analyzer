@@ -1,5 +1,4 @@
 tech: sequelize
 name: Sequelize
-type: orm
 files:
   - .sequelizerc

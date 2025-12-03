@@ -1,6 +1,5 @@
 tech: supabase.realtime
 name: Supabase Realtime
-type: queue
 dependencies:
   - type: npm
     name: "@supabase/realtime-js"

@@ -1,6 +1,5 @@
 tech: apache_couchdb
 name: Apache CouchDB
-type: database
 dependencies:
   - type: docker
     name: apache/couchdb

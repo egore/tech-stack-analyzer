@@ -1,6 +1,5 @@
 tech: coveralls
 name: Coveralls
-type: ci
 dependencies:
   - type: githubAction
     name: coverallsapp/github-action

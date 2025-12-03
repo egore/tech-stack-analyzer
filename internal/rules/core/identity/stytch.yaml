@@ -1,6 +1,5 @@
 tech: stytch
 name: Stytch
-type: auth
 dependencies:
   - type: npm
     name: stytch

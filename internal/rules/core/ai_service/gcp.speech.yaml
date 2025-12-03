@@ -1,6 +1,5 @@
 tech: gcp.speech
 name: Cloud Speech
-type: ai
 dependencies:
   - type: npm
     name: "@google-cloud/speech"

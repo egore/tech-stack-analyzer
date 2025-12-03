@@ -1,6 +1,5 @@
 tech: sequelruby
 name: Sequel
-type: orm
 dependencies:
   - type: ruby
     name: sequel

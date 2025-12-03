@@ -1,6 +1,5 @@
 tech: trpc
 name: TRPC
-type: tool
 dependencies:
   - type: npm
     name: "@trpc/server"

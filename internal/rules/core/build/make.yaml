@@ -1,6 +1,5 @@
 tech: make
 name: Make
-type: builder
 files:
   - Makefile
   - makefile

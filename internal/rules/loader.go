@@ -48,6 +48,11 @@ func LoadEmbeddedRules() ([]types.Rule, error) {
 			return fmt.Errorf("failed to parse rule file %s: %w", path, err)
 		}
 
+		// Derive type from folder if not specified
+		if rule.Type == "" {
+			rule.Type = deriveTypeFromPath(path)
+		}
+
 		// Validate rule
 		if err := validateRule(&rule); err != nil {
 			return fmt.Errorf("invalid rule in %s: %w", path, err)
@@ -92,6 +97,11 @@ func LoadExternalRules(rulesDir string) ([]types.Rule, error) {
 			return fmt.Errorf("failed to parse rule file %s: %w", path, err)
 		}
 
+		// Derive type from folder if not specified
+		if rule.Type == "" {
+			rule.Type = deriveTypeFromPath(path)
+		}
+
 		// Validate rule
 		if err := validateRule(&rule); err != nil {
 			return fmt.Errorf("invalid rule in %s: %w", path, err)
@@ -106,6 +116,13 @@ func LoadExternalRules(rulesDir string) ([]types.Rule, error) {
 	}
 
 	return rules, nil
+}
+
+// deriveTypeFromPath extracts the type from the folder name in the path
+// e.g., "core/database/postgres.yaml" -> "database"
+func deriveTypeFromPath(path string) string {
+	dir := filepath.Dir(path)
+	return filepath.Base(dir)
 }
 
 // validateRule validates a rule definition

@@ -1,5 +1,4 @@
 tech: revenuecat
 name: RevenueCat
-type: payment
 dotenv:
   - REVENUECAT_

@@ -1,6 +1,5 @@
 tech: jsx
 name: JSX
-type: language
 extensions:
   - .jsx
   - .tsx

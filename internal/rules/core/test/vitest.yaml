@@ -1,6 +1,5 @@
 tech: vitest
 name: Vitest
-type: test
 dependencies:
   - type: npm
     name: vitest

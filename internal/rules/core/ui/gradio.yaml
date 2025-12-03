@@ -1,6 +1,5 @@
 tech: gradio
 name: Gradio
-type: ui
 dependencies:
   - type: python
     name: gradio

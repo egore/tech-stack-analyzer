@@ -1,6 +1,5 @@
 tech: hostinger
 name: Hostinger
-type: cloud
 dependencies:
   - type: php
     name: hostinger/api-php-sdk

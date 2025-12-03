@@ -1,6 +1,5 @@
 tech: infisical
 name: Infisical
-type: security
 dotenv:
   - INFISICAL_
 dependencies:

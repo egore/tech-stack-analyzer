@@ -1,6 +1,5 @@
 tech: anthropic
 name: Anthropic
-type: ai
 dotenv:
   - ANTHROPIC_
 dependencies:

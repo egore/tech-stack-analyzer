@@ -1,6 +1,5 @@
 tech: aws.comprehend
 name: AWS Comprehend
-type: ai
 dependencies:
   - type: npm
     name: "@aws-sdk/client-comprehend"

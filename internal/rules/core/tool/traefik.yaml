@@ -1,6 +1,5 @@
 tech: traefik
 name: Traefik
-type: app
 dependencies:
   - type: docker
     name: traefik

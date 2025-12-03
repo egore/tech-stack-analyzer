@@ -1,6 +1,5 @@
 tech: valibot
 name: Valibot
-type: validation
 dependencies:
   - type: npm
     name: valibot

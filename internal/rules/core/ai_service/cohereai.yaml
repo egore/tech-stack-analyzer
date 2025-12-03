@@ -1,6 +1,5 @@
 tech: cohereai
 name: Cohere AI
-type: ai
 dotenv:
   - COHERE_
 dependencies:

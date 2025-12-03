@@ -1,6 +1,5 @@
 tech: datocms
 name: Dato CMS
-type: cms
 dependencies:
   - type: npm
     name: datocms-structured-text-utils

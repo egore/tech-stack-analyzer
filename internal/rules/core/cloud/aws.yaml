@@ -1,6 +1,5 @@
 tech: aws
 name: AWS
-type: cloud
 dependencies:
   - type: npm
     name: aws-sdk

@@ -1,6 +1,5 @@
 tech: datastax
 name: Datastax
-type: database
 dependencies:
   - type: terraform
     name: registry.terraform.io/datastax/astra

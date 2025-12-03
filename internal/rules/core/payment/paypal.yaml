@@ -1,6 +1,5 @@
 tech: paypal
 name: Paypal
-type: payment
 dotenv:
   - PAYPAL_
 dependencies:

@@ -1,6 +1,5 @@
 tech: google.tasks
 name: Google Tasks
-type: collaboration
 dependencies:
   - type: npm
     name: "@googleapis/tasks"

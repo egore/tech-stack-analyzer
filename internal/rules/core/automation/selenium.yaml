@@ -1,6 +1,5 @@
 tech: selenium
 name: Selenium
-type: automation
 dependencies:
   - type: npm
     name: selenium

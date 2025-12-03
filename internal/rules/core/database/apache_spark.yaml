@@ -1,6 +1,5 @@
 tech: apache_spark
 name: Apache Spark
-type: database
 dependencies:
   - type: docker
     name: apache/spark

@@ -1,6 +1,5 @@
 tech: grafana
 name: Grafana
-type: app
 dependencies:
   - type: docker
     name: grafana/grafana-enterprise

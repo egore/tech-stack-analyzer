@@ -1,6 +1,5 @@
 tech: jsdom
 name: jsdom
-type: test
 dependencies:
   - type: npm
     name: jsdom

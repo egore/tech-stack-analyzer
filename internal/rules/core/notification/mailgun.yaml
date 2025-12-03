@@ -1,6 +1,5 @@
 tech: mailgun
 name: Mailgun
-type: notification
 dependencies:
   - type: npm
     name: mailgun.js

@@ -1,6 +1,5 @@
 tech: qovery
 name: Qovery
-type: cloud
 dependencies:
   - type: terraform
     name: registry.terraform.io/Qovery/qovery

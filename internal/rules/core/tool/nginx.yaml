@@ -1,6 +1,5 @@
 tech: nginx
 name: Nginx
-type: app
 dependencies:
   - type: docker
     name: nginx

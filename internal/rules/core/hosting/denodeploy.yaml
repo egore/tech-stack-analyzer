@@ -1,6 +1,5 @@
 tech: denodeploy
 name: Deno Deploy
-type: hosting
 dependencies:
   - type: githubAction
     name: denoland/deployctl

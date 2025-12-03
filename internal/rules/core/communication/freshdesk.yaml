@@ -1,6 +1,5 @@
 tech: freshdesk
 name: Freshdesk
-type: communication
 dotenv:
   - FRESHDESK_
 dependencies:

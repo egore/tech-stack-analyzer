@@ -1,6 +1,5 @@
 tech: gcp.vision
 name: Cloud Vision
-type: ai
 dependencies:
   - type: npm
     name: "@google-cloud/vision"

@@ -1,6 +1,5 @@
 tech: nestjs
 name: NestJS
-type: framework
 dependencies:
   - type: npm
     name: "@nestjs/cli"

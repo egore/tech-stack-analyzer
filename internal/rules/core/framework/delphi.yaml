@@ -1,6 +1,5 @@
 tech: delphi
 name: Delphi
-type: framework
 files:
   - "*.dproj"
   - "*.dpr"

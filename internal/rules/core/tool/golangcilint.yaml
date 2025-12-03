@@ -1,6 +1,5 @@
 tech: golangcilint
 name: GolangCI Lint
-type: linter
 dependencies:
   - type: golang
     name: github.com/golangci/golangci-lint

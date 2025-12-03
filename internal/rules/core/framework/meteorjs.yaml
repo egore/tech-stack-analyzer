@@ -1,6 +1,5 @@
 tech: meteorjs
 name: Meteor
-type: framework
 dependencies:
   - type: npm
     name: meteor

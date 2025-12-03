@@ -1,6 +1,5 @@
 tech: zapier
 name: Zapier
-type: notification
 dotenv:
   - ZAPIER_
 dependencies:

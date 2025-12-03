@@ -1,6 +1,5 @@
 tech: aws.cloudformation
 name: AWS CloudFormation
-type: iac
 dependencies:
   - type: npm
     name: "@aws-sdk/client-cloudformation"

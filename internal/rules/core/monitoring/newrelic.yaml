@@ -1,6 +1,5 @@
 tech: newrelic
 name: New Relic
-type: monitoring
 dotenv:
   - NEW_RELIC_
 dependencies:

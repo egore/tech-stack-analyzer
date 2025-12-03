@@ -1,6 +1,5 @@
 tech: mailjet
 name: Mailjet
-type: notification
 dotenv:
   - MAILJET_
 dependencies:

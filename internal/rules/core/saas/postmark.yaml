@@ -1,6 +1,5 @@
 tech: postmark
 name: Postmark
-type: saas
 dependencies:
   - type: npm
     name: postmark

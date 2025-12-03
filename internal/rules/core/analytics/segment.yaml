@@ -1,6 +1,5 @@
 tech: segment
 name: Segment
-type: analytics
 dotenv:
   - SEGMENT_
 dependencies:

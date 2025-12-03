@@ -1,6 +1,5 @@
 tech: phosphoreicons
 name: Phosphor Icons
-type: iconset
 dependencies:
   - type: npm
     name: "@phosphor-icons/react"

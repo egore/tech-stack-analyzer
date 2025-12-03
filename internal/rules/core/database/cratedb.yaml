@@ -1,6 +1,5 @@
 tech: cratedb
 name: CrateDB
-type: database
 dependencies:
   - type: docker
     name: cratedb

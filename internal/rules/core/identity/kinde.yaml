@@ -1,6 +1,5 @@
 tech: kinde
 name: Kinde
-type: auth
 dependencies:
   - type: python
     name: kinde-python-sdk

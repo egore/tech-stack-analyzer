@@ -1,6 +1,5 @@
 tech: jacoco
 name: JaCoCo
-type: test
 dependencies:
   - type: maven
     name: io.quarkus:quarkus-jacoco

@@ -1,6 +1,5 @@
 tech: apache_kafka
 name: Apache Kafka
-type: queue
 dependencies:
   - type: docker
     name: bitnami/kafka

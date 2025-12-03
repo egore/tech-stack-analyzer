@@ -1,6 +1,5 @@
 tech: golang
 name: Golang
-type: language
 dependencies:
   - type: docker
     name: golang

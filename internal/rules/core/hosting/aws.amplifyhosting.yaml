@@ -1,6 +1,5 @@
 tech: aws.amplifyhosting
 name: AWS Amplify Hosting
-type: hosting
 dependencies:
   - type: npm
     name: aws-amplify

@@ -1,6 +1,5 @@
 tech: elasticsearch
 name: Elasticsearch
-type: database
 dotenv:
   - ELASTICSEARCH_
 dependencies:

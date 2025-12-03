@@ -1,6 +1,5 @@
 tech: mailhog
 name: Mailhog
-type: tool
 dependencies:
   - type: golang
     name: github.com/mailhog/MailHog

@@ -1,6 +1,5 @@
 tech: google.slides
 name: Google Slides
-type: collaboration
 dependencies:
   - type: npm
     name: "@googleapis/slides"

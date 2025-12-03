@@ -1,6 +1,5 @@
 tech: mergedev
 name: Merge.dev
-type: etl
 dependencies:
   - type: python
     name: MergePythonClient

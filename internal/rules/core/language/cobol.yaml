@@ -1,6 +1,5 @@
 tech: cobol
 name: COBOL
-type: language
 extensions:
   - .cob
   - .cbl

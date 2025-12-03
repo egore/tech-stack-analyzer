@@ -1,6 +1,5 @@
 tech: puppeteer
 name: Puppeteer
-type: automation
 dependencies:
   - type: npm
     name: puppeteer

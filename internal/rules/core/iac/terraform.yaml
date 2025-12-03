@@ -1,6 +1,5 @@
 tech: terraform
 name: Terraform
-type: iac
 dependencies:
   - type: githubAction
     name: hashicorp/setup-terraform

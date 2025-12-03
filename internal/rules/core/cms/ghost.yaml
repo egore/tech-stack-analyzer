@@ -1,6 +1,5 @@
 tech: ghost
 name: Ghost
-type: cms
 dotenv:
   - GHOST_
 dependencies:

@@ -1,6 +1,5 @@
 tech: papertrail
 name: Papertrail
-type: monitoring
 dotenv:
   - PAPERTRAIL_
 dependencies:

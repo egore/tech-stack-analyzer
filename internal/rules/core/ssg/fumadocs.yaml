@@ -1,6 +1,5 @@
 tech: fumadocs
 name: FumaDocs
-type: ssg
 dependencies:
   - type: npm
     name: fumadocs-ui

@@ -1,6 +1,5 @@
 tech: npm
 name: npm
-type: package_manager
 files:
   - package.json
   - package-lock.json

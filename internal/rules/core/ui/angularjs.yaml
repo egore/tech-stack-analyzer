@@ -1,6 +1,5 @@
 tech: angularjs
 name: AngularJS
-type: framework
 dependencies:
   - type: npm
     name: angular

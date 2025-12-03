@@ -1,6 +1,5 @@
 tech: perl
 name: Perl
-type: language
 extensions:
   - .pl
   - .al

@@ -1,6 +1,5 @@
 tech: jboss
 name: JBoss / WildFly
-type: appserver
 files:
   - jboss-web.xml
   - jboss-app.xml

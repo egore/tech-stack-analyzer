@@ -1,6 +1,5 @@
 tech: apache_hadoop
 name: Apache Hadoop
-type: database
 dependencies:
   - type: docker
     name: apache/hadoop

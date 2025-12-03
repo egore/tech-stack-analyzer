@@ -1,6 +1,5 @@
 tech: goacmelego
 name: Lego
-type: tool
 dependencies:
   - type: docker
     name: goacme/lego

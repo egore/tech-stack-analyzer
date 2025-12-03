@@ -1,6 +1,5 @@
 tech: zuora
 name: Zuora
-type: payment
 dotenv:
   - ZUORA_
 dependencies:

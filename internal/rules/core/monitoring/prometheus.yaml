@@ -1,6 +1,5 @@
 tech: prometheus
 name: Prometheus
-type: monitoring
 dependencies:
   - type: npm
     name: prom-client

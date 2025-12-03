@@ -1,6 +1,5 @@
 tech: oxlint
 name: OxLint
-type: linter
 dependencies:
   - type: npm
     name: oxlint

@@ -1,6 +1,5 @@
 tech: knex
 name: Knex
-type: orm
 dependencies:
   - type: npm
     name: knex

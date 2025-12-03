@@ -1,6 +1,5 @@
 tech: apacheCordova
 name: Cordova
-type: runtime
 dependencies:
   - type: npm
     name: cordova

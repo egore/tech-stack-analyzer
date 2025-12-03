@@ -1,6 +1,5 @@
 tech: geminiai
 name: Gemini AI
-type: ai
 dotenv:
   - GEMINI_
 dependencies:

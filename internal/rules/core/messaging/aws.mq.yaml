@@ -1,6 +1,5 @@
 tech: aws.mq
 name: AWS ActiveMQ
-type: queue
 dependencies:
   - type: npm
     name: "@aws-cdk/aws-mq"

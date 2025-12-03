@@ -1,6 +1,5 @@
 tech: msaccess
 name: Microsoft Access
-type: database
 extensions:
   - .mdb
   - .accdb

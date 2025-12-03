@@ -1,5 +1,4 @@
 tech: bazaar
 name: Bazaar
-type: vcs
 files:
   - .bzrignore

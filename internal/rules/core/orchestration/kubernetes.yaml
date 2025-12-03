@@ -1,6 +1,5 @@
 tech: kubernetes
 name: Kubernetes
-type: hosting
 dependencies:
   - type: terraform
     name: registry.terraform.io/hashicorp/kubernetes

@@ -1,6 +1,5 @@
 tech: tidb
 name: TiDB
-type: database
 dependencies:
   - type: docker
     name: pingcap/tidb

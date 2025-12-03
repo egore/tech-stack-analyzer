@@ -1,6 +1,5 @@
 tech: snowflake
 name: Snowflake
-type: database
 dependencies:
   - type: terraform
     name: registry.terraform.io/Snowflake-Labs/snowflake

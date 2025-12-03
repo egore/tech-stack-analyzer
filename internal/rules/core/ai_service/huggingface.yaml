@@ -1,6 +1,5 @@
 tech: huggingface
 name: Hugging Face
-type: ai
 dotenv:
   - HUGGINGFACE_
 dependencies:

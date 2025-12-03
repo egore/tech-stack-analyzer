@@ -1,6 +1,5 @@
 tech: novu
 name: Novy
-type: notification
 dependencies:
   - type: npm
     name: "@novu/notification-center-vue"

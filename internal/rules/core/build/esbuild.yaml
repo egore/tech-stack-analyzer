@@ -1,6 +1,5 @@
 tech: esbuild
 name: Esbuild
-type: builder
 dependencies:
   - type: npm
     name: esbuild

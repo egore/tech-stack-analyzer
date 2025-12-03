@@ -1,6 +1,5 @@
 tech: logtoio
 name: Logto
-type: auth
 dotenv:
   - LOGTO_
 dependencies:

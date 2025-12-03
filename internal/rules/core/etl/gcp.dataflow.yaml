@@ -1,6 +1,5 @@
 tech: gcp.dataflow
 name: Cloud Dataflow
-type: etl
 dependencies:
   - type: npm
     name: "@google-cloud/dataflow"

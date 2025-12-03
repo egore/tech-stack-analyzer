@@ -1,6 +1,5 @@
 tech: pagerduty
 name: Pagerduty
-type: saas
 dotenv:
   - PAGERDUTY_
 dependencies:

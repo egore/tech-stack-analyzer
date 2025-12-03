@@ -1,6 +1,5 @@
 tech: mailchimp
 name: Mailchimp
-type: notification
 dotenv:
   - MAILCHIMP_
 dependencies:

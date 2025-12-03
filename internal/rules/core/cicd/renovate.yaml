@@ -1,6 +1,5 @@
 tech: renovate
 name: Renovate
-type: ci
 dependencies:
   - type: npm
     name: renovate

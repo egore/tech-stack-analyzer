@@ -1,6 +1,5 @@
 tech: sendgrid
 name: Sendgrid
-type: notification
 dependencies:
   - type: npm
     name: nodemailer-sendgrid

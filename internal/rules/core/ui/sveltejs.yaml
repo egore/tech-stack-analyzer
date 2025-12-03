@@ -1,6 +1,5 @@
 tech: svelte
 name: Svelte
-type: ui_framework
 dependencies:
   - type: npm
     name: svelte

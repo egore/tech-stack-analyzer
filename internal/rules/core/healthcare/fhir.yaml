@@ -1,6 +1,5 @@
 tech: fhir
 name: FHIR
-type: healthcare
 files:
   - fhir-resources.json
   - fhir-structures.json

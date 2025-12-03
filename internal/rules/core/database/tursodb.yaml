@@ -1,6 +1,5 @@
 tech: tursodb
 name: Turso
-type: database
 dotenv:
   - TURSO_
 dependencies:

@@ -1,6 +1,5 @@
 tech: scaleway.documentdb
 name: Scaleway DocumentDB
-type: database
 dependencies:
   - type: terraform.resource
     name: scaleway_documentdb_instance

@@ -1,6 +1,5 @@
 tech: airbyte
 name: Airbyte
-type: etl
 dependencies:
   - type: terraform
     name: registry.terraform.io/airbytehq/airbyte

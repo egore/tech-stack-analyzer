@@ -1,6 +1,5 @@
 tech: mapbox
 name: Mapbox
-type: maps
 dotenv:
   - MAPBOX_
 dependencies:

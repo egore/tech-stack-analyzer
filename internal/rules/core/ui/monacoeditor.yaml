@@ -1,6 +1,5 @@
 tech: monacoeditor
 name: Monaco Editor
-type: ui
 dependencies:
   - type: npm
     name: monaco-editor

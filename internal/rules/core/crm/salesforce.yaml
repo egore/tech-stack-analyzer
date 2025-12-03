@@ -1,6 +1,5 @@
 tech: salesforce
 name: Salesforce
-type: crm
 dotenv:
   - SALESFORCE_
 dependencies:

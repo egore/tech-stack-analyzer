@@ -1,6 +1,5 @@
 tech: remixrouter
 name: Remix Router
-type: ui
 dependencies:
   - type: npm
     name: "@remix-run/router"

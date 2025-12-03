@@ -1,6 +1,5 @@
 tech: scoutapm
 name: Scout APM
-type: monitoring
 dependencies:
   - type: ruby
     name: scout_apm

@@ -1,6 +1,5 @@
 tech: simpleicons
 name: Simple Icons
-type: iconset
 dependencies:
   - type: npm
     name: "@icons-pack/react-simple-icons"

@@ -1,6 +1,5 @@
 tech: okta
 name: Okta
-type: auth
 dotenv:
   - OKTA_
 dependencies:

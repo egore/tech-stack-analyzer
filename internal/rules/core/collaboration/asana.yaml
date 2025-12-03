@@ -1,6 +1,5 @@
 tech: asana
 name: Asana
-type: collaboration
 dotenv:
   - ASANA_
 dependencies:

@@ -1,6 +1,5 @@
 tech: vbnet
 name: VB.NET
-type: language
 extensions:
   - .vb
 files:

@@ -1,6 +1,5 @@
 tech: hetzner
 name: Hetzner
-type: cloud
 dependencies:
   - type: terraform
     name: registry.terraform.io/hetznercloud/hcloud

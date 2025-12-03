@@ -1,6 +1,5 @@
 tech: asp
 name: ASP
-type: framework
 dependencies:
   - type: nuget
     name: /^Microsoft\.AspNet/

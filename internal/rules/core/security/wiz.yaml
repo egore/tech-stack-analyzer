@@ -1,6 +1,5 @@
 tech: wiz
 name: Wiz
-type: security
 dotenv:
   - WIZ_
 dependencies:

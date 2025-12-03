@@ -1,6 +1,5 @@
 tech: lago
 name: Lago
-type: saas
 dotenv:
   - LAGO_
 dependencies:

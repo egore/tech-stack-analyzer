@@ -1,6 +1,5 @@
 tech: git
 name: Git
-type: vcs
 files:
   - .gitignore
   - .gitmodules

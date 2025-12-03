@@ -1,6 +1,5 @@
 tech: influxdb
 name: InfluxDB
-type: database
 dependencies:
   - type: npm
     name: "@influxdata/influxdb-client"

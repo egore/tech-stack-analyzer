@@ -1,6 +1,5 @@
 tech: amplitude
 name: Amplitude Analytics
-type: analytics
 dotenv:
   - AMPLITUDE_
 dependencies:

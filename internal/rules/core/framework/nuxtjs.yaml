@@ -1,6 +1,5 @@
 tech: nuxtjs
 name: Nuxt.js
-type: framework
 dependencies:
   - type: npm
     name: nuxt

@@ -1,6 +1,5 @@
 tech: hugeicons
 name: HugeIcons
-type: iconset
 dependencies:
   - type: npm
     name: "@hugeicons/react"

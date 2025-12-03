@@ -1,6 +1,5 @@
 tech: testinglibrary
 name: Testing Library
-type: test
 dependencies:
   - type: npm
     name: /^@testing-library\//

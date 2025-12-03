@@ -1,6 +1,5 @@
 tech: gcp.bigtable
 name: Cloud BigTable
-type: database
 dependencies:
   - type: npm
     name: "@google-cloud/bigtable"

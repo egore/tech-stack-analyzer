@@ -1,6 +1,5 @@
 tech: tanstackstart
 name: Tanstack Start
-type: framework
 dependencies:
   - type: npm
     name: "@tanstack/react-start"

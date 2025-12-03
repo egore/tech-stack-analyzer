@@ -1,6 +1,5 @@
 tech: aws.kms
 name: AWS Kms
-type: security
 dependencies:
   - type: npm
     name: "@aws-sdk/client-kms"

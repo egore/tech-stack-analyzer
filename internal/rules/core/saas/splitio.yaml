@@ -1,6 +1,5 @@
 tech: splitio
 name: Split
-type: saas
 dependencies:
   - type: golang
     name: github.com/splitio/go-client/v6

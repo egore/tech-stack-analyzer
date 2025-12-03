@@ -1,6 +1,5 @@
 tech: betterstack
 name: Better Stack
-type: monitoring
 dotenv:
   - LOGTAIL_
   - BETTERSTACK_

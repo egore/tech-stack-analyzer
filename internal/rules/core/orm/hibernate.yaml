@@ -1,6 +1,5 @@
 tech: hibernate
 name: Hibernate
-type: orm
 dependencies:
   - type: maven
     name: io.quarkus:quarkus-hibernate-orm-panache

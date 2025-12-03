@@ -1,6 +1,5 @@
 tech: gcp.functions
 name: Cloud Functions
-type: hosting
 dependencies:
   - type: npm
     name: "@google-cloud/functions-framework"

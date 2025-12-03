@@ -1,6 +1,5 @@
 tech: atlassian.confluence
 name: Confluence
-type: collaboration
 dependencies:
   - type: githubAction
     name: Bhacaz/docs-as-code-confluence

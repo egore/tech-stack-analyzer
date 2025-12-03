@@ -1,6 +1,5 @@
 tech: joomla
 name: Joomla!
-type: cms
 dependencies:
   - type: php
     name: joomla/application

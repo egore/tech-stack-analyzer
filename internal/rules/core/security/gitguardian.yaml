@@ -1,6 +1,5 @@
 tech: gitguardian
 name: GitGuardian
-type: security
 dependencies:
   - type: githubAction
     name: GitGuardian/ggshield-action

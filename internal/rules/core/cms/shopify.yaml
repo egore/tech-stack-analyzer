@@ -1,6 +1,5 @@
 tech: shopify
 name: Shopify
-type: cms
 dependencies:
   - type: npm
     name: "@shopify/shopify-api"

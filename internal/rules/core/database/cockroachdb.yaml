@@ -1,6 +1,5 @@
 tech: cockroachdb
 name: CockroachDB
-type: database
 dependencies:
   - type: terraform
     name: registry.terraform.io/cockroachdb/cockroach

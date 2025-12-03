@@ -1,5 +1,4 @@
 tech: linkedin
 name: Linkedin
-type: communication
 dotenv:
   - LINKEDIN_

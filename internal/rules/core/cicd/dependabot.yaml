@@ -1,6 +1,5 @@
 tech: dependabot
 name: Dependabot
-type: ci
 dependencies:
   - type: githubAction
     name: ahmadnassri/action-dependabot-auto-merge

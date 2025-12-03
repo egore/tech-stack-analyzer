@@ -1,6 +1,5 @@
 tech: vercel.functions
 name: Vercel Functions
-type: hosting
 dependencies:
   - type: npm
     name: "@vercel/functions"

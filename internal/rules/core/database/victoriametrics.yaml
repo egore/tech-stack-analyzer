@@ -1,6 +1,5 @@
 tech: victoriametrics
 name: VictoriaMetrics
-type: database
 dependencies:
   - type: docker
     name: victoriametrics/victoria-metrics

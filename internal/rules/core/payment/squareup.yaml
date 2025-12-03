@@ -1,6 +1,5 @@
 tech: squareup
 name: Square
-type: payment
 dotenv:
   - SQUARE_
 dependencies:

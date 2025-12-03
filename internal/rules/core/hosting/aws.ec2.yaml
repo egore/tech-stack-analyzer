@@ -1,6 +1,5 @@
 tech: aws.ec2
 name: AWS Compute
-type: hosting
 dependencies:
   - type: npm
     name: "@aws-cdk/aws-ec2"

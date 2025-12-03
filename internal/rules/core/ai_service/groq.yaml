@@ -1,6 +1,5 @@
 tech: groq
 name: Groq
-type: ai
 dotenv:
   - GROQ_
 dependencies:

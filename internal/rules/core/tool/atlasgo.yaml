@@ -1,6 +1,5 @@
 tech: atlasgo
 name: AtlasGo
-type: tool
 dependencies:
   - type: docker
     name: arigaio/atlas

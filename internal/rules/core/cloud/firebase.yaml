@@ -1,6 +1,5 @@
 tech: firebase
 name: Firebase
-type: cloud
 dotenv:
   - FIREBASE_
 dependencies:

@@ -1,6 +1,5 @@
 tech: jsonschema
 name: JSON Schema
-type: validation
 dependencies:
   - type: npm
     name: "@types/json-schema"

@@ -1,6 +1,5 @@
 tech: codeclimate
 name: Code Climate
-type: ci
 dependencies:
   - type: githubAction
     name: paambaati/codeclimate-action

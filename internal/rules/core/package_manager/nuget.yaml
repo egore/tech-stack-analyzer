@@ -1,5 +1,4 @@
 tech: nuget
 name: NuGet
-type: package_manager
 files:
   - .csproj

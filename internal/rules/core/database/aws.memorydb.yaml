@@ -1,6 +1,5 @@
 tech: aws.memorydb
 name: AWS MemoryDB
-type: database
 dependencies:
   - type: npm
     name: "@aws-cdk/aws-memorydb"

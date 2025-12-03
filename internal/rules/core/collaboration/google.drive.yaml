@@ -1,6 +1,5 @@
 tech: google.drive
 name: Google Drive
-type: collaboration
 dependencies:
   - type: npm
     name: "@googleapis/drive"

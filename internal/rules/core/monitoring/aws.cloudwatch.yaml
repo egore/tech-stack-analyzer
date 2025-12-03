@@ -1,6 +1,5 @@
 tech: aws.cloudwatch
 name: AWS Cloudwatch
-type: monitoring
 dependencies:
   - type: npm
     name: "@aws-cdk/aws-cloudwatch"

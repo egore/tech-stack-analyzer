@@ -1,6 +1,5 @@
 tech: doctrinephp
 name: Doctrine
-type: orm
 dependencies:
   - type: php
     name: doctrine/orm

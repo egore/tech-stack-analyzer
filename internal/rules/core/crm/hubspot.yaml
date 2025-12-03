@@ -1,6 +1,5 @@
 tech: hubspot
 name: HubSpot
-type: crm
 dependencies:
   - type: php
     name: hubspot/hubspot-php

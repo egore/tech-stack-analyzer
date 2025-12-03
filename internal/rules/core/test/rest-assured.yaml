@@ -1,6 +1,5 @@
 tech: rest-assured
 name: Rest Assured
-type: test
 dependencies:
   - type: maven
     name: /^io\.rest-assured:rest-assured.*/

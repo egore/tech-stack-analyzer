@@ -1,6 +1,5 @@
 tech: milvusdb
 name: MilvusDB
-type: database
 dotenv:
   - MILVUS_
 dependencies:

@@ -1,6 +1,5 @@
 tech: mockito
 name: Mockito
-type: test
 dependencies:
   - type: maven
     name: org.mockito:mockito-core

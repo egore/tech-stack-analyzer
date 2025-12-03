@@ -1,6 +1,5 @@
 tech: redwoodjs
 name: RedwoodJs
-type: framework
 dependencies:
   - type: npm
     name: "@vercel/redwood"

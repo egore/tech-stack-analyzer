@@ -1,6 +1,5 @@
 tech: vercel.postgres
 name: Vercel Postgres
-type: database
 dependencies:
   - type: npm
     name: "@vercel/postgres"

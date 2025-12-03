@@ -1,6 +1,5 @@
 tech: google.chat
 name: Google Chat
-type: collaboration
 dependencies:
   - type: npm
     name: "@googleapis/chat"

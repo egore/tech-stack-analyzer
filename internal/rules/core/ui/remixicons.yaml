@@ -1,6 +1,5 @@
 tech: remixicons
 name: Remix Icons
-type: iconset
 dependencies:
   - type: npm
     name: remixicon

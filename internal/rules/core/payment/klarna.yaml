@@ -1,6 +1,5 @@
 tech: klarna
 name: Klarna
-type: payment
 dotenv:
   - KLARNA_
 dependencies:

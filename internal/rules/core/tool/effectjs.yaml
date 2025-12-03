@@ -1,6 +1,5 @@
 tech: effectjs
 name: EffectJS
-type: tool
 dependencies:
   - type: npm
     name: effect

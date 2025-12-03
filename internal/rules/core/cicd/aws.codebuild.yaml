@@ -1,6 +1,5 @@
 tech: aws.codebuild
 name: AWS Code Build
-type: ci
 dependencies:
   - type: npm
     name: "@aws-sdk/client-codebuild"

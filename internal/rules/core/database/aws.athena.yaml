@@ -1,6 +1,5 @@
 tech: aws.athena
 name: AWS Athena
-type: database
 dependencies:
   - type: npm
     name: "@aws-cdk/aws-athena"

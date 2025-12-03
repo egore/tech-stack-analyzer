@@ -1,6 +1,5 @@
 tech: aws.cognito
 name: AWS Cognito
-type: auth
 dependencies:
   - type: golang
     name: github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider

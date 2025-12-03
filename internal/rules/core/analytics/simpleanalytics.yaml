@@ -1,6 +1,5 @@
 tech: simpleanalytics
 name: Simple Analytics
-type: analytics
 dotenv:
   - SIMPLEANALYTICS_
 dependencies:

@@ -1,6 +1,5 @@
 tech: ansible
 name: Ansible
-type: iac
 dependencies:
   - type: githubAction
     name: ansible/ansible-lint

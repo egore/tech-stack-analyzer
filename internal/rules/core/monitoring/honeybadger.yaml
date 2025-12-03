@@ -1,6 +1,5 @@
 tech: honeybadger
 name: Honeybadger
-type: monitoring
 dotenv:
   - HONEYBADGER_
 dependencies:

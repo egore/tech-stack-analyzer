@@ -1,6 +1,5 @@
 tech: gcp.kms
 name: Cloud KMS
-type: security
 dependencies:
   - type: npm
     name: "@google-cloud/kms"

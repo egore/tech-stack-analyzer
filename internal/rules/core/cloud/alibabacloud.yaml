@@ -1,6 +1,5 @@
 tech: alibabacloud
 name: Alibaba Cloud
-type: cloud
 dependencies:
   - type: terraform
     name: registry.terraform.io/aliyun/alicloud

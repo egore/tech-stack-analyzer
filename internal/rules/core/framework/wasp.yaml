@@ -1,6 +1,5 @@
 tech: wasp
 name: Wasp
-type: framework
 files:
   - main.wasp
   - main.wasp.ts

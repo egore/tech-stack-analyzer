@@ -1,6 +1,5 @@
 tech: reacticons
 name: React Icons
-type: iconset
 dependencies:
   - type: npm
     name: react-icons

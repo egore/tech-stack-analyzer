@@ -1,6 +1,5 @@
 tech: oraclecloud
 name: Oracle Cloud
-type: cloud
 dependencies:
   - type: terraform
     name: registry.terraform.io/oracle/oci

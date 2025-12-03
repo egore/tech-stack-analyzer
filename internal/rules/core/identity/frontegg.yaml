@@ -1,6 +1,5 @@
 tech: frontegg
 name: Frontegg
-type: auth
 dependencies:
   - type: python
     name: frontegg

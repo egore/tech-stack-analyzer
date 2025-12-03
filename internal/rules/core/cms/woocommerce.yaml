@@ -1,6 +1,5 @@
 tech: woocommerce
 name: WooCommerce
-type: cms
 dotenv:
   - WOOCOMMERCE_
 dependencies:

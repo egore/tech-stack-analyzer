@@ -1,6 +1,5 @@
 tech: gcp.translate
 name: Google Translate
-type: ai
 dependencies:
   - type: npm
     name: "@google-cloud/translate"

@@ -1,6 +1,5 @@
 tech: koyeb
 name: Koyeb
-type: hosting
 dependencies:
   - type: npm
     name: koyeb-api-client

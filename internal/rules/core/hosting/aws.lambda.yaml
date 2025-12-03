@@ -1,6 +1,5 @@
 tech: aws.lambda
 name: AWS Lambda
-type: hosting
 dependencies:
   - type: npm
     name: is-lambda

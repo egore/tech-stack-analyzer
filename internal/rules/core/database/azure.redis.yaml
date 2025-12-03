@@ -1,6 +1,5 @@
 tech: azure.redis
 name: Azure Redis
-type: database
 dependencies:
   - type: ruby
     name: azure_mgmt_redis

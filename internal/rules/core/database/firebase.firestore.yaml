@@ -1,6 +1,5 @@
 tech: firebase.firestore
 name: Firebase Firestore
-type: database
 dependencies:
   - type: php
     name: google/cloud-firestore

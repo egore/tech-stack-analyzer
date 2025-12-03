@@ -1,6 +1,5 @@
 tech: rspack
 name: Rspack
-type: builder
 dependencies:
   - type: npm
     name: rspack

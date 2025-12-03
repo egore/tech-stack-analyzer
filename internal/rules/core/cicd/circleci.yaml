@@ -1,6 +1,5 @@
 tech: circleci
 name: CircleCI
-type: ci
 dependencies:
   - type: ruby
     name: circleci

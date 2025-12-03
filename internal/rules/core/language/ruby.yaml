@@ -1,6 +1,5 @@
 tech: ruby
 name: Ruby
-type: language
 dependencies:
   - type: githubAction
     name: ruby/setup-ruby

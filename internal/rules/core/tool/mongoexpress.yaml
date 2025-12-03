@@ -1,6 +1,5 @@
 tech: mongoexpress
 name: Mongo Express
-type: app
 dependencies:
   - type: docker
     name: mongo-express

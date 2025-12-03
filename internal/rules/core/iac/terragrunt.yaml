@@ -1,6 +1,5 @@
 tech: terragrunt
 name: Terragrunt
-type: iac
 files:
   - terragrunt.hcl
   - terragrunt.hcl.json

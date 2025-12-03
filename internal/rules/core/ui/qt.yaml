@@ -1,6 +1,5 @@
 tech: qt
 name: Qt Framework
-type: ui
 content:
   # Qt project files (.pro)
   - pattern: '^QT\s*[+:]='

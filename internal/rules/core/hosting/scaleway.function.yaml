@@ -1,6 +1,5 @@
 tech: scaleway.function
 name: Scaleway Function
-type: hosting
 dependencies:
   - type: terraform.resource
     name: scaleway_function

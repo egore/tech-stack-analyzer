@@ -1,6 +1,5 @@
 tech: sanity
 name: Sanity
-type: cms
 dependencies:
   - type: npm
     name: sanity

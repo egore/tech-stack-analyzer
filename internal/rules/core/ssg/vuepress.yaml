@@ -1,6 +1,5 @@
 tech: vuepress
 name: VuePress
-type: ssg
 dependencies:
   - type: npm
     name: vuepress

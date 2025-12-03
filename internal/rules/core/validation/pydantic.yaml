@@ -1,6 +1,5 @@
 tech: pydantic
 name: Pydantic
-type: validation
 dependencies:
   - type: python
     name: pydantic

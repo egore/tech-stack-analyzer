@@ -1,6 +1,5 @@
 tech: shadcn
 name: Shadcn
-type: ui
 content:
   - type: json-path
     path: $.$schema

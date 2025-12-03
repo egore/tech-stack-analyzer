@@ -1,6 +1,5 @@
 tech: poi
 name: POI
-type: tool
 dependencies:
   - type: maven
     name: /^org\.apache\.poi:.*$/

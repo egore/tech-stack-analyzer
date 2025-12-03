@@ -1,6 +1,5 @@
 tech: github.pages
 name: Github Pages
-type: hosting
 dependencies:
   - type: githubAction
     name: actions/upload-pages-artifact

@@ -1,6 +1,5 @@
 tech: nango
 name: Nango
-type: etl
 dotenv:
   - NANGO_
 dependencies:

@@ -1,6 +1,5 @@
 tech: apache_hive
 name: Apache Hive
-type: database
 dependencies:
   - type: docker
     name: apache/hive

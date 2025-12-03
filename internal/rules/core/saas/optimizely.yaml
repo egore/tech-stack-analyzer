@@ -1,6 +1,5 @@
 tech: optimizely
 name: Optimizely
-type: saas
 dotenv:
   - OPTIMIZELY_
 dependencies:

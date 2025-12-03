@@ -1,6 +1,5 @@
 tech: aws.lightsail
 name: AWS Lightsail
-type: hosting
 dependencies:
   - type: npm
     name: "@aws-cdk/aws-lightsail"

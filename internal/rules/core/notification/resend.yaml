@@ -1,6 +1,5 @@
 tech: resend
 name: Resend
-type: notification
 dotenv:
   - RESEND_
 dependencies:

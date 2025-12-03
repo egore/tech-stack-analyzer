@@ -1,6 +1,5 @@
 tech: chromadb
 name: ChromaDB
-type: database
 dependencies:
   - type: python
     name: chromadb

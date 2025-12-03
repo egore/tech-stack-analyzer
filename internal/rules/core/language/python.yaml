@@ -1,6 +1,5 @@
 tech: python
 name: Python
-type: language
 dependencies:
   - type: githubAction
     name: actions/setup-python

@@ -1,6 +1,5 @@
 tech: replicate
 name: Replicate
-type: ai
 dotenv:
   - REPLICATE_
 dependencies:

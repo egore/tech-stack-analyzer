@@ -1,6 +1,5 @@
 tech: deepseek
 name: Deepseek
-type: ai
 dotenv:
   - DEEPSEEK_
 dependencies:

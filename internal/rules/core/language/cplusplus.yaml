@@ -1,6 +1,5 @@
 tech: cplusplus
 name: C++
-type: language
 is_component: true
 extensions:
   - .cpp

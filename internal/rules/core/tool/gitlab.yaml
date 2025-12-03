@@ -1,6 +1,5 @@
 tech: gitlab
 name: Gitlab
-type: tool
 dependencies:
   - type: terraform
     name: registry.terraform.io/gitlabhq/gitlab

@@ -1,6 +1,5 @@
 tech: aws.kafka
 name: AWS Kafka
-type: queue
 dependencies:
   - type: npm
     name: "@pulumi/kafka"

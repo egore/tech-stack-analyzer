@@ -1,6 +1,5 @@
 tech: adobe.analytics
 name: Adobe Analytics
-type: analytics
 dotenv:
   - ADOBE_ANALYTICS_
 dependencies:

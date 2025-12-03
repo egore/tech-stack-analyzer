@@ -1,6 +1,5 @@
 tech: rabbitmq
 name: RabbitMQ
-type: queue
 dotenv:
   - RABBITMQ_
 dependencies:

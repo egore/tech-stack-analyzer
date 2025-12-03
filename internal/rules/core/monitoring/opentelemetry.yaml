@@ -1,6 +1,5 @@
 tech: opentelemetry
 name: OpenTelemetry
-type: monitoring
 dotenv:
   - OTEL_
 dependencies:

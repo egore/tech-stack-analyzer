@@ -1,6 +1,5 @@
 tech: eslint
 name: Eslint
-type: linter
 dependencies:
   - type: npm
     name: eslint

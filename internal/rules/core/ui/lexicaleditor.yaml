@@ -1,6 +1,5 @@
 tech: lexicaleditor
 name: Lexical Editor
-type: ui
 dependencies:
   - type: npm
     name: lexical

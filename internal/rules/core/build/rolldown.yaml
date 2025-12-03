@@ -1,6 +1,5 @@
 tech: rolldown
 name: Rolldown
-type: builder
 dependencies:
   - type: npm
     name: rolldown

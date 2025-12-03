@@ -1,6 +1,5 @@
 tech: flyway
 name: Flyway
-type: tool
 dependencies:
   - type: docker
     name: flyway/flyway

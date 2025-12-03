@@ -1,6 +1,5 @@
 tech: akamai
 name: Akamai
-type: cloud
 dotenv:
   - AKAMAI_
 dependencies:

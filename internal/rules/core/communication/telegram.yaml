@@ -1,6 +1,5 @@
 tech: telegram
 name: Telegram
-type: communication
 dotenv:
   - TELEGRAM_
 dependencies:

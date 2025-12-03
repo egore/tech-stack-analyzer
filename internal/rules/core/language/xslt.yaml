@@ -1,6 +1,5 @@
 tech: xslt
 name: XSLT
-type: language
 extensions:
   - .xsl
   - .xslt

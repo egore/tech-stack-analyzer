@@ -1,6 +1,5 @@
 tech: aws.efs
 name: AWS File System
-type: storage
 dependencies:
   - type: npm
     name: "@aws-cdk/aws-efs"

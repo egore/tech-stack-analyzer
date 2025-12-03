@@ -1,6 +1,5 @@
 tech: uniface
 name: Uniface
-type: platform
 content:
   # Uniface Application Source files (not MSVC resource files)
   - type: regex

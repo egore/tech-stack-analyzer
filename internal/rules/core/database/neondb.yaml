@@ -1,6 +1,5 @@
 tech: neondb
 name: NeonDB
-type: database
 dependencies:
   - type: npm
     name: "@neondatabase/serverless"

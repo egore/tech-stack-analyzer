@@ -1,6 +1,5 @@
 tech: scaleway.redis
 name: Scaleway Redis
-type: database
 dependencies:
   - type: terraform.resource
     name: scaleway_redis_cluster

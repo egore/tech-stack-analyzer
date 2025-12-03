@@ -1,6 +1,5 @@
 tech: libphonenumber
 name: libphonenumber
-type: tool
 dependencies:
   - type: maven
     name: /^com\.googlecode\.libphonenumber:.*$/

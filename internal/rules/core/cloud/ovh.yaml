@@ -1,6 +1,5 @@
 tech: ovh
 name: OVH
-type: cloud
 dotenv:
   - OVH_
 dependencies:

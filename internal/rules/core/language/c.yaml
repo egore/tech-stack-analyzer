@@ -1,6 +1,5 @@
 tech: c
 name: C
-type: language
 is_component: true
 extensions:
   - .c

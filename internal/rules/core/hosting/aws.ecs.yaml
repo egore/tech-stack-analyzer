@@ -1,6 +1,5 @@
 tech: aws.ecs
 name: AWS Container
-type: hosting
 dependencies:
   - type: npm
     name: "@aws-cdk/aws-ecs"

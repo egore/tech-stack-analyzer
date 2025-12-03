@@ -1,6 +1,5 @@
 tech: spring
 name: Spring Framework
-type: framework
 dependencies:
   - type: maven
     name: /^org\.springframework:.*/

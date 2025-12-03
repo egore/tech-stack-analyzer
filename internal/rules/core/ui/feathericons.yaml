@@ -1,6 +1,5 @@
 tech: feathericons
 name: Feather Icons
-type: iconset
 dependencies:
   - type: npm
     name: feather-icons

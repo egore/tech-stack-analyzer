@@ -1,6 +1,5 @@
 tech: gcp.dns
 name: Google DNS
-type: network
 dependencies:
   - type: npm
     name: "@google-cloud/dns"

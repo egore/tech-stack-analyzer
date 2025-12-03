@@ -1,6 +1,5 @@
 tech: trufflesecurity
 name: Truffle Security
-type: ci
 dependencies:
   - type: docker
     name: trufflesecurity/trufflehog

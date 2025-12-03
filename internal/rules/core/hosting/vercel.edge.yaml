@@ -1,6 +1,5 @@
 tech: vercel.edge
 name: Vercel Edge
-type: hosting
 dependencies:
   - type: npm
     name: "@vercel/edge"

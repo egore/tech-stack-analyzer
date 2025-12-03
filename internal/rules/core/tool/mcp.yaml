@@ -1,6 +1,5 @@
 tech: mcp
 name: MCP
-type: tool
 dependencies:
   - type: npm
     name: "@modelcontextprotocol/sdk"

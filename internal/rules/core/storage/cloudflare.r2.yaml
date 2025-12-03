@@ -1,6 +1,5 @@
 tech: cloudflare.r2
 name: Cloudflare R2
-type: storage
 dependencies:
   - type: npm
     name: node-cloudflare-r2

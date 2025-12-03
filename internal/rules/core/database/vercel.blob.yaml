@@ -1,6 +1,5 @@
 tech: vercel.blob
 name: Vercel Blob
-type: database
 dependencies:
   - type: npm
     name: "@vercel/blob"

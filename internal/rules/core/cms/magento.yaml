@@ -1,6 +1,5 @@
 tech: magento
 name: Magento
-type: cms
 dependencies:
   - type: php
     name: magento/composer

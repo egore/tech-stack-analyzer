@@ -1,6 +1,5 @@
 tech: nunit
 name: NUnit
-type: test
 dependencies:
   - type: nuget
     name: nunit

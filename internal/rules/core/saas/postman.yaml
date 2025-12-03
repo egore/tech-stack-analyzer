@@ -1,6 +1,5 @@
 tech: postman
 name: Postman
-type: saas
 dependencies:
   - type: npm
     name: postman-collection

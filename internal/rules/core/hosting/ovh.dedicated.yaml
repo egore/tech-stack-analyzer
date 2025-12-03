@@ -1,6 +1,5 @@
 tech: ovh.dedicated
 name: OVH Dedicated Server
-type: hosting
 dependencies:
   - type: terraform.resource
     name: ovh_dedicated_server_install_task

@@ -1,6 +1,5 @@
 tech: mysql
 name: Mysql
-type: database
 dotenv:
   - MYSQL_
 dependencies:

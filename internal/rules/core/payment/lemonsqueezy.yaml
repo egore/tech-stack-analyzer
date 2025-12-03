@@ -1,6 +1,5 @@
 tech: lemonsqueezy
 name: Lemon Squeezy
-type: payment
 dotenv:
   - LEMON_SQUEEZY_
   - LEMONSQUEEZY_
