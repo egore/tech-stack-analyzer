@@ -1,0 +1,8 @@
+tech: uniface
+name: Uniface
+type: platform
+files:
+  - .aps
+  - .frm
+  - .inc
+  - .proc

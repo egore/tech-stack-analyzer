@@ -166,7 +166,7 @@ func TestContentTypeRegistry(t *testing.T) {
 	registry := NewContentTypeRegistry()
 
 	// Check all default types are registered
-	expectedTypes := []string{"regex", "json-path", "yaml-path"}
+	expectedTypes := []string{"regex", "json-path", "yaml-path", "xml-path"}
 	for _, typeName := range expectedTypes {
 		if registry.Get(typeName) == nil {
 			t.Errorf("Expected type %q to be registered", typeName)

@@ -1,0 +1,12 @@
+tech: cache_objectscript
+name: Cache ObjectScript
+type: language
+files:
+  - package.xml
+  - ^%*.int
+  - ^%*.mac
+content:
+  - type: xml-path
+    path: $.Generator
+    value: /Cache|/IRIS
+    files: [package.xml]

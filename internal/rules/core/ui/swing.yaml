@@ -1,0 +1,8 @@
+tech: swing
+name: Java Swing
+type: ui
+dependencies:
+  - type: maven
+    name: /^javax\.swing/
+  - type: gradle
+    name: /^javax\.swing/

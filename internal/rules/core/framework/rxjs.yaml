@@ -1,0 +1,8 @@
+tech: rxjs
+name: RxJS
+type: framework
+dependencies:
+  - type: npm
+    name: rxjs
+  - type: npm
+    name: /^@reactivex/

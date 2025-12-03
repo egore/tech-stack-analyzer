@@ -1,0 +1,12 @@
+tech: firebird
+name: Firebird
+type: database
+dependencies:
+  - type: maven
+    name: /^org\.firebirdsql:/
+  - type: gradle
+    name: /^org\.firebirdsql:/
+  - type: nuget
+    name: /^FirebirdSql/
+  - type: python
+    name: fdb

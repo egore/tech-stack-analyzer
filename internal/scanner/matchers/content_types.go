@@ -38,6 +38,7 @@ func NewContentTypeRegistry() *ContentTypeRegistry {
 	registry.Register(&RegexContentMatcher{})
 	registry.Register(&JSONPathContentMatcher{})
 	registry.Register(&YAMLPathContentMatcher{})
+	registry.Register(&XMLPathContentMatcher{})
 
 	return registry
 }
