@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-enry/go-enry/v2"
 	"github.com/go-enry/go-enry/v2/data"
+	"github.com/petrarca/tech-stack-analyzer/internal/types"
 	"github.com/spf13/cobra"
 )
 
@@ -79,7 +80,7 @@ func buildLanguagesResult() *LanguagesResult {
 
 	for lang := range langSet {
 		langType := enry.GetLanguageType(lang)
-		typeName := enryTypeToString(langType)
+		typeName := types.LanguageTypeToString(langType)
 
 		extensions := getExtensionsForLanguage(lang)
 
@@ -103,22 +104,6 @@ func buildLanguagesResult() *LanguagesResult {
 			Total:  len(languages),
 			ByType: byType,
 		},
-	}
-}
-
-// enryTypeToString converts enry.Type to string
-func enryTypeToString(t enry.Type) string {
-	switch t {
-	case enry.Programming:
-		return "programming"
-	case enry.Data:
-		return "data"
-	case enry.Markup:
-		return "markup"
-	case enry.Prose:
-		return "prose"
-	default:
-		return "unknown"
 	}
 }
 

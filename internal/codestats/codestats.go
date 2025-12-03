@@ -7,27 +7,12 @@ import (
 	"sync"
 
 	"github.com/go-enry/go-enry/v2"
+	"github.com/petrarca/tech-stack-analyzer/internal/types"
 )
 
 // round2 rounds a float to 2 decimal places
 func round2(f float64) float64 {
 	return math.Round(f*100) / 100
-}
-
-// languageTypeToString converts enry.Type to string
-func languageTypeToString(t enry.Type) string {
-	switch t {
-	case enry.Programming:
-		return "programming"
-	case enry.Data:
-		return "data"
-	case enry.Markup:
-		return "markup"
-	case enry.Prose:
-		return "prose"
-	default:
-		return "unknown"
-	}
 }
 
 // Stats holds code statistics for a language or total (SCC-analyzed files)
@@ -197,14 +182,14 @@ func (a *sccAnalyzer) buildByType(analyzed []LanguageStats, unanalyzed []OtherLa
 
 	// Collect languages by type (analyzed)
 	for _, ls := range analyzed {
-		typeName := languageTypeToString(enry.GetLanguageType(ls.Language))
+		typeName := types.LanguageTypeToString(enry.GetLanguageType(ls.Language))
 		if typeName != "unknown" {
 			typeLanguages[typeName] = append(typeLanguages[typeName], ls.Language)
 		}
 	}
 	// Collect languages by type (unanalyzed)
 	for _, ls := range unanalyzed {
-		typeName := languageTypeToString(enry.GetLanguageType(ls.Language))
+		typeName := types.LanguageTypeToString(enry.GetLanguageType(ls.Language))
 		if typeName != "unknown" {
 			typeLanguages[typeName] = append(typeLanguages[typeName], ls.Language)
 		}

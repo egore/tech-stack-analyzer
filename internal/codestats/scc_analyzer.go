@@ -6,6 +6,7 @@ import (
 
 	"github.com/boyter/scc/v3/processor"
 	"github.com/go-enry/go-enry/v2"
+	"github.com/petrarca/tech-stack-analyzer/internal/types"
 )
 
 var initOnce sync.Once
@@ -63,7 +64,7 @@ func (a *sccAnalyzer) ProcessFile(filename string, language string, content []by
 
 	// Get language type from go-enry (programming, data, markup, prose)
 	langType := enry.GetLanguageType(language)
-	typeName := languageTypeToString(langType)
+	typeName := types.LanguageTypeToString(langType)
 
 	if sccRecognized {
 		// Analyzed bucket: SCC-analyzed files with full stats
