@@ -1,6 +1,6 @@
 tech: clickhouse
 name: ClickHouse
-type: db
+type: database
 dependencies:
   - type: docker
     name: clickhouse/clickhouse-server

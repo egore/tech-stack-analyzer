@@ -1,6 +1,6 @@
 tech: loguru
 name: Loguru
-type: logger
+type: logging
 dependencies:
   - type: python
     name: loguru

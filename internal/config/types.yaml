@@ -99,6 +99,10 @@ types:
     is_component: true
     description: "AI services (OpenAI, Anthropic, etc.)"
   
+  agentic:
+    is_component: false
+    description: "Agentic AI frameworks (PydanticAI, LangChain, CrewAI, etc.)"
+  
   # Development Tools - DO NOT create components
   ci:
     is_component: false
@@ -159,3 +163,15 @@ types:
   iconset:
     is_component: false
     description: "Icon libraries (Lucide, Font Awesome, etc.)"
+  
+  build:
+    is_component: false
+    description: "Build tools (Maven, Gradle, etc.)"
+  
+  logging:
+    is_component: false
+    description: "Logging libraries (Log4j, Logback, SLF4J, etc.)"
+  
+  appserver:
+    is_component: true
+    description: "Application servers (JBoss, Tomcat, WebLogic, etc.)"

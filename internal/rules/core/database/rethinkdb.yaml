@@ -1,6 +1,6 @@
 tech: rethinkdb
 name: RethinkDB
-type: db
+type: database
 dependencies:
   - type: docker
     name: rethinkdb

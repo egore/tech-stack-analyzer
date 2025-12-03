@@ -1,6 +1,6 @@
 tech: apache_cassandra
 name: Apache Cassandra
-type: db
+type: database
 dependencies:
   - type: rust
     name: discord-cassandra-cpp

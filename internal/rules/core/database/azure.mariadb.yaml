@@ -1,6 +1,6 @@
 tech: azure.mariadb
 name: Azure MariaDB
-type: db
+type: database
 dependencies:
   - type: ruby
     name: azure_mgmt_mariadb

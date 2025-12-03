@@ -1,6 +1,6 @@
 tech: aws.elasticache
 name: AWS ElastiCache
-type: db
+type: database
 dependencies:
   - type: npm
     name: "@aws-cdk/aws-elasticache"

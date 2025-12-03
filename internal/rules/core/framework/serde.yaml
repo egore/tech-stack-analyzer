@@ -1,6 +1,6 @@
 tech: serde
 name: Serde
-type: mapping
+type: tool
 dependencies:
   - type: rust
     name: /^serde.*/

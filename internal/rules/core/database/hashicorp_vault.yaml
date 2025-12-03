@@ -1,6 +1,6 @@
 tech: hashicorp_vault
 name: Vault
-type: db
+type: database
 dependencies:
   - type: npm
     name: "@pulumi/vault"

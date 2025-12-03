@@ -1,6 +1,6 @@
 tech: qdrant
 name: Qdrant
-type: db
+type: database
 dotenv:
   - QDRANT_
 dependencies:

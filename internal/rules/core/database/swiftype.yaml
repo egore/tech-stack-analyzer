@@ -1,6 +1,6 @@
 tech: swiftype
 name: Swiftype
-type: db
+type: database
 dependencies:
   - type: ruby
     name: site-search-ruby

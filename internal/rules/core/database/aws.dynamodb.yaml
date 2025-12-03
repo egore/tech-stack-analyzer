@@ -1,6 +1,6 @@
 tech: aws.dynamodb
 name: AWS DynamoDB
-type: db
+type: database
 dependencies:
   - type: npm
     name: "@aws-cdk/aws-dynamodb"

@@ -1,6 +1,6 @@
 tech: mssql
 name: MS SQL
-type: db
+type: database
 dependencies:
   - type: ruby
     name: jdbc-mssql

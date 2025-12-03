@@ -1,6 +1,6 @@
 tech: couchbase
 name: Couchbase
-type: db
+type: database
 dependencies:
   - type: npm
     name: couchbase

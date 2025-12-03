@@ -1,0 +1,8 @@
+tech: pydantic
+name: Pydantic
+type: validation
+dependencies:
+  - type: python
+    name: pydantic
+  - type: python
+    name: pydantic-settings

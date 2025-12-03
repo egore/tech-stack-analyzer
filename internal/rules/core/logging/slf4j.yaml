@@ -1,6 +1,6 @@
 tech: slf4j
 name: SLF4J
-type: logger
+type: logging
 dependencies:
   - type: maven
     name: /^org\.slf4j:.*$/

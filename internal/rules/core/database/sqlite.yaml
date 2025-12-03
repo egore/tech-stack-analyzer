@@ -1,6 +1,6 @@
 tech: sqlite
 name: SQLite
-type: db
+type: database
 dependencies:
   - type: npm
     name: sqlite

@@ -1,6 +1,6 @@
 tech: aws.opensearch
 name: AWS Opensearch
-type: db
+type: database
 dependencies:
   - type: npm
     name: "@aws-cdk/aws-opensearch"

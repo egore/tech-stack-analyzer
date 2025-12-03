@@ -1,6 +1,6 @@
 tech: timescaledb
 name: TimescaleDB
-type: db
+type: database
 dependencies:
   - type: docker
     name: timescale/timescaledb-ha

@@ -1,6 +1,6 @@
 tech: tdengine
 name: TDengine
-type: db
+type: database
 dependencies:
   - type: docker
     name: tdengine/tdengine

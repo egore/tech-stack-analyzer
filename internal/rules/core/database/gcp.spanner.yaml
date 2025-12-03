@@ -1,6 +1,6 @@
 tech: gcp.spanner
 name: Cloud Spanner
-type: db
+type: database
 dependencies:
   - type: npm
     name: "@google-cloud/spanner"

@@ -1,6 +1,6 @@
 tech: meilisearch
 name: Meilisearch
-type: db
+type: database
 dotenv:
   - MEILISEARCH_
 dependencies:

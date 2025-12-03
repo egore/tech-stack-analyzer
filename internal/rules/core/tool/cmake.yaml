@@ -1,6 +1,6 @@
 tech: cmake
 name: CMake
-type: build_tool
+type: build
 files:
   - CMakeLists.txt
   - CMakeSettings.json

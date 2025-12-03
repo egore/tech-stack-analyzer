@@ -1,6 +1,6 @@
 tech: azure.postgres
 name: Azure Postgres
-type: db
+type: database
 dependencies:
   - type: ruby
     name: azure_mgmt_postgresql

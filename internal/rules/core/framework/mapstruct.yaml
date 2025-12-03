@@ -1,6 +1,6 @@
 tech: mapstruct
 name: MapStruct
-type: mapping
+type: tool
 dependencies:
   - type: maven
     name: /^org\.mapstruct.*/

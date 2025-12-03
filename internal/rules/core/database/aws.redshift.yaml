@@ -1,6 +1,6 @@
 tech: aws.redshift
 name: AWS Redshift
-type: db
+type: database
 dependencies:
   - type: npm
     name: "@aws-cdk/aws-redshift"

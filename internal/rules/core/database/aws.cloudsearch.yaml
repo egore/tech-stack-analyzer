@@ -1,6 +1,6 @@
 tech: aws.cloudsearch
 name: AWS Cloudsearch
-type: db
+type: database
 dependencies:
   - type: npm
     name: "@aws-cdk/aws-cloudsearch"

@@ -1,6 +1,6 @@
 tech: mariadb
 name: MariaDB
-type: db
+type: database
 dependencies:
   - type: npm
     name: mariadb

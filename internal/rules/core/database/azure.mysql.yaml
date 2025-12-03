@@ -1,6 +1,6 @@
 tech: azure.mysql
 name: Azure MySQL
-type: db
+type: database
 dependencies:
   - type: ruby
     name: azure_mgmt_mysql

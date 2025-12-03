@@ -1,6 +1,6 @@
 tech: aws.timestream
 name: AWS Timestream
-type: db
+type: database
 dependencies:
   - type: npm
     name: "@aws-cdk/aws-timestream"

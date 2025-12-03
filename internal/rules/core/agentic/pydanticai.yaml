@@ -1,0 +1,6 @@
+tech: pydanticai
+name: PydanticAI
+type: agentic
+dependencies:
+  - type: python
+    name: /^pydantic-ai/

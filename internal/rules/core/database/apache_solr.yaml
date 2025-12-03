@@ -1,6 +1,6 @@
 tech: apache_solr
 name: Apache Solr
-type: db
+type: database
 dependencies:
   - type: docker
     name: solr
