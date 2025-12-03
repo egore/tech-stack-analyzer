@@ -36,7 +36,7 @@ See [How to Extend It](#how-to-extend-it) for complete rule documentation.
 
 ## Key Features
 
-- **700+ Technology Rules** - Comprehensive detection across databases, frameworks, tools, cloud services
+- **700+ Technology Rules** - Comprehensive detection across 48 technology categories (databases, frameworks, APIs, tools, cloud services)
 - **Zero Dependencies** - Single binary deployment without Node.js runtime requirement
 - **Project Configuration** - `.stack-analyzer.yml` for custom metadata, exclusions, and external dependencies
 - **Scan Metadata** - Automatic tracking of scan execution (timestamp, duration, git info, file counts)
@@ -117,8 +117,11 @@ The analyzer uses a command-based interface powered by [Cobra](https://github.co
 ./bin/stack-analyzer info rule postgresql
 ./bin/stack-analyzer info rule postgresql --format json
 
-# List component types
-./bin/stack-analyzer info component-types
+# List technology categories
+./bin/stack-analyzer info categories
+
+# List component categories only
+./bin/stack-analyzer info categories --components
 ```
 
 ### Output Example
@@ -500,24 +503,26 @@ stack-analyzer scan /path --log-level debug --log-format json
 stack-analyzer scan /path --log-level trace
 ```
 
-#### `info` - Display information about rules and types
+#### `info` - Display information about rules and categories
 
 **Subcommands:**
 
-**`info component-types`** - List all component types
+**`info categories`** - List all technology categories
 ```bash
-stack-analyzer info component-types
+stack-analyzer info categories                    # List all categories with descriptions
+stack-analyzer info categories --components       # Show component vs non-component categories
+stack-analyzer info categories --format json      # JSON format with descriptions
 ```
-Shows which technology types create components (appear in `tech` field) vs those that don't (only in `techs` array).
+Shows which technology categories create components (appear in `tech` field) vs those that don't (only in `techs` array).
 
 **`info techs`** - List all available technologies
 ```bash
-stack-analyzer info techs                    # Text format (simple list)
-stack-analyzer info techs --format json      # JSON with name, type, description, properties
-stack-analyzer info techs --format yaml      # YAML with name, type, description, properties
+stack-analyzer info techs                    # Text format (simple list with categories)
+stack-analyzer info techs --format json      # JSON with name, category, description, properties
+stack-analyzer info techs --format yaml      # YAML with name, category, description, properties
 stack-analyzer info techs | grep postgres    # Filter technologies
 ```
-Lists all technology names from the embedded rules. JSON and YAML formats include detailed information (tech key, name, type, description, and custom properties).
+Lists all technology names from the embedded rules. JSON and YAML formats include detailed information (tech key, name, category, description, and custom properties).
 
 **`info rule [tech-name]`** - Show rule details
 ```bash
@@ -528,6 +533,7 @@ Displays the complete rule definition for a given technology.
 
 **Flags:**
 - `--format, -f` - Output format: `text`, `yaml`, or `json` (default varies by command)
+- `--components` - Show only component categories (for `info categories` command)
 
 ### Global Flags
 
@@ -620,45 +626,48 @@ content:
 - **Specific file validation**: Only check `package.json`, not all `.json` files
 - **Prevent false positives**: Ensure actual usage, not just file presence
 
-### Technology Type Configuration
+### Technology Category Configuration
 
-Technology types and their component behavior are defined in `internal/config/types.yaml`. This configuration file determines which technology types create architectural components versus being classified as tools/libraries.
+Technology categories and their component behavior are defined in `internal/config/categories.yaml`. This configuration file determines which technology categories create architectural components versus being classified as tools/libraries.
 
-#### Type Configuration File
+#### Category Configuration File
 
 ```yaml
-# internal/config/types.yaml
+# internal/config/categories.yaml
 types:
   database:
     is_component: true
     description: "Database systems (PostgreSQL, MongoDB, Redis, etc.)"
   
-  framework:
+  backend_framework:
     is_component: false
-    description: "Application frameworks (React, Django, Spring, etc.)"
+    description: "Backend frameworks (Django, Spring, Express, NestJS, etc.)"
 ```
 
-**Adding New Technology Types:**
+**Adding New Technology Categories:**
 
-1. Add the type definition to `internal/config/types.yaml`:
+1. Add the category definition to `internal/config/categories.yaml`:
    ```yaml
-   my_new_type:
+   my_new_category:
      is_component: true  # or false
-     description: "Description of this type"
+     description: "Description of this category"
    ```
 
-2. Use the type in your rules:
+2. Create the category directory and use it in your rules:
+   ```bash
+   mkdir internal/rules/core/my_new_category
+   ```
    ```yaml
    tech: my-tech
    name: My Technology
-   type: my_new_type
+   # type is derived from folder name automatically
    ```
 
 **Benefits:**
 - **No code changes required** - Edit YAML, no recompilation needed
-- **Self-documenting** - Descriptions explain each type's purpose
-- **Centralized** - All type definitions in one place
-- **Discoverable** - Use `stack-analyzer info component-types` to list all types
+- **Self-documenting** - Descriptions explain each category's purpose
+- **Centralized** - All category definitions in one place
+- **Discoverable** - Use `stack-analyzer info categories --components` to list all categories
 
 #### Per-Rule Component Override
 
@@ -672,13 +681,13 @@ is_component: true  # Override: create component anyway
 
 **Priority Order:**
 1. Rule's `is_component` field (highest priority)
-2. Type definition in `types.yaml`
-3. Default to `false` if type not defined
+2. Category definition in `categories.yaml`
+3. Default to `false` if category not defined
 
 **Example Use Cases:**
-- **Promote to component**: `ui_framework` with `is_component: true` creates a component
+- **Promote to component**: `desktop_framework` with `is_component: true` creates a component
 - **Demote from component**: `database` with `is_component: false` doesn't create a component
-- **New types**: Types not in `types.yaml` default to no component creation
+- **New categories**: Categories not in `categories.yaml` default to no component creation
 
 This configuration-driven approach allows fine-grained control over which technologies appear as architectural components versus implementation details.
 
