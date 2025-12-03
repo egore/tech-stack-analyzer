@@ -7,6 +7,8 @@ import (
 	"os"
 	"sort"
 
+	"github.com/go-enry/go-enry/v2"
+	"github.com/go-enry/go-enry/v2/data"
 	"github.com/petrarca/tech-stack-analyzer/internal/config"
 	"github.com/petrarca/tech-stack-analyzer/internal/rules"
 	"github.com/petrarca/tech-stack-analyzer/internal/types"
@@ -47,16 +49,25 @@ var ruleCmd = &cobra.Command{
 	Run:   runRule,
 }
 
+var languagesCmd = &cobra.Command{
+	Use:   "languages",
+	Short: "List all languages known to go-enry",
+	Long:  `List all programming languages, data formats, markup, and prose languages from go-enry (GitHub Linguist).`,
+	Run:   runLanguages,
+}
+
 func init() {
 	rootCmd.AddCommand(infoCmd)
 	infoCmd.AddCommand(componentTypesCmd)
 	infoCmd.AddCommand(techsCmd)
 	infoCmd.AddCommand(ruleCmd)
+	infoCmd.AddCommand(languagesCmd)
 
 	// Add format flag to all info subcommands with separate variables and validation
 	setupFormatFlag(componentTypesCmd, "text", runComponentTypes)
 	setupFormatFlag(techsCmd, "text", runTechs)
 	setupFormatFlag(ruleCmd, "yaml", runRule)
+	setupFormatFlag(languagesCmd, "json", runLanguages)
 }
 
 // setupFormatFlag configures format flag and validation for a command
@@ -237,4 +248,110 @@ func findRuleByTech(allRules []types.Rule, techName string) *types.Rule {
 		}
 	}
 	return nil
+}
+
+// LanguageInfo holds information about a language from go-enry
+type LanguageInfo struct {
+	Name       string   `json:"name"`
+	Type       string   `json:"type"`
+	Extensions []string `json:"extensions"`
+}
+
+// LanguagesOutput is the output structure for the languages command
+type LanguagesOutput struct {
+	Languages []LanguageInfo `json:"languages"`
+	Summary   struct {
+		Total  int            `json:"total"`
+		ByType map[string]int `json:"by_type"`
+	} `json:"summary"`
+}
+
+func runLanguages(cmd *cobra.Command, args []string) {
+	// Get all languages from go-enry's data
+	langNames := data.LanguagesByExtension
+
+	// Build unique language set
+	langSet := make(map[string]bool)
+	for _, langs := range langNames {
+		for _, lang := range langs {
+			langSet[lang] = true
+		}
+	}
+
+	// Build language info list
+	languages := make([]LanguageInfo, 0, len(langSet))
+	byType := make(map[string]int)
+
+	for lang := range langSet {
+		langType := enry.GetLanguageType(lang)
+		typeName := languageTypeToString(langType)
+
+		// Get extensions for this language
+		extensions := getExtensionsForLanguage(lang)
+
+		languages = append(languages, LanguageInfo{
+			Name:       lang,
+			Type:       typeName,
+			Extensions: extensions,
+		})
+
+		byType[typeName]++
+	}
+
+	// Sort by name
+	sort.Slice(languages, func(i, j int) bool {
+		return languages[i].Name < languages[j].Name
+	})
+
+	// Build output
+	output := LanguagesOutput{}
+	output.Languages = languages
+	output.Summary.Total = len(languages)
+	output.Summary.ByType = byType
+
+	// Output based on format
+	switch util.NormalizeFormat(outputFormat) {
+	case "json":
+		outputAndMarshal(output, "json")
+	case "yaml":
+		outputAndMarshal(output, "yaml")
+	default: // text format
+		for _, lang := range languages {
+			fmt.Printf("%-30s %-12s %v\n", lang.Name, lang.Type, lang.Extensions)
+		}
+		fmt.Printf("\nTotal: %d languages\n", len(languages))
+		fmt.Printf("By type: programming=%d, data=%d, markup=%d, prose=%d\n",
+			byType["programming"], byType["data"], byType["markup"], byType["prose"])
+	}
+}
+
+// languageTypeToString converts enry.Type to string
+func languageTypeToString(t enry.Type) string {
+	switch t {
+	case enry.Programming:
+		return "programming"
+	case enry.Data:
+		return "data"
+	case enry.Markup:
+		return "markup"
+	case enry.Prose:
+		return "prose"
+	default:
+		return "unknown"
+	}
+}
+
+// getExtensionsForLanguage returns file extensions for a language
+func getExtensionsForLanguage(lang string) []string {
+	var extensions []string
+	for ext, langs := range data.LanguagesByExtension {
+		for _, l := range langs {
+			if l == lang {
+				extensions = append(extensions, ext)
+				break
+			}
+		}
+	}
+	sort.Strings(extensions)
+	return extensions
 }
