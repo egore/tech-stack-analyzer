@@ -107,7 +107,31 @@ types:
   ai:
     is_component: false
     description: "AI libraries and frameworks (LangChain, PyTorch, PydanticAI, etc.)"
+  
+  backend_framework:
+    is_component: false
+    description: "Backend frameworks (Django, Spring, Express, NestJS, etc.)"
+  
+  mobile_framework:
+    is_component: false
+    description: "Mobile frameworks (React Native, Flutter, Swift, Kotlin, etc.)"
+  
+  desktop_framework:
+    is_component: false
+    description: "Desktop frameworks (Qt, MFC, Win32, Electron, etc.)"
+  
+  web_framework:
+    is_component: false
+    description: "Web frameworks (React, Vue, Angular, Svelte, etc.)"
+  
+  fullstack_framework:
+    is_component: false
+    description: "Full-stack frameworks (Next.js, Nuxt, Remix, etc.)"
 
+  api:
+    is_component: false
+    description: "API protocols and specifications (GraphQL, REST, gRPC, etc.)"
+  
   cicd:
     is_component: false
     description: "CI/CD tools (GitHub Actions, Jenkins, CircleCI, etc.)"
@@ -128,9 +152,13 @@ types:
     is_component: false
     description: "General development tools"
   
-  framework:
+  dbmigration:
     is_component: false
-    description: "Application frameworks (React, Django, Spring, etc.)"
+    description: "Database migration tools (Flyway, Liquibase, etc.)"
+  
+  codequality:
+    is_component: false
+    description: "Code quality and static analysis tools (ESLint, Prettier, Sonarlint, RuboCop, etc.)"
   
   validation:
     is_component: false
@@ -138,7 +166,7 @@ types:
   
   test:
     is_component: false
-    description: "Testing frameworks (Jest, Pytest, etc.)"
+    description: "Testing frameworks (Jest, Pytest, JUnit, Mocha, etc.)"
   
   orm:
     is_component: false
