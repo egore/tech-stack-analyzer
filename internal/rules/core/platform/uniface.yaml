@@ -1,8 +1,16 @@
 tech: uniface
 name: Uniface
 type: platform
-files:
-  - .aps
-  - .frm
-  - .inc
-  - .proc
+content:
+  # Uniface Application Source files (not MSVC resource files)
+  - type: regex
+    pattern: ;\s*Uniface|entry|trigger|proc trigger|webtrigger
+    extensions: [.aps]
+  # Uniface form definitions
+  - type: regex
+    pattern: FORM|ENDFORM|FIELD|ENDFIELD|LABEL|ENDLABEL
+    extensions: [.frm]
+  # Uniface procedure files
+  - type: regex
+    pattern: PROCEDURE|ENDPROCEDURE|PARAMETERS|ENDPARAMETERS
+    extensions: [.proc]
