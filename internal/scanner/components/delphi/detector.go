@@ -21,7 +21,7 @@ func (d *Detector) Detect(files []types.File, currentPath, basePath string, prov
 	// Check for .dproj files
 	for _, file := range files {
 		if strings.HasSuffix(strings.ToLower(file.Name), ".dproj") {
-			payload := d.detectDelphiProject(file, currentPath, basePath, provider)
+			payload := d.detectDelphiProject(file, currentPath, basePath, provider, depDetector)
 			if payload != nil {
 				results = append(results, payload)
 			}
@@ -31,7 +31,7 @@ func (d *Detector) Detect(files []types.File, currentPath, basePath string, prov
 	return results
 }
 
-func (d *Detector) detectDelphiProject(file types.File, currentPath, basePath string, provider types.Provider) *types.Payload {
+func (d *Detector) detectDelphiProject(file types.File, currentPath, basePath string, provider types.Provider, depDetector components.DependencyDetector) *types.Payload {
 	content, err := provider.ReadFile(filepath.Join(currentPath, file.Name))
 	if err != nil {
 		return nil
@@ -67,6 +67,7 @@ func (d *Detector) detectDelphiProject(file types.File, currentPath, basePath st
 
 	// Create dependencies list from packages
 	var dependencies []types.Dependency
+	var depNames []string
 	for _, pkg := range project.Packages {
 		dep := types.Dependency{
 			Type:    "delphi",
@@ -74,9 +75,20 @@ func (d *Detector) detectDelphiProject(file types.File, currentPath, basePath st
 			Example: "",
 		}
 		dependencies = append(dependencies, dep)
+		depNames = append(depNames, pkg)
 	}
 
 	payload.Dependencies = dependencies
+
+	// Match dependencies against rules
+	if len(depNames) > 0 {
+		matchedTechs := depDetector.MatchDependencies(depNames, "delphi")
+		for tech, reasons := range matchedTechs {
+			for _, reason := range reasons {
+				payload.AddTech(tech, reason)
+			}
+		}
+	}
 
 	return payload
 }

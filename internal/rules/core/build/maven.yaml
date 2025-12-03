@@ -1,0 +1,4 @@
+# Detected by java component detector (internal/scanner/components/java/)
+tech: maven
+name: Apache Maven
+type: build
