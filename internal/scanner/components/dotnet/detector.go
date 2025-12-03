@@ -40,7 +40,7 @@ func (d *Detector) detectDotNetProject(file types.File, currentPath, basePath st
 
 	// Parse .csproj file using parser
 	dotnetParser := parsers.NewDotNetParser()
-	project := dotnetParser.ParseCsproj(string(content))
+	project := dotnetParser.ParseCsproj(string(content), filepath.Join(currentPath, file.Name))
 
 	if project.Name == "" {
 		return nil
@@ -107,6 +107,12 @@ func (d *Detector) detectDotNetProject(file types.File, currentPath, basePath st
 
 			// Add child to parent payload
 			payload.AddChild(childPayload)
+
+			// Add edges for non-hosting/cloud types (like database components)
+			// Check if this child component type should create edges
+			if childTech != "hosting" && childTech != "cloud" {
+				payload.AddEdges(childPayload)
+			}
 		}
 	}
 

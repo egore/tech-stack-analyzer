@@ -45,3 +45,12 @@ dependencies:
   - type: terraform.resource
     name: airbyte_destination_redis
     example: airbyte_destination_redis
+  - type: nuget
+    name: StackExchange.Redis
+    example: StackExchange.Redis
+  - type: nuget
+    name: Microsoft.Extensions.Caching.StackExchangeRedis
+    example: Microsoft.Extensions.Caching.StackExchangeRedis
+  - type: nuget
+    name: ServiceStack.Redis
+    example: ServiceStack.Redis

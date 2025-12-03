@@ -55,7 +55,7 @@ func TestParseCsproj(t *testing.T) {
   </ItemGroup>
 </Project>`,
 			expected: DotNetProject{
-				Name:      "DotNetProject", // Fallback name
+				Name:      "test", // Extracted from filename
 				Framework: "net7.0",
 				Packages: []DotNetPackage{
 					{Name: "Microsoft.Extensions.Logging", Version: "7.0.0"},
@@ -142,7 +142,7 @@ func TestParseCsproj(t *testing.T) {
 		{
 			name:     "empty project file",
 			content:  "",
-			expected: DotNetProject{Name: "DotNetProject", Framework: "", Packages: []DotNetPackage{}},
+			expected: DotNetProject{Name: "test", Framework: "", Packages: []DotNetPackage{}},
 		},
 		{
 			name: "invalid XML",
@@ -159,7 +159,7 @@ func TestParseCsproj(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := parser.ParseCsproj(tt.content)
+			result := parser.ParseCsproj(tt.content, "test.csproj")
 
 			assert.Equal(t, tt.expected.Name, result.Name, "Should have correct project name")
 			assert.Equal(t, tt.expected.Framework, result.Framework, "Should have correct framework")
@@ -290,25 +290,25 @@ func TestExtractProjectNameFromContent(t *testing.T) {
 			expected: "MyProject",
 		},
 		{
-			name:     "fallback to generic name for .csproj content",
+			name:     "fallback to filename for .csproj content",
 			content:  `<Project Reference="..\OtherProject.csproj" />`,
-			expected: "DotNetProject",
+			expected: "test",
 		},
 		{
-			name:     "fallback for non-.csproj content",
+			name:     "fallback to filename for non-.csproj content",
 			content:  `<SomeOtherXml></SomeOtherXml>`,
-			expected: "DotNetProject",
+			expected: "test",
 		},
 		{
 			name:     "empty content",
 			content:  "",
-			expected: "DotNetProject",
+			expected: "test",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := parser.extractProjectNameFromContent(tt.content)
+			result := parser.extractProjectNameFromContent(tt.content, "test.csproj")
 			assert.Equal(t, tt.expected, result, "Should extract correct project name")
 		})
 	}
@@ -336,7 +336,7 @@ func TestDotNetParser_Integration(t *testing.T) {
   </ItemGroup>
 </Project>`
 
-	result := parser.ParseCsproj(modernProject)
+	result := parser.ParseCsproj(modernProject, "AwesomeWebApp.csproj")
 
 	assert.Equal(t, "AwesomeWebApp", result.Name)
 	assert.Equal(t, "net7.0", result.Framework)
@@ -362,7 +362,7 @@ func TestDotNetParser_Integration(t *testing.T) {
   </ItemGroup>
 </Project>`
 
-	result = parser.ParseCsproj(legacyProject)
+	result = parser.ParseCsproj(legacyProject, "LegacyEnterpriseApp.csproj")
 
 	assert.Equal(t, "LegacyEnterpriseApp", result.Name)
 	assert.Equal(t, "net48", result.Framework)
@@ -385,8 +385,8 @@ func TestDotNetParser_EdgeCases(t *testing.T) {
   </ItemGroup>
 </Project>`
 
-		result := parser.ParseCsproj(content)
-		assert.Equal(t, "DotNetProject", result.Name) // Fallback name
+		result := parser.ParseCsproj(content, "MinimalProject.csproj")
+		assert.Equal(t, "MinimalProject", result.Name) // Extracted from filename
 		assert.Equal(t, "", result.Framework)
 		assert.Len(t, result.Packages, 1)
 		assert.Equal(t, "TestPackage", result.Packages[0].Name)
@@ -404,11 +404,11 @@ func TestDotNetParser_EdgeCases(t *testing.T) {
   <InvalidTag>
   </InvalidTag>`
 
-		result := parser.ParseCsproj(content)
+		result := parser.ParseCsproj(content, "MalformedProject.csproj")
 		// Malformed XML should cause parsing to fail and return empty values
-		assert.Equal(t, "DotNetProject", result.Name) // Fallback name
-		assert.Equal(t, "", result.Framework)         // No framework parsed
-		assert.Len(t, result.Packages, 0)             // No packages parsed
+		assert.Equal(t, "MalformedProject", result.Name) // Extracted from filename
+		assert.Equal(t, "", result.Framework)            // No framework parsed
+		assert.Len(t, result.Packages, 0)                // No packages parsed
 	})
 
 	// Test project with comments and whitespace
@@ -429,7 +429,7 @@ func TestDotNetParser_EdgeCases(t *testing.T) {
   </ItemGroup>
 </Project>`
 
-		result := parser.ParseCsproj(content)
+		result := parser.ParseCsproj(content, "CommentedApp.csproj")
 		assert.Equal(t, "CommentedApp", result.Name)
 		assert.Equal(t, "net8.0", result.Framework)
 		assert.Len(t, result.Packages, 2)

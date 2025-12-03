@@ -2,6 +2,7 @@ package parsers
 
 import (
 	"encoding/xml"
+	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -64,22 +65,22 @@ func NewDotNetParser() *DotNetParser {
 }
 
 // ParseCsproj parses a .csproj file and extracts project information
-func (p *DotNetParser) ParseCsproj(content string) DotNetProject {
+func (p *DotNetParser) ParseCsproj(content, filePath string) DotNetProject {
 	var project DotNetProject
 
 	// Try to parse as modern SDK-style project first
 	var modernProject Project
 	if err := xml.Unmarshal([]byte(content), &modernProject); err == nil {
-		project = p.parseModernProject(modernProject, content)
+		project = p.parseModernProject(modernProject, content, filePath)
 	} else {
 		// Try to parse as legacy .NET Framework project
 		var legacyProject LegacyProject
 		if err := xml.Unmarshal([]byte(content), &legacyProject); err == nil {
-			project = p.parseLegacyProject(legacyProject, content)
+			project = p.parseLegacyProject(legacyProject, content, filePath)
 		} else {
 			// Both parsing attempts failed, return fallback project
 			project = DotNetProject{
-				Name:      p.extractProjectNameFromContent(content),
+				Name:      p.extractProjectNameFromContent(content, filePath),
 				Framework: "",
 				Packages:  []DotNetPackage{},
 			}
@@ -90,7 +91,7 @@ func (p *DotNetParser) ParseCsproj(content string) DotNetProject {
 }
 
 // parseModernProject parses modern SDK-style .csproj files
-func (p *DotNetParser) parseModernProject(project Project, content string) DotNetProject {
+func (p *DotNetParser) parseModernProject(project Project, content, filePath string) DotNetProject {
 	var result DotNetProject
 
 	// Extract project name and framework from PropertyGroups
@@ -117,14 +118,14 @@ func (p *DotNetParser) parseModernProject(project Project, content string) DotNe
 
 	// If no AssemblyName found, try to extract from filename using regex
 	if result.Name == "" {
-		result.Name = p.extractProjectNameFromContent(content)
+		result.Name = p.extractProjectNameFromContent(content, filePath)
 	}
 
 	return result
 }
 
 // parseLegacyProject parses legacy .NET Framework .csproj files
-func (p *DotNetParser) parseLegacyProject(project LegacyProject, content string) DotNetProject {
+func (p *DotNetParser) parseLegacyProject(project LegacyProject, content, filePath string) DotNetProject {
 	var result DotNetProject
 
 	// Extract project name and framework from PropertyGroups
@@ -151,28 +152,24 @@ func (p *DotNetParser) parseLegacyProject(project LegacyProject, content string)
 
 	// If no AssemblyName found, try to extract from filename using regex
 	if result.Name == "" {
-		result.Name = p.extractProjectNameFromContent(content)
+		result.Name = p.extractProjectNameFromContent(content, filePath)
 	}
 
 	return result
 }
 
 // extractProjectNameFromContent attempts to extract project name from XML content
-func (p *DotNetParser) extractProjectNameFromContent(content string) string {
+func (p *DotNetParser) extractProjectNameFromContent(content, filePath string) string {
 	// Try to match AssemblyName in content (might be in different format)
 	assemblyNameRegex := regexp.MustCompile(`<AssemblyName>([^<]+)</AssemblyName>`)
 	if matches := assemblyNameRegex.FindStringSubmatch(content); len(matches) > 1 {
 		return strings.TrimSpace(matches[1])
 	}
 
-	// Try to match ProjectReference or other hints
-	projectNameRegex := regexp.MustCompile(`\.csproj`)
-	if projectNameRegex.MatchString(content) {
-		// Fallback to a generic name if we can't extract specific
-		return "DotNetProject"
-	}
-
-	return "DotNetProject"
+	// Extract from filename as fallback
+	filename := filepath.Base(filePath)
+	projectName := strings.TrimSuffix(filename, ".csproj")
+	return projectName
 }
 
 // GetFrameworkType determines if the framework is modern .NET or legacy .NET Framework

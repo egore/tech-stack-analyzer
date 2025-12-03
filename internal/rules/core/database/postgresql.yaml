@@ -66,4 +66,10 @@ dependencies:
   - type: docker
     name: pgvector/pgvector
     example: pgvector/pgvector
+  - type: nuget
+    name: Npgsql
+    example: Npgsql
+  - type: nuget
+    name: Npgsql.EntityFrameworkCore.PostgreSQL
+    example: Npgsql.EntityFrameworkCore.PostgreSQL
 

@@ -236,11 +236,11 @@ func TestDetector_Detect_CsprojWithoutAssemblyName(t *testing.T) {
 	// Test detection
 	results := detector.Detect(files, "/project", "/project", provider, depDetector)
 
-	// Verify results - note: parser may provide fallback name
-	require.Len(t, results, 1, "Should detect one .NET project (parser provides fallback)")
+	// Verify results - note: parser now extracts name from filename
+	require.Len(t, results, 1, "Should detect one .NET project")
 
 	payload := results[0]
-	assert.Equal(t, "DotNetProject", payload.Name) // Fallback name from parser
+	assert.Equal(t, "NoName", payload.Name) // Extracted from filename
 	assert.Contains(t, payload.Tech, "dotnet", "Should have dotnet as primary tech")
 }
 
@@ -271,11 +271,11 @@ func TestDetector_Detect_EmptyCsproj(t *testing.T) {
 	// Test detection
 	results := detector.Detect(files, "/project", "/project", provider, depDetector)
 
-	// Verify results - note: parser may provide fallback name even for empty projects
-	require.Len(t, results, 1, "Should detect one .NET project (parser provides fallback)")
+	// Verify results - note: parser now extracts name from filename even for empty projects
+	require.Len(t, results, 1, "Should detect one .NET project")
 
 	payload := results[0]
-	assert.Equal(t, "DotNetProject", payload.Name) // Fallback name from parser
+	assert.Equal(t, "Empty", payload.Name) // Extracted from filename
 	assert.Contains(t, payload.Tech, "dotnet", "Should have dotnet as primary tech")
 	assert.Empty(t, payload.Dependencies, "Should have no dependencies")
 }

@@ -10,3 +10,15 @@ dependencies:
   - type: npm
     name: "@opentelemetry/instrumentation-tedious"
     example: "@opentelemetry/instrumentation-tedious"
+  - type: nuget
+    name: Microsoft.EntityFrameworkCore.SqlServer
+    example: Microsoft.EntityFrameworkCore.SqlServer
+  - type: nuget
+    name: System.Data.SqlClient
+    example: System.Data.SqlClient
+  - type: nuget
+    name: Microsoft.Data.SqlClient
+    example: Microsoft.Data.SqlClient
+  - type: nuget
+    name: Hangfire.SqlServer
+    example: Hangfire.SqlServer
