@@ -71,9 +71,9 @@ dependencies:
   - type: python
     name: tartiflette-aiohttp
     example: tartiflette-aiohttp
-  - type: dotnet
+  - type: nuget
     name: /^GraphQL.*/
     example: GraphQL
-  - type: dotnet
+  - type: nuget
     name: StrawberryShake.Server
     example: StrawberryShake.Server

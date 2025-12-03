@@ -28,13 +28,13 @@ dependencies:
   - type: python
     name: django-oracle
     example: django-oracle
-  - type: java
+  - type: maven
     name: ojdbc8
     example: ojdbc8
-  - type: java
+  - type: maven
     name: oracle.jdbc
     example: oracle.jdbc
-  - type: java
+  - type: maven
     name: oracle.jdbc.driver
     example: oracle.jdbc.driver
   - type: ruby
