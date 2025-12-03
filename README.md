@@ -201,34 +201,30 @@ The scanner automatically collects code statistics using [SCC](https://github.co
 ```json
 {
   "code_stats": {
-    "total": {
-      "lines": 38308,
-      "code": 31975,
-      "comments": 2008,
-      "blanks": 4325,
-      "complexity": 1920,
-      "files": 858
+    "total": { "lines": 39212, "code": 32834, "comments": 2027, "blanks": 4351, "complexity": 1960, "files": 858 },
+    "kpis": {
+      "comment_ratio": 0.12,
+      "code_density": 0.76,
+      "avg_file_size": 236.81,
+      "complexity_per_kloc": 116.49,
+      "avg_complexity": 21.08,
+      "top_languages": [{"language": "Go", "pct": 1}]
+    },
+    "by_type": {
+      "programming": { "total": { "lines": 22023, "code": 16826, ... }, "languages": ["Go"] },
+      "data": { "total": { "lines": 12575, ... }, "languages": ["YAML", "JSON", "Go Checksums"] },
+      "prose": { "total": { "lines": 5003, ... }, "languages": ["Markdown", "Text"] }
     },
     "analyzed": {
-      "total": {
-        "lines": 38308,
-        "code": 31975,
-        "comments": 2008,
-        "blanks": 4325,
-        "complexity": 1920,
-        "files": 858
-      },
+      "total": { ... },
       "by_language": [
-        {"language": "Go", "lines": 21841, "code": 16679, "comments": 1963, "blanks": 3199, "complexity": 1920, "files": 93},
-        {"language": "YAML", "lines": 11385, "code": 11258, "comments": 45, "blanks": 82, "complexity": 0, "files": 754}
+        {"language": "Go", "lines": 21841, "code": 16679, "comments": 1963, ...},
+        {"language": "YAML", "lines": 11385, "code": 11258, ...}
       ]
     },
     "unanalyzed": {
       "total": {"lines": 389, "files": 3},
-      "by_language": [
-        {"language": "Go Checksums", "lines": 253, "files": 1},
-        {"language": "Go Module", "lines": 70, "files": 1}
-      ]
+      "by_language": [{"language": "Go Checksums", "lines": 253, "files": 1}, ...]
     }
   }
 }
@@ -236,11 +232,14 @@ The scanner automatically collects code statistics using [SCC](https://github.co
 
 **Fields:**
 - **`total`** - Grand total for all analyzed files
+- **`kpis`** - Derived metrics (programming languages only)
+- **`by_type`** - Stats grouped by [GitHub Linguist](https://github.com/github-linguist/linguist) language type:
+  - `programming` - Go, C++, Java, Python, etc.
+  - `data` - JSON, YAML, CSV, XML, etc.
+  - `markup` - HTML, SVG
+  - `prose` - Markdown, Text
 - **`analyzed`** - Files SCC can fully parse (code/comments/blanks/complexity breakdown)
-  - Sorted by lines descending
-- **`unanalyzed`** - Files SCC cannot parse (only line counts available)
-  - Includes config files like `go.mod`, `go.sum`, `.gitignore`
-  - Sorted by lines descending
+- **`unanalyzed`** - Files SCC cannot parse (only line counts)
 
 **Metrics:**
 - `lines` - Total lines in file
@@ -249,6 +248,35 @@ The scanner automatically collects code statistics using [SCC](https://github.co
 - `blanks` - Blank lines
 - `complexity` - Cyclomatic complexity (for supported languages)
 - `files` - Number of files
+
+**KPIs** (derived metrics from programming languages only):
+```json
+{
+  "kpis": {
+    "comment_ratio": 0.14,
+    "code_density": 0.77,
+    "avg_file_size": 400.6,
+    "complexity_per_kloc": 165.08,
+    "avg_complexity": 51.16,
+    "top_languages": [
+      {"language": "C++", "pct": 0.90},
+      {"language": "C", "pct": 0.05},
+      {"language": "C#", "pct": 0.02}
+    ]
+  }
+}
+```
+
+| KPI | Formula | Insight |
+|-----|---------|---------|
+| `comment_ratio` | comments / code | Documentation level (10-20% typical) |
+| `code_density` | code / lines | Actual code vs whitespace/comments |
+| `avg_file_size` | lines / files | File granularity |
+| `complexity_per_kloc` | complexity / (code/1000) | Maintainability indicator |
+| `avg_complexity` | complexity / files | Per-file complexity |
+| `top_languages` | top 5 by lines (≥1%) | Main programming languages |
+
+All values rounded to 2 decimal places. KPIs are computed from **programming languages only** (excludes data formats like JSON, YAML, CSV).
 
 ### Project Configuration
 

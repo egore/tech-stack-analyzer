@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/boyter/scc/v3/processor"
+	"github.com/go-enry/go-enry/v2"
 )
 
 var initOnce sync.Once
@@ -60,6 +61,10 @@ func (a *sccAnalyzer) ProcessFile(filename string, language string, content []by
 	// Determine if SCC recognized this file (can distinguish code/comments)
 	sccRecognized := sccLang != ""
 
+	// Get language type from go-enry (programming, data, markup, prose)
+	langType := enry.GetLanguageType(language)
+	typeName := languageTypeToString(langType)
+
 	if sccRecognized {
 		// Analyzed bucket: SCC-analyzed files with full stats
 		a.total.Lines += filejob.Lines
@@ -78,6 +83,19 @@ func (a *sccAnalyzer) ProcessFile(filename string, language string, content []by
 		a.codeByLanguage[language].Blanks += filejob.Blank
 		a.codeByLanguage[language].Complexity += filejob.Complexity
 		a.codeByLanguage[language].Files++
+
+		// Aggregate by language type
+		if typeName != "unknown" {
+			if _, ok := a.byType[typeName]; !ok {
+				a.byType[typeName] = &Stats{}
+			}
+			a.byType[typeName].Lines += filejob.Lines
+			a.byType[typeName].Code += filejob.Code
+			a.byType[typeName].Comments += filejob.Comment
+			a.byType[typeName].Blanks += filejob.Blank
+			a.byType[typeName].Complexity += filejob.Complexity
+			a.byType[typeName].Files++
+		}
 	} else {
 		// Other bucket: files SCC can't analyze (just line counts)
 		a.otherTotal.Lines += filejob.Lines
@@ -88,5 +106,14 @@ func (a *sccAnalyzer) ProcessFile(filename string, language string, content []by
 		}
 		a.otherByLanguage[language].Lines += filejob.Lines
 		a.otherByLanguage[language].Files++
+
+		// Also aggregate by type for unanalyzed files
+		if typeName != "unknown" {
+			if _, ok := a.byType[typeName]; !ok {
+				a.byType[typeName] = &Stats{}
+			}
+			a.byType[typeName].Lines += filejob.Lines
+			a.byType[typeName].Files++
+		}
 	}
 }
