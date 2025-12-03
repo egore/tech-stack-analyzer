@@ -35,6 +35,9 @@ dependencies:
   - type: rust
     name: openapi
     example: openapi
+  - type: maven
+    name: io.quarkus:quarkus-smallrye-openapi
+    example: io.quarkus:quarkus-smallrye-openapi
 files:
   - openapi.yaml
   - openapi.json
