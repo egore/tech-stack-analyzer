@@ -1250,6 +1250,7 @@ content:
 | `regex` (default) | Regex pattern matching on file content | `pattern`, `extensions` or `files` |
 | `json-path` | Checks if JSON path exists or matches value | `path`, `files`, optional `value` |
 | `yaml-path` | Checks if YAML path exists or matches value | `path`, `files`, optional `value` |
+| `xml-path` | Checks if XML path exists or matches value | `path`, `files`, optional `value` |
 
 **Example: JSON Schema Validation** (using json-path):
 ```yaml
@@ -1258,6 +1259,15 @@ content:
     path: $.$schema
     value: https://ui.shadcn.com/schema.json
     files: [components.json]
+```
+
+**Example: XML Generator Detection** (using xml-path):
+```yaml
+content:
+  - type: xml-path
+    path: $.Export.generator
+    value: /Cache|/IRIS
+    files: [package.xml]
 ```
 
 **Value Matching:**
