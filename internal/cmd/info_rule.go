@@ -25,18 +25,43 @@ func init() {
 	setupFormatFlag(ruleCmd, &ruleFormat)
 }
 
+// RuleOutput represents the output format for rule info
+type RuleOutput struct {
+	Tech         string                 `json:"tech"`
+	Name         string                 `json:"name"`
+	Category     string                 `json:"category"`
+	Files        []string               `json:"files,omitempty"`
+	Extensions   []string               `json:"extensions,omitempty"`
+	Content      []types.ContentRule    `json:"content,omitempty"`
+	Dependencies []types.Dependency     `json:"dependencies,omitempty"`
+	Properties   map[string]interface{} `json:"properties,omitempty"`
+	Description  string                 `json:"description,omitempty"`
+}
+
 // RuleResult wraps a rule for output
 type RuleResult struct {
 	Rule *types.Rule
 }
 
 func (r *RuleResult) ToJSON() interface{} {
-	return r.Rule
+	rule := r.Rule
+	return &RuleOutput{
+		Tech:         rule.Tech,
+		Name:         rule.Name,
+		Category:     rule.Type,
+		Files:        rule.Files,
+		Extensions:   rule.Extensions,
+		Content:      rule.Content,
+		Dependencies: rule.Dependencies,
+		Properties:   rule.Properties,
+		Description:  rule.Description,
+	}
 }
 
 func (r *RuleResult) ToText(w io.Writer) {
 	// For text, use YAML as it's more readable
-	data, err := yaml.Marshal(r.Rule)
+	output := r.ToJSON().(*RuleOutput)
+	data, err := yaml.Marshal(output)
 	if err != nil {
 		log.Fatalf("Failed to marshal rule: %v", err)
 	}

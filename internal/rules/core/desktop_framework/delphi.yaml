@@ -1,9 +1,5 @@
 tech: delphi
 name: Delphi
-files:
-  - "*.dproj"
-  - "*.dpr"
-  - "*.dpk"
 extensions:
   - .dproj
   - .dpr

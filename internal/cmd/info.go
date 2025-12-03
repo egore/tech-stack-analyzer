@@ -6,8 +6,8 @@ import (
 
 var infoCmd = &cobra.Command{
 	Use:   "info",
-	Short: "Display information about rules, types, and languages",
-	Long:  `Display information about component types, available technologies, rule details, and supported languages.`,
+	Short: "Display information about rules, categories, and languages",
+	Long:  `Display information about component categories, available technologies, rule details, and supported languages.`,
 }
 
 func init() {
