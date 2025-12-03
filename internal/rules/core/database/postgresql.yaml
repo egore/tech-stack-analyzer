@@ -55,3 +55,9 @@ dependencies:
   - type: terraform.resource
     name: airbyte_destination_postgres
     example: airbyte_destination_postgres
+  - type: maven
+    name: io.quarkus:quarkus-jdbc-postgresql
+    example: io.quarkus:quarkus-jdbc-postgresql
+  - type: maven
+    name: org.postgresql:postgresql
+    example: org.postgresql:postgresql

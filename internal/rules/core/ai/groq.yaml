@@ -14,8 +14,8 @@ dependencies:
     name: groq-sdk
     example: groq-sdk
   - type: npm
-    name: genkitx-groq 
-    example: genkitx-groq 
+    name: genkitx-groq
+    example: genkitx-groq
   - type: python
     name: langchain-groq
     example: langchain-groq

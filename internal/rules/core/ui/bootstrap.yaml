@@ -5,3 +5,6 @@ dependencies:
   - type: npm
     name: bootstrap
     example: bootstrap
+  - type: npm
+    name: bootstrap-vue-next
+    example: bootstrap-vue-next

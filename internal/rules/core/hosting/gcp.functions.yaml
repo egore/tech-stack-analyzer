@@ -6,8 +6,8 @@ dependencies:
     name: "@google-cloud/functions-framework"
     example: "@google-cloud/functions-framework"
   - type: ruby
-    name: functions_framework 
-    example: functions_framework 
+    name: functions_framework
+    example: functions_framework
   - type: golang
     name: cloud.google.com/go/functions
     example: cloud.google.com/go/functions

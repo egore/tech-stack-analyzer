@@ -24,8 +24,8 @@ dependencies:
     name: typesense
     example: typesense
   - type: php
-    name: typesense/typesense-php 
-    example: typesense/typesense-php 
+    name: typesense/typesense-php
+    example: typesense/typesense-php
   - type: php
     name: typesense/laravel-scout-typesense-driver
     example: typesense/laravel-scout-typesense-driver
