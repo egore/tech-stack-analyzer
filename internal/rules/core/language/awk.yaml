@@ -1,0 +1,8 @@
+tech: awk
+name: AWK
+type: language
+extensions:
+  - .awk
+  - .gawk
+  - .mawk
+  - .nawk
